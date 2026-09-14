@@ -1,0 +1,13 @@
+[
+  {
+    "AllowedOrigins": [
+      "https://iphoneduowallpaper.com",
+      "https://www.iphoneduowallpaper.com",
+      "http://localhost:3000"
+    ],
+    "AllowedMethods": ["GET", "HEAD", "PUT"],
+    "AllowedHeaders": ["content-type", "cache-control"],
+    "ExposeHeaders": ["ETag"],
+    "MaxAgeSeconds": 3600
+  }
+]
