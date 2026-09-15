@@ -30,6 +30,7 @@ export async function generateMetadata({ params }: PageProps<"/collections/[slug
       `A curated set of ${collection.name} wallpapers for iPhone Duo and iPhone 18 Pro.`,
     path: `/collections/${collection.slug}`,
     image: collection.cover_thumb_key ? { url: imageUrl(collection.cover_thumb_key), alt: collection.name } : null,
+    noIndex: collection.wallpaper_count === 0,
   });
 }
 

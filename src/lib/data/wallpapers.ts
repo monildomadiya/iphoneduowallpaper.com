@@ -261,7 +261,14 @@ export async function getPrerenderWallpaperSlugs(limit = 60): Promise<string[]> 
   return (data ?? []).map((row) => row.slug as string);
 }
 
-export async function getWallpaperSitemapEntries(): Promise<{ slug: string; updated_at: string }[]> {
+export interface WallpaperSitemapEntry {
+  slug: string;
+  updated_at: string;
+  preview_key: string;
+  original_key: string;
+}
+
+export async function getWallpaperSitemapEntries(): Promise<WallpaperSitemapEntry[]> {
   "use cache";
   cacheTag("wallpapers");
   const supabase = getPublicSupabase();
@@ -271,7 +278,7 @@ export async function getWallpaperSitemapEntries(): Promise<{ slug: string; upda
   }
   const { data, error } = await supabase
     .from("wallpapers")
-    .select("slug,updated_at")
+    .select("slug,updated_at,preview_key,original_key")
     .eq("status", "published")
     .order("published_at", { ascending: false })
     .limit(45000);
@@ -281,5 +288,5 @@ export async function getWallpaperSitemapEntries(): Promise<{ slug: string; upda
     console.error("[data:sitemap]", error.message);
     return [];
   }
-  return (data ?? []) as { slug: string; updated_at: string }[];
+  return (data ?? []) as WallpaperSitemapEntry[];
 }

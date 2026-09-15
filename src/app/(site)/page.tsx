@@ -74,7 +74,7 @@ export default async function HomePage() {
             Made for iPhone Duo
           </p>
           <h1 className="headline-hero mx-auto mt-6 max-w-4xl text-balance">
-            Wallpapers, <span className="text-gradient-duo">unfolded.</span>
+            iPhone Duo wallpapers, <span className="text-gradient-duo">unfolded.</span>
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-pretty text-[19px] leading-7 text-fg-2 md:text-[23px] md:leading-8">
             {settings.tagline} Full-resolution designs for the 5.4-inch outer display, the 7.6-inch inner display and

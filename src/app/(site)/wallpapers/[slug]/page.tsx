@@ -41,7 +41,10 @@ export async function generateMetadata({ params }: PageProps<"/wallpapers/[slug]
   const wallpaper = await getWallpaperBySlug(slug);
   if (!wallpaper) return { title: "Wallpaper not found", robots: { index: false, follow: true } };
 
-  const title = wallpaper.seo_title || `${wallpaper.title} Wallpaper — ${wallpaper.width} × ${wallpaper.height}`;
+  const family = wallpaper.devices[0]?.family ?? "iPhone Duo";
+  const title =
+    wallpaper.seo_title ||
+    `${wallpaper.title} ${family} Wallpaper — ${qualityLabel(wallpaper.width, wallpaper.height)} ${wallpaper.width}x${wallpaper.height}`;
   const description =
     wallpaper.seo_description ||
     (wallpaper.description

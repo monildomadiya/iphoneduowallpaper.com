@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { getPostSitemapEntries } from "@/lib/data/posts";
 import { getCategories, getCollections, getDevices } from "@/lib/data/taxonomy";
 import { getWallpaperSitemapEntries } from "@/lib/data/wallpapers";
-import { absoluteUrl } from "@/lib/utils";
+import { absoluteUrl, imageUrl } from "@/lib/utils";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [wallpapers, posts, categories, collections, devices] = await Promise.all([
@@ -29,21 +29,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: absoluteUrl("/dmca"), changeFrequency: "yearly", priority: 0.2 },
   ];
 
+  // Empty taxonomy pages are noindex (thin content), so they join the sitemap once they have wallpapers.
+  const hasWallpapers = (item: { wallpaper_count: number }) => item.wallpaper_count > 0;
+
   return [
     ...staticPages,
-    ...categories.map((item) => ({
+    ...categories.filter(hasWallpapers).map((item) => ({
       url: absoluteUrl(`/categories/${item.slug}`),
       lastModified: item.updated_at,
       changeFrequency: "weekly" as const,
       priority: 0.7,
     })),
-    ...collections.map((item) => ({
+    ...collections.filter(hasWallpapers).map((item) => ({
       url: absoluteUrl(`/collections/${item.slug}`),
       lastModified: item.updated_at,
       changeFrequency: "weekly" as const,
       priority: 0.6,
     })),
-    ...devices.map((item) => ({
+    ...devices.filter(hasWallpapers).map((item) => ({
       url: absoluteUrl(`/devices/${item.slug}`),
       lastModified: item.updated_at,
       changeFrequency: "weekly" as const,
@@ -60,6 +63,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: item.updated_at,
       changeFrequency: "monthly" as const,
       priority: 0.8,
+      // Image sitemap entries help the wallpapers show up in Google Images.
+      images: [imageUrl(item.preview_key), imageUrl(item.original_key)].filter(Boolean),
     })),
   ];
 }

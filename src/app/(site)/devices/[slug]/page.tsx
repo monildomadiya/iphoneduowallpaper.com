@@ -22,11 +22,13 @@ export async function generateMetadata({ params }: PageProps<"/devices/[slug]">)
   if (!device) return { title: "Device not found", robots: { index: false, follow: true } };
 
   return buildMetadata({
-    title: device.seo_title || `${device.name} Wallpapers — ${device.width} × ${device.height}`,
+    // "1320x2868" is how people type resolutions into search.
+    title: device.seo_title || `${device.name} Wallpapers ${device.width}x${device.height} — Free HD & 4K`,
     description:
       device.seo_description ||
-      `Free ${device.name} wallpapers in full resolution. Every design fits the ${device.width} × ${device.height} pixel screen perfectly.`,
+      `Free ${device.name} wallpapers made for the ${device.width}x${device.height} screen. Full-resolution HD and 4K downloads that fit pixel for pixel, no sign-up.`,
     path: `/devices/${device.slug}`,
+    noIndex: device.wallpaper_count === 0,
   });
 }
 
