@@ -26,7 +26,7 @@ export default async function SiteLayout({ children }: LayoutProps<"/">) {
       <SiteFooter settings={settings} />
       {settings.cookie_banner_enabled ? <CookieBanner /> : null}
       {adsEnabled && settings.adsense_client_id ? <AdsenseScript clientId={settings.adsense_client_id} /> : null}
-      {settings.ga_measurement_id ? <GoogleAnalytics measurementId={settings.ga_measurement_id} /> : null}
+      {isProduction && settings.ga_measurement_id ? <GoogleAnalytics measurementId={settings.ga_measurement_id} /> : null}
     </AdsProvider>
   );
 }

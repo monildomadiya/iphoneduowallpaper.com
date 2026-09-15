@@ -5,6 +5,13 @@
 -- =====================================================================
 
 -- ---------------------------------------------------------------------
+-- Site settings (Google Analytics 4; change or clear in Admin → Site settings)
+-- ---------------------------------------------------------------------
+update public.site_settings
+set ga_measurement_id = 'G-5Q42KS8WZ0'
+where id = 1 and ga_measurement_id is null;
+
+-- ---------------------------------------------------------------------
 -- Devices (orientation = how the screen is normally used)
 -- ---------------------------------------------------------------------
 insert into public.devices
