@@ -2,7 +2,7 @@
 
 import { updateTag } from "next/cache";
 import { z } from "zod";
-import { failure, success, type ActionResult } from "@/lib/actions";
+import { failure, idsSchema, success, type ActionResult } from "@/lib/actions";
 import { emptyToNull, normalizeTags, uniqueSlug } from "@/lib/admin/slugs";
 import { ActionError, authorize } from "@/lib/auth";
 import { deleteObjects, headObject } from "@/lib/r2";
@@ -68,17 +68,16 @@ export async function savePost(input: z.input<typeof postSchema>): Promise<Actio
   }
 }
 
-export async function deletePost(id: string): Promise<ActionResult<null>> {
+export async function deletePosts(ids: string[]): Promise<ActionResult<{ count: number }>> {
   try {
     const { supabase } = await authorize();
-    const postId = z.uuid().parse(id);
-    const { data } = await supabase.from("posts").select("cover_key").eq("id", postId).maybeSingle();
-    const { error } = await supabase.from("posts").delete().eq("id", postId);
+    const { data, error } = await supabase.from("posts").delete().in("id", idsSchema.parse(ids)).select("cover_key");
     if (error) throw error;
-    if (data?.cover_key) await deleteObjects([data.cover_key as string]);
+    await deleteObjects((data ?? []).map((row) => row.cover_key as string | null));
     updateTag("posts");
-    return success(null, "Article deleted.");
+    const count = data?.length ?? 0;
+    return success({ count }, count === 1 ? "Article deleted." : `${count} articles deleted.`);
   } catch (error) {
-    return failure(error, "Could not delete the article.");
+    return failure(error, "Could not delete the selected articles.");
   }
 }

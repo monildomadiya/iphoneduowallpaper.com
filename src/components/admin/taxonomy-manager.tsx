@@ -10,6 +10,7 @@ import type { CategoryRow, CollectionRow, DeviceRow } from "@/lib/types";
 import { cn, imageUrl, slugify } from "@/lib/utils";
 import { CoverPicker } from "./cover-picker";
 import { Modal, PendingButton, Switch, useConfirm } from "./client";
+import { BulkBar, SelectBox, useSelection } from "./selection";
 import { AdminEmpty, Badge, Field, buttonClass, inputClass } from "./ui";
 
 type Kind = "categories" | "collections" | "devices";
@@ -70,6 +71,8 @@ export function TaxonomyManager({ kind, rows }: { kind: Kind; rows: Row[] }) {
   const [slugTouched, setSlugTouched] = useState(false);
   const [coverBusy, setCoverBusy] = useState(false);
   const [saving, startSaving] = useTransition();
+  const [deleting, startDeleting] = useTransition();
+  const selection = useSelection(rows.map((row) => row.id));
   const label = LABELS[kind];
 
   function open(row: Row | null) {
@@ -119,24 +122,29 @@ export function TaxonomyManager({ kind, rows }: { kind: Kind; rows: Row[] }) {
     });
   }
 
-  async function remove(row: Row) {
+  async function remove(targets: Row[]) {
+    const single = targets.length === 1 ? targets[0] : null;
+    const affected = targets.reduce((sum, row) => sum + row.wallpaper_count, 0);
     const ok = await confirm({
-      title: `Delete “${row.name}”?`,
+      title: single ? `Delete “${single.name}”?` : `Delete ${targets.length} ${kind}?`,
       message:
         kind === "categories"
-          ? `${row.wallpaper_count} wallpaper(s) will become uncategorized. Wallpapers are not deleted.`
-          : `Wallpapers will be unlinked from this ${label.singular}, not deleted.`,
+          ? `${affected} wallpaper(s) will become uncategorized. Wallpapers are not deleted.`
+          : `Wallpapers will be unlinked from ${single ? `this ${label.singular}` : `these ${kind}`}, not deleted.`,
       confirmLabel: "Delete",
       destructive: true,
     });
     if (!ok) return;
-    const result = await deleteTaxonomy(kind, row.id);
-    if (result.ok) {
-      toast.success("Deleted");
-      router.refresh();
-    } else {
-      toast.error(result.error);
-    }
+    startDeleting(async () => {
+      const result = await deleteTaxonomy(kind, targets.map((row) => row.id));
+      if (result.ok) {
+        toast.success(result.message ?? "Deleted");
+        selection.clear();
+        router.refresh();
+      } else {
+        toast.error(result.error);
+      }
+    });
   }
 
   return (
@@ -151,10 +159,18 @@ export function TaxonomyManager({ kind, rows }: { kind: Kind; rows: Row[] }) {
       {rows.length ? (
         <div className="overflow-hidden rounded-[22px] border border-line bg-elevated shadow-card">
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[640px] text-left text-[14px]">
+            <table className="w-full min-w-[680px] text-left text-[14px]">
               <thead className="border-b border-line text-[12px] text-fg-3">
                 <tr>
-                  <th className="px-5 py-3 font-medium">Name</th>
+                  <th className="w-10 py-3 pl-5 pr-2">
+                    <SelectBox
+                      checked={selection.allSelected}
+                      indeterminate={selection.someSelected}
+                      label={`Select all ${kind}`}
+                      onToggle={selection.toggleAll}
+                    />
+                  </th>
+                  <th className="px-2 py-3 font-medium">Name</th>
                   {kind === "devices" ? <th className="px-3 py-3 font-medium">Resolution</th> : null}
                   <th className="px-3 py-3 text-right font-medium">Wallpapers</th>
                   <th className="px-3 py-3 font-medium">Status</th>
@@ -162,12 +178,19 @@ export function TaxonomyManager({ kind, rows }: { kind: Kind; rows: Row[] }) {
                   <th className="w-32 px-5 py-3" />
                 </tr>
               </thead>
-              <tbody className="divide-y divide-line">
+              <tbody className={cn("divide-y divide-line", deleting && "opacity-60")}>
                 {rows.map((row) => {
                   const cover = (row as CategoryRow).cover_key;
                   return (
-                    <tr key={row.id} className="hover:bg-surface/60">
-                      <td className="px-5 py-3">
+                    <tr key={row.id} className={cn("hover:bg-surface/60", selection.isSelected(row.id) && "bg-accent/5")}>
+                      <td className="py-3 pl-5 pr-2">
+                        <SelectBox
+                          checked={selection.isSelected(row.id)}
+                          label={`Select ${row.name}`}
+                          onToggle={(range) => selection.toggle(row.id, range)}
+                        />
+                      </td>
+                      <td className="px-2 py-3">
                         <div className="flex items-center gap-3">
                           {kind !== "devices" ? (
                             <div className="h-11 w-9 shrink-0 overflow-hidden rounded-md bg-surface">
@@ -209,7 +232,7 @@ export function TaxonomyManager({ kind, rows }: { kind: Kind; rows: Row[] }) {
                               <ExternalLink className="size-4" />
                             </a>
                           ) : null}
-                          <button type="button" aria-label="Delete" onClick={() => remove(row)} className="grid size-8 place-items-center rounded-full text-fg-2 hover:bg-danger/10 hover:text-danger">
+                          <button type="button" aria-label="Delete" disabled={deleting} onClick={() => remove([row])} className="grid size-8 place-items-center rounded-full text-fg-2 hover:bg-danger/10 hover:text-danger">
                             <Trash2 className="size-4" />
                           </button>
                         </div>
@@ -224,6 +247,18 @@ export function TaxonomyManager({ kind, rows }: { kind: Kind; rows: Row[] }) {
       ) : (
         <AdminEmpty title={`No ${kind} yet`} description={`Create your first ${label.singular} to organize wallpapers.`} />
       )}
+
+      <BulkBar count={selection.selected.length} onClear={selection.clear}>
+        <button
+          type="button"
+          disabled={deleting}
+          className={buttonClass.danger}
+          onClick={() => remove(rows.filter((row) => selection.isSelected(row.id)))}
+        >
+          <Trash2 className="size-4" />
+          Delete
+        </button>
+      </BulkBar>
 
       <Modal
         open={Boolean(form)}

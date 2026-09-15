@@ -1,11 +1,11 @@
 import { Plus } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { AdminEmpty, AdminHeader, Badge, buttonClass } from "@/components/admin/ui";
+import { PostList } from "@/components/admin/post-list";
+import { AdminEmpty, AdminHeader, buttonClass } from "@/components/admin/ui";
 import { listAdminPosts } from "@/lib/admin/queries";
 import { requireAdmin } from "@/lib/auth";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { formatDate } from "@/lib/utils";
 
 // Admin screens read the session cookie, so they are allowed to block.
 export const instant = false;
@@ -31,23 +31,7 @@ export default async function AdminPostsPage() {
       />
 
       {posts.length ? (
-        <div className="overflow-hidden rounded-[22px] border border-line bg-elevated shadow-card">
-          <ul className="divide-y divide-line">
-            {posts.map((post) => (
-              <li key={post.id}>
-                <Link href={`/admin/posts/${post.id}`} className="flex items-center gap-4 px-5 py-4 transition hover:bg-surface/60">
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-[15px] font-medium">{post.title}</p>
-                    <p className="mt-0.5 truncate text-[12px] text-fg-3">
-                      /blog/{post.slug} · {post.author_name} · updated {formatDate(post.updated_at, { month: "short", day: "numeric", year: "numeric" })}
-                    </p>
-                  </div>
-                  <Badge tone={post.status === "published" ? "green" : "gray"}>{post.status}</Badge>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
+        <PostList posts={posts} />
       ) : (
         <AdminEmpty
           title="No articles yet"

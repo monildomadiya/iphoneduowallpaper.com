@@ -1,5 +1,8 @@
-import { ZodError } from "zod";
+import { z, ZodError } from "zod";
 import { ActionError } from "@/lib/auth";
+
+/** Row ids for bulk actions; 200 matches the largest admin page size. */
+export const idsSchema = z.array(z.uuid()).min(1, "Select at least one item.").max(200, "Select up to 200 items at a time.");
 
 export type ActionResult<T = undefined> =
   | { ok: true; data: T; message?: string }

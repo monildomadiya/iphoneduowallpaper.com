@@ -13,6 +13,8 @@ export const instant = false;
 
 export const metadata: Metadata = { title: "Wallpapers" };
 
+const PAGE_SIZES = [25, 50, 100, 200] as const;
+
 function first(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
 }
@@ -29,6 +31,8 @@ export default async function AdminWallpapersPage({ searchParams }: PageProps<"/
     featured: first(params.featured) === "1",
     sort: (["newest", "oldest", "downloads", "views", "title"] as const).find((value) => value === first(params.sort)) ?? "newest",
     page: clampPage(first(params.page)),
+    // Bigger pages make bulk actions faster (up to 200 rows at once).
+    perPage: PAGE_SIZES.find((value) => value === Number(first(params.per))) ?? PAGE_SIZES[0],
   };
 
   const [result, categories] = await Promise.all([listAdminWallpapers(supabase, filters), listAllCategories(supabase)]);
@@ -40,6 +44,7 @@ export default async function AdminWallpapersPage({ searchParams }: PageProps<"/
     if (filters.categoryId) search.set("category", filters.categoryId);
     if (filters.featured) search.set("featured", "1");
     if (filters.sort && filters.sort !== "newest") search.set("sort", filters.sort);
+    if (filters.perPage !== PAGE_SIZES[0]) search.set("per", String(filters.perPage));
     if (page > 1) search.set("page", String(page));
     const value = search.toString();
     return value ? `/admin/wallpapers?${value}` : "/admin/wallpapers";
@@ -58,7 +63,7 @@ export default async function AdminWallpapersPage({ searchParams }: PageProps<"/
         }
       />
 
-      <form className="mb-5 grid gap-3 md:grid-cols-[minmax(0,1fr)_150px_180px_160px_auto]" role="search">
+      <form className="mb-5 grid gap-3 md:grid-cols-[minmax(0,1fr)_150px_180px_160px_120px_auto]" role="search">
         <div className="relative">
           <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-fg-3" />
           <input name="q" defaultValue={filters.q} placeholder="Search title or slug" className={`${inputClass} pl-9`} />
@@ -83,11 +88,18 @@ export default async function AdminWallpapersPage({ searchParams }: PageProps<"/
           <option value="views">Most views</option>
           <option value="title">Title A–Z</option>
         </select>
+        <select name="per" defaultValue={filters.perPage} className={selectClass} aria-label="Wallpapers per page">
+          {PAGE_SIZES.map((size) => (
+            <option key={size} value={size}>
+              {size} per page
+            </option>
+          ))}
+        </select>
         <div className="flex gap-2">
           <button type="submit" className={buttonClass.secondary}>
             Filter
           </button>
-          {filters.q || filters.status !== "all" || filters.categoryId || filters.sort !== "newest" ? (
+          {filters.q || filters.status !== "all" || filters.categoryId || filters.sort !== "newest" || filters.perPage !== PAGE_SIZES[0] ? (
             <Link href="/admin/wallpapers" className={buttonClass.ghost}>
               Reset
             </Link>

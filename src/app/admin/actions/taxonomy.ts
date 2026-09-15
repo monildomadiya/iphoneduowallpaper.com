@@ -3,7 +3,7 @@
 import { randomUUID } from "node:crypto";
 import { updateTag } from "next/cache";
 import { z } from "zod";
-import { failure, success, type ActionResult } from "@/lib/actions";
+import { failure, idsSchema, success, type ActionResult } from "@/lib/actions";
 import { emptyToNull, uniqueSlug } from "@/lib/admin/slugs";
 import { ActionError, authorize } from "@/lib/auth";
 import { buildCoverKey, createPresignedUpload, deleteObjects, headObject, isOwnedKey, type PresignedUpload } from "@/lib/r2";
@@ -158,26 +158,27 @@ export async function saveDevice(input: z.input<typeof deviceSchema>): Promise<A
   }
 }
 
-export async function deleteTaxonomy(kind: TaxonomyKind, id: string): Promise<ActionResult<null>> {
+export async function deleteTaxonomy(kind: TaxonomyKind, ids: string[]): Promise<ActionResult<{ count: number }>> {
   try {
     const { supabase } = await authorize();
     const table = z.enum(["categories", "collections", "devices"]).parse(kind);
-    const rowId = z.uuid().parse(id);
+    const rowIds = idsSchema.parse(ids);
 
-    let cover: string | null = null;
-    if (table !== "devices") {
-      const { data } = await supabase.from(table).select("cover_key").eq("id", rowId).maybeSingle();
-      cover = (data?.cover_key as string | null) ?? null;
-    }
-
-    const { error } = await supabase.from(table).delete().eq("id", rowId);
+    // Devices have no cover image; the returned rows are the ones actually deleted.
+    const { data, error } = await supabase
+      .from(table)
+      .delete()
+      .in("id", rowIds)
+      .select(table === "devices" ? "id" : "id,cover_key");
     if (error) throw error;
-    if (cover) await deleteObjects([cover]);
+
+    const rows = (data ?? []) as Array<{ cover_key?: string | null }>;
+    await deleteObjects(rows.map((row) => row.cover_key));
 
     refreshTags(table);
-    return success(null, "Deleted.");
+    return success({ count: rows.length }, rows.length === 1 ? "Deleted." : `${rows.length} items deleted.`);
   } catch (error) {
-    return failure(error, "Could not delete this item.");
+    return failure(error, "Could not delete the selected items.");
   }
 }
 

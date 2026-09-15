@@ -4,7 +4,7 @@ import { randomUUID } from "node:crypto";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { updateTag } from "next/cache";
 import { z } from "zod";
-import { failure, success, type ActionResult } from "@/lib/actions";
+import { failure, idsSchema, success, type ActionResult } from "@/lib/actions";
 import { emptyToNull, normalizeTags, uniqueSlug } from "@/lib/admin/slugs";
 import { ActionError, authorize } from "@/lib/auth";
 import {
@@ -250,20 +250,17 @@ export async function replaceWallpaperImage(
   }
 }
 
-const idsSchema = z.array(z.uuid()).min(1).max(200);
-
 export async function deleteWallpapers(ids: string[]): Promise<ActionResult<{ count: number }>> {
   try {
     const { supabase } = await authorize();
     const wallpaperIds = idsSchema.parse(ids);
 
-    const { data, error: loadError } = await supabase
+    // Returning the deleted rows means only their files are removed from storage.
+    const { data, error } = await supabase
       .from("wallpapers")
-      .select("id,original_key,preview_key,thumb_key")
-      .in("id", wallpaperIds);
-    if (loadError) throw loadError;
-
-    const { error } = await supabase.from("wallpapers").delete().in("id", wallpaperIds);
+      .delete()
+      .in("id", wallpaperIds)
+      .select("original_key,preview_key,thumb_key");
     if (error) throw error;
 
     await deleteObjects((data ?? []).flatMap((row) => [row.original_key, row.preview_key, row.thumb_key]));

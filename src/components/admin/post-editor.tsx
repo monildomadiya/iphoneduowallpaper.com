@@ -7,7 +7,7 @@ import { useState, useTransition } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { toast } from "sonner";
-import { deletePost, savePost } from "@/app/admin/actions/posts";
+import { deletePosts, savePost } from "@/app/admin/actions/posts";
 import type { Post } from "@/lib/types";
 import { cn, readingMinutes, slugify } from "@/lib/utils";
 import { CoverPicker } from "./cover-picker";
@@ -84,7 +84,7 @@ export function PostEditor({ post }: { post: Post | null }) {
       destructive: true,
     });
     if (!ok) return;
-    const result = await deletePost(post.id);
+    const result = await deletePosts([post.id]);
     if (result.ok) {
       toast.success("Article deleted");
       router.push("/admin/posts");

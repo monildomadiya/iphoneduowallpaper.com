@@ -1,6 +1,6 @@
 import "server-only";
 import {
-  DeleteObjectCommand,
+  DeleteObjectsCommand,
   GetObjectCommand,
   HeadObjectCommand,
   PutObjectCommand,
@@ -82,15 +82,25 @@ export async function headObject(key: string): Promise<{ size: number; contentTy
   }
 }
 
+/** Deletes objects with one request per 1,000 keys. Failures are logged, not thrown. */
 export async function deleteObjects(keys: Array<string | null | undefined>) {
   if (!isR2Configured) return;
   const unique = [...new Set(keys.filter((key): key is string => Boolean(key)))];
+  const batches: string[][] = [];
+  for (let start = 0; start < unique.length; start += 1000) batches.push(unique.slice(start, start + 1000));
+
   const results = await Promise.allSettled(
-    unique.map((Key) => getClient().send(new DeleteObjectCommand({ Bucket: r2.bucket, Key }))),
+    batches.map((batch) =>
+      getClient().send(
+        new DeleteObjectsCommand({ Bucket: r2.bucket, Delete: { Objects: batch.map((Key) => ({ Key })), Quiet: true } }),
+      ),
+    ),
   );
   for (const result of results) {
     if (result.status === "rejected") {
       console.error("[r2] delete failed", result.reason);
+    } else if (result.value.Errors?.length) {
+      console.error("[r2] delete failed", result.value.Errors);
     }
   }
 }
