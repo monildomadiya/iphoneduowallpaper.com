@@ -27,7 +27,7 @@ loadEnvFile(".env.local");
 loadEnvFile(".env");
 
 const [email, password, displayName = "", role = "owner"] = process.argv.slice(2);
-const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const url = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
 const secret = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 function fail(message) {

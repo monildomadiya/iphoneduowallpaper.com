@@ -135,6 +135,7 @@ Public data is cached with Next.js Cache Components (`"use cache"`, `cacheLife`,
 
 | Problem | Fix |
 | --- | --- |
+| “Supabase environment variables are missing” | Set `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (`SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` also work) on the server, then redeploy. |
 | Upload fails with “Upload blocked…CORS” | Add the R2 CORS policy and make sure your site origin is listed. |
 | Images don’t show | Check `NEXT_PUBLIC_R2_PUBLIC_URL` (no trailing slash), then redeploy. |
 | “This account does not have access” | Run `npm run create-admin` for that email — it adds the `admin_users` row. |
