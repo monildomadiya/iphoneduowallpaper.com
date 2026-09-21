@@ -170,7 +170,7 @@ export function AdminSidebar(props: SidebarProps) {
         <NavContent {...props} />
       </aside>
 
-      <div className="glass sticky top-0 z-40 flex h-14 items-center justify-between border-b border-line px-4 lg:hidden">
+      <div className="glass sticky top-0 z-40 flex h-14 items-center justify-between border-b border-line px-4 pt-[env(safe-area-inset-top)] [height:calc(3.5rem+env(safe-area-inset-top))] lg:hidden">
         <div className="flex items-center gap-2">
           <LogoMark className="size-6" />
           <span className="text-[14px] font-semibold">Admin</span>

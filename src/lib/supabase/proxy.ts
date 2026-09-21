@@ -2,7 +2,8 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { isSupabaseConfigured, supabasePublishableKey, supabaseUrl } from "@/lib/env";
 
-const PUBLIC_ADMIN_PATHS = new Set(["/admin/login", "/admin/forgot-password"]);
+// The home-screen icon has to be fetchable before anyone signs in.
+const PUBLIC_ADMIN_PATHS = new Set(["/admin/login", "/admin/forgot-password", "/admin/apple-icon"]);
 
 /** Refreshes the Supabase session and guards /admin routes. */
 export async function updateSession(request: NextRequest) {
