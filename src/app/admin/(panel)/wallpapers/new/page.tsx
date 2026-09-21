@@ -25,7 +25,7 @@ export default async function UploadPage() {
     <>
       <AdminHeader
         title="Upload wallpapers"
-        description="Files go straight to Cloudflare R2. We create a sharp preview and thumbnail for each one in your browser."
+        description="Write each title and description right in the queue, so nothing is left to fill in afterwards. Files go straight to Cloudflare R2 and previews are made in your browser."
         back={{ href: "/admin/wallpapers", label: "Wallpapers" }}
       />
       {!isR2Configured || !r2PublicUrl ? (

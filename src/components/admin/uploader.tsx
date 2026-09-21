@@ -1,7 +1,7 @@
 "use client";
 
 /* eslint-disable @next/next/no-img-element -- local object URL previews */
-import { AlertTriangle, CheckCircle2, ImagePlus, Loader2, Trash2, UploadCloud, X } from "lucide-react";
+import { AlertTriangle, CheckCircle2, ChevronDown, ImagePlus, Loader2, Trash2, UploadCloud, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -14,11 +14,13 @@ import {
   readDimensions,
   uploadToStorage,
 } from "@/lib/admin/image-client";
-import { cn, formatBytes, screenFit, titleFromFilename } from "@/lib/utils";
+import { siteUrl } from "@/lib/env";
+import { cn, formatBytes, screenFit, slugify, titleFromFilename } from "@/lib/utils";
 import { Switch, TagInput } from "./client";
 import { Card, Field, buttonClass, inputClass } from "./ui";
 import {
   CategorySelect,
+  CharCount,
   ChipMultiSelect,
   SourceSelect,
   StatusToggle,
@@ -32,6 +34,12 @@ interface QueueItem {
   file: File;
   objectUrl: string;
   title: string;
+  // Per-file, because these have to differ from wallpaper to wallpaper.
+  description: string;
+  slug: string;
+  seoTitle: string;
+  seoDescription: string;
+  expanded: boolean;
   status: ItemStatus;
   progress: number;
   width?: number;
@@ -109,6 +117,11 @@ export function Uploader({
         file,
         objectUrl: URL.createObjectURL(file),
         title: titleFromFilename(file.name),
+        description: "",
+        slug: "",
+        seoTitle: "",
+        seoDescription: "",
+        expanded: false,
         status: "queued",
         progress: 0,
       });
@@ -173,6 +186,10 @@ export function Uploader({
         mimeType,
         dominantColor: processed.dominantColor,
         title: item.title.trim() || titleFromFilename(item.file.name),
+        slug: item.slug.trim(),
+        description: item.description.trim(),
+        seoTitle: item.seoTitle.trim(),
+        seoDescription: item.seoDescription.trim(),
         categoryId,
         deviceIds,
         collectionIds,
@@ -216,6 +233,9 @@ export function Uploader({
 
   const pendingCount = items.filter((item) => item.status === "queued" || item.status === "error").length;
   const doneCount = items.filter((item) => item.status === "done").length;
+  const missingDescriptions = items.filter(
+    (item) => (item.status === "queued" || item.status === "error") && !item.description.trim(),
+  ).length;
 
   return (
     <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_340px]">
@@ -263,7 +283,7 @@ export function Uploader({
         {items.length ? (
           <Card
             title={`Upload queue (${items.length})`}
-            description={doneCount ? `${doneCount} uploaded` : "Edit titles before uploading"}
+            description={doneCount ? `${doneCount} uploaded` : "Fill in each title and description before uploading"}
             actions={
               !running && doneCount ? (
                 <button
@@ -317,6 +337,98 @@ export function Uploader({
                         </p>
                       ) : null}
 
+                      {item.status !== "done" ? (
+                        <div className="mt-2.5 space-y-2.5">
+                          <div>
+                            <textarea
+                              value={item.description}
+                              onChange={(event) => patch(item.key, { description: event.target.value })}
+                              disabled={locked}
+                              rows={3}
+                              aria-label={`Description for ${item.title}`}
+                              placeholder="Describe the colors, mood and subject in 2–3 sentences. Unique text here is what SEO and AdSense reward."
+                              className={cn(inputClass, "resize-y text-[13px] leading-5")}
+                            />
+                            <div className="mt-1 flex items-center justify-between gap-3">
+                              {item.description.trim() ? (
+                                <span />
+                              ) : (
+                                <span className="text-[12px] text-warning">No description yet</span>
+                              )}
+                              <CharCount value={item.description} max={2000} />
+                            </div>
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => patch(item.key, { expanded: !item.expanded })}
+                            aria-expanded={item.expanded}
+                            className="inline-flex items-center gap-1 text-[12px] font-medium text-link hover:underline"
+                          >
+                            <ChevronDown className={cn("size-3.5 transition-transform", item.expanded && "rotate-180")} />
+                            {item.expanded ? "Hide link & search listing" : "Link & search listing"}
+                          </button>
+
+                          {item.expanded ? (
+                            <div className="space-y-3.5 rounded-xl border border-line p-3">
+                              <label className="block">
+                                <span className="mb-1 block text-[12px] font-medium text-fg-2">URL slug</span>
+                                <div className="flex gap-2">
+                                  <input
+                                    value={item.slug}
+                                    onChange={(event) => patch(item.key, { slug: slugify(event.target.value) })}
+                                    disabled={locked}
+                                    placeholder={slugify(item.title)}
+                                    className={cn(inputClass, "py-1.5 text-[13px]")}
+                                  />
+                                  <button
+                                    type="button"
+                                    disabled={locked}
+                                    onClick={() => patch(item.key, { slug: slugify(item.title) })}
+                                    className={cn(buttonClass.secondary, "shrink-0 whitespace-nowrap")}
+                                  >
+                                    From title
+                                  </button>
+                                </div>
+                                <span className="mt-1 block truncate text-[12px] text-fg-3">
+                                  {siteUrl.replace(/^https?:\/\//, "")}/wallpapers/
+                                  {item.slug || slugify(item.title) || "…"}
+                                </span>
+                              </label>
+
+                              <label className="block">
+                                <span className="mb-1 block text-[12px] font-medium text-fg-2">SEO title</span>
+                                <input
+                                  value={item.seoTitle}
+                                  onChange={(event) => patch(item.key, { seoTitle: event.target.value })}
+                                  disabled={locked}
+                                  placeholder={item.title}
+                                  className={cn(inputClass, "py-1.5 text-[13px]")}
+                                />
+                                <span className="mt-1 block text-right">
+                                  <CharCount value={item.seoTitle} max={60} />
+                                </span>
+                              </label>
+
+                              <label className="block">
+                                <span className="mb-1 block text-[12px] font-medium text-fg-2">Meta description</span>
+                                <textarea
+                                  value={item.seoDescription}
+                                  onChange={(event) => patch(item.key, { seoDescription: event.target.value })}
+                                  disabled={locked}
+                                  rows={2}
+                                  placeholder="Leave empty to reuse the description above."
+                                  className={cn(inputClass, "resize-y text-[13px] leading-5")}
+                                />
+                                <span className="mt-1 block text-right">
+                                  <CharCount value={item.seoDescription} max={160} />
+                                </span>
+                              </label>
+                            </div>
+                          ) : null}
+                        </div>
+                      ) : null}
+
                       {item.status !== "queued" ? (
                         <div className="mt-2.5">
                           {item.status === "error" ? (
@@ -363,7 +475,7 @@ export function Uploader({
             <ul className="mt-2 list-disc space-y-1 pl-5">
               <li>Only upload artwork you created, AI art you generated, or images you are licensed to share.</li>
               <li>Use at least 2670 × 1878 for Duo inner, 1398 × 2034 for Duo outer, 1320 × 2868 for Pro Max.</li>
-              <li>After uploading, add a unique description to each wallpaper — it helps SEO and approval.</li>
+              <li>Write each description right here in the queue — unique text per wallpaper helps SEO and approval.</li>
             </ul>
           </div>
         )}
@@ -410,15 +522,24 @@ export function Uploader({
             <Switch label="Featured" description="Show on the home page" checked={isFeatured} onChange={setIsFeatured} />
           </div>
         </Card>
-        <button
-          type="button"
-          onClick={startUpload}
-          disabled={running || !pendingCount}
-          className={cn(buttonClass.primary, "h-12 w-full text-[15px]")}
-        >
-          {running ? <Loader2 className="size-4 animate-spin" /> : <UploadCloud className="size-4" />}
-          {running ? "Uploading…" : pendingCount ? `Upload ${pendingCount} wallpaper${pendingCount === 1 ? "" : "s"}` : "Add files to upload"}
-        </button>
+        <div className="space-y-2">
+          {missingDescriptions && !running ? (
+            <p className="flex items-start gap-1.5 rounded-xl bg-warning/10 px-3 py-2 text-[12px] leading-5 text-warning">
+              <AlertTriangle className="mt-0.5 size-3.5 shrink-0" />
+              {missingDescriptions} of {pendingCount} still have no description. You can upload anyway and add them
+              later, but unique descriptions are what AdSense looks for.
+            </p>
+          ) : null}
+          <button
+            type="button"
+            onClick={startUpload}
+            disabled={running || !pendingCount}
+            className={cn(buttonClass.primary, "h-12 w-full text-[15px]")}
+          >
+            {running ? <Loader2 className="size-4 animate-spin" /> : <UploadCloud className="size-4" />}
+            {running ? "Uploading…" : pendingCount ? `Upload ${pendingCount} wallpaper${pendingCount === 1 ? "" : "s"}` : "Add files to upload"}
+          </button>
+        </div>
       </div>
     </div>
   );

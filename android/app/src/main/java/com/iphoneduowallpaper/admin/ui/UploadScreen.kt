@@ -32,6 +32,7 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -59,6 +60,12 @@ import kotlinx.coroutines.withContext
 
 private class UploadItem(val uri: Uri) {
     var title by mutableStateOf("")
+    // Per-file, because these have to differ from wallpaper to wallpaper.
+    var description by mutableStateOf("")
+    var slug by mutableStateOf("")
+    var seoTitle by mutableStateOf("")
+    var seoDescription by mutableStateOf("")
+    var expanded by mutableStateOf(false)
     var stage by mutableStateOf("Waiting")
     var progress by mutableFloatStateOf(0f)
     var saved by mutableStateOf(false)
@@ -129,6 +136,10 @@ fun UploadScreen(vm: AdminViewModel, nav: Navigator) {
                 item.stage = "Saving"
                 val form = WallpaperForm(
                     title = item.title.trim().ifBlank { "Wallpaper" },
+                    slug = item.slug.trim().ifBlank { null },
+                    description = item.description.trim(),
+                    seoTitle = item.seoTitle.trim(),
+                    seoDescription = item.seoDescription.trim(),
                     categoryId = categoryId,
                     deviceIds = deviceIds.toList(),
                     collectionIds = collectionIds.toList(),
@@ -184,8 +195,9 @@ fun UploadScreen(vm: AdminViewModel, nav: Navigator) {
                 item {
                     EmptyState(
                         title = "Nothing picked yet",
-                        description = "Choose up to 30 images. Each one gets a preview, a 9:16 thumbnail and a " +
-                            "dominant colour before it is uploaded — exactly like the web panel.",
+                        description = "Choose up to 30 images. Write each title and description right here, so " +
+                            "nothing is left to fill in afterwards. Previews, 9:16 thumbnails and dominant " +
+                            "colours are made on the phone before uploading.",
                     )
                 }
             }
@@ -222,6 +234,65 @@ fun UploadScreen(vm: AdminViewModel, nav: Navigator) {
                                     contentDescription = "Saved",
                                     tint = LocalAccents.current.success,
                                     modifier = Modifier.size(22.dp).padding(start = 4.dp),
+                                )
+                            }
+                        }
+
+                        if (!item.saved) {
+                            Spacer(Modifier.height(10.dp))
+                            Field(
+                                label = "Description",
+                                value = item.description,
+                                onValueChange = { item.description = it },
+                                singleLine = false,
+                                minLines = 3,
+                                enabled = !running,
+                                placeholder = "Colours, mood and subject in 2–3 sentences.",
+                                helper = if (item.description.isBlank()) {
+                                    "No description yet — unique text per wallpaper is what SEO and AdSense reward."
+                                } else {
+                                    "${item.description.length}/2000"
+                                },
+                            )
+
+                            TextButton(
+                                onClick = { item.expanded = !item.expanded },
+                                enabled = !running,
+                            ) {
+                                Text(
+                                    if (item.expanded) "Hide link & search listing" else "Link & search listing",
+                                    style = MaterialTheme.typography.labelMedium,
+                                )
+                            }
+
+                            if (item.expanded) {
+                                Field(
+                                    label = "URL slug",
+                                    value = item.slug,
+                                    onValueChange = { item.slug = it },
+                                    enabled = !running,
+                                    placeholder = slugFrom(item.title),
+                                    helper = "Leave empty to build it from the title.",
+                                )
+                                FormSpacer()
+                                Field(
+                                    label = "SEO title",
+                                    value = item.seoTitle,
+                                    onValueChange = { item.seoTitle = it },
+                                    enabled = !running,
+                                    placeholder = item.title,
+                                    helper = "${item.seoTitle.length}/60",
+                                )
+                                FormSpacer()
+                                Field(
+                                    label = "Meta description",
+                                    value = item.seoDescription,
+                                    onValueChange = { item.seoDescription = it },
+                                    singleLine = false,
+                                    minLines = 2,
+                                    enabled = !running,
+                                    placeholder = "Leave empty to reuse the description above.",
+                                    helper = "${item.seoDescription.length}/160",
                                 )
                             }
                         }
@@ -335,6 +406,17 @@ fun UploadScreen(vm: AdminViewModel, nav: Navigator) {
 
         if (items.isNotEmpty()) {
             Column(Modifier.padding(16.dp)) {
+                val pending = items.count { !it.saved }
+                val missing = items.count { !it.saved && it.description.isBlank() }
+                if (missing > 0 && !running) {
+                    Text(
+                        "$missing of $pending still have no description. You can upload anyway and add them " +
+                            "later, but unique descriptions are what AdSense looks for.",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = LocalAccents.current.warning,
+                    )
+                    Spacer(Modifier.height(8.dp))
+                }
                 Button(
                     onClick = { startUpload() },
                     enabled = !running && items.any { !it.saved },
