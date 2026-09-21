@@ -105,6 +105,23 @@ Useful scripts: `npm run build`, `npm run start`, `npm run lint`, `npm run typec
 - Never click your own ads. Ads are labeled “Advertisement”, never shown on admin, login or error pages, and kept away from download buttons.
 - Handle copyright notices in **Admin → Reports** quickly.
 
+## 6. Android admin app
+
+[`android/`](android/) is a native Kotlin + Jetpack Compose app with the same features
+as the web panel, including bulk upload straight from the phone's photo library. It
+talks to `/api/admin/v1/*` (see [`src/app/api/admin/v1/`](src/app/api/admin/v1/)), which
+reuses the panel's own Server Actions, so validation, R2 cleanup and cache invalidation
+behave identically. Those endpoints require a Supabase access token as a bearer header
+and ignore cookies.
+
+```bash
+cd android && ./gradlew assembleDebug
+```
+
+Install `android/app/build/outputs/apk/debug/app-debug.apk` on your phone and sign in
+with your admin email and password. See [`android/README.md`](android/README.md) for
+the API reference and how to point the app at a dev server.
+
 ## Project structure
 
 ```
@@ -113,6 +130,7 @@ src/
     (site)/          public pages (home, wallpapers, categories, collections, devices, blog, legal pages)
     admin/           admin panel (login + (panel) routes and server actions)
     api/             download redirect, view tracking, health check
+    api/admin/v1/    bearer-authenticated admin API for the Android app
     ads.txt/         dynamic ads.txt
     sitemap.ts, robots.ts, manifest.ts, opengraph-image.tsx
   components/        site, wallpaper, admin and ads components
@@ -125,6 +143,7 @@ src/
 supabase/            SQL schema (tables, RLS, views, functions) and seed data
 cloudflare/          R2 CORS policy
 scripts/             create-admin
+android/             native Kotlin + Compose admin app
 ```
 
 ## How caching works

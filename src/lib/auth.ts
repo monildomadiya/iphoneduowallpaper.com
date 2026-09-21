@@ -3,7 +3,7 @@ import { cache } from "react";
 import { redirect } from "next/navigation";
 import { connection } from "next/server";
 import { isSupabaseConfigured } from "@/lib/env";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createSupabaseServerClient, getBearerToken } from "@/lib/supabase/server";
 import type { AdminRole } from "@/lib/types";
 
 export interface AdminUser {
@@ -21,7 +21,9 @@ export const getCurrentAdmin = cache(async (): Promise<AdminUser | null> => {
   await connection();
   if (!isSupabaseConfigured) return null;
   const supabase = await createSupabaseServerClient();
-  const { data: claimsData } = await supabase.auth.getClaims();
+  // The admin app sends its access token as a bearer header; the panel uses session cookies.
+  const bearer = await getBearerToken();
+  const { data: claimsData } = await supabase.auth.getClaims(bearer ?? undefined);
   const userId = claimsData?.claims?.sub;
   if (!userId) return null;
 

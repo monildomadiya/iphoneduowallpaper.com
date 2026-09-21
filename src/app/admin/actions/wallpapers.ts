@@ -2,9 +2,9 @@
 
 import { randomUUID } from "node:crypto";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { updateTag } from "next/cache";
 import { z } from "zod";
 import { failure, idsSchema, success, type ActionResult } from "@/lib/actions";
+import { refreshTag } from "@/lib/admin/refresh";
 import { emptyToNull, normalizeTags, uniqueSlug } from "@/lib/admin/slugs";
 import { ActionError, authorize } from "@/lib/auth";
 import {
@@ -179,7 +179,7 @@ export async function createWallpaper(input: CreateWallpaperInput): Promise<Acti
     if (error) throw error;
 
     await syncRelations(supabase, image.uploadId, fields.deviceIds, fields.collectionIds);
-    updateTag("wallpapers");
+    refreshTag("wallpapers");
     return success({ id: image.uploadId, slug });
   } catch (error) {
     return failure(error, "Could not save the wallpaper.");
@@ -203,7 +203,7 @@ export async function updateWallpaper(
     if (error) throw error;
 
     await syncRelations(supabase, wallpaperId, fields.deviceIds, fields.collectionIds);
-    updateTag("wallpapers");
+    refreshTag("wallpapers");
     return success({ slug }, "Wallpaper saved.");
   } catch (error) {
     return failure(error, "Could not save the wallpaper.");
@@ -243,7 +243,7 @@ export async function replaceWallpaperImage(
     if (error) throw error;
 
     await deleteObjects([current.original_key, current.preview_key, current.thumb_key]);
-    updateTag("wallpapers");
+    refreshTag("wallpapers");
     return success({ thumbKey: image.thumbKey, previewKey: image.previewKey }, "Image replaced.");
   } catch (error) {
     return failure(error, "Could not replace the image.");
@@ -264,7 +264,7 @@ export async function deleteWallpapers(ids: string[]): Promise<ActionResult<{ co
     if (error) throw error;
 
     await deleteObjects((data ?? []).flatMap((row) => [row.original_key, row.preview_key, row.thumb_key]));
-    updateTag("wallpapers");
+    refreshTag("wallpapers");
     return success({ count: data?.length ?? 0 }, `${data?.length ?? 0} wallpaper(s) deleted.`);
   } catch (error) {
     return failure(error, "Could not delete the selected wallpapers.");
@@ -298,7 +298,7 @@ export async function bulkUpdateWallpapers(
       .in("id", wallpaperIds);
     if (error) throw error;
 
-    updateTag("wallpapers");
+    refreshTag("wallpapers");
     return success({ count: count ?? wallpaperIds.length }, `${count ?? wallpaperIds.length} wallpaper(s) updated.`);
   } catch (error) {
     return failure(error, "Could not update the selected wallpapers.");

@@ -1,8 +1,8 @@
 "use server";
 
-import { updateTag } from "next/cache";
 import { z } from "zod";
 import { failure, idsSchema, success, type ActionResult } from "@/lib/actions";
+import { refreshTag } from "@/lib/admin/refresh";
 import { authorize, MANAGER_ROLES } from "@/lib/auth";
 
 export async function setMessageStatus(id: string, status: "new" | "read" | "archived"): Promise<ActionResult<null>> {
@@ -50,7 +50,7 @@ export async function setReportStatus(
         .update({ status: "draft" })
         .eq("id", z.uuid().parse(options.unpublishWallpaperId));
       if (unpublishError) throw unpublishError;
-      updateTag("wallpapers");
+      refreshTag("wallpapers");
     }
     return success(null, options.unpublishWallpaperId ? "Report resolved and wallpaper unpublished." : "Report updated.");
   } catch (error) {

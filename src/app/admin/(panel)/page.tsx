@@ -4,10 +4,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ActivityChart } from "@/components/admin/activity-chart";
 import { AdminHeader, Badge, buttonClass, Card, StatCard } from "@/components/admin/ui";
+import { buildAdSenseChecklist } from "@/lib/admin/checklist";
 import { getAdminSettings, getDashboardStats, getRecentWallpapers, getTopWallpapers } from "@/lib/admin/queries";
 import { requireAdmin } from "@/lib/auth";
-import { r2PublicUrl, siteUrl } from "@/lib/env";
-import { isR2Configured, supabaseSecretKey } from "@/lib/server-env";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { formatCompact, formatDate, formatNumber, imageUrl } from "@/lib/utils";
 
@@ -27,18 +26,7 @@ export default async function DashboardPage({ searchParams }: PageProps<"/admin"
     searchParams,
   ]);
 
-  const checklist = [
-    { label: "Database connected", done: true, href: undefined },
-    { label: "Server secret key configured (forms & counters)", done: Boolean(supabaseSecretKey), href: undefined },
-    { label: "Cloudflare R2 storage configured", done: isR2Configured && Boolean(r2PublicUrl), href: undefined },
-    { label: "Custom domain set in NEXT_PUBLIC_SITE_URL", done: !/localhost|onrender\.com/.test(siteUrl), href: undefined },
-    { label: "Privacy, Terms, Cookie, DMCA & Contact pages live", done: true, href: undefined },
-    { label: `At least 30 published wallpapers (${stats.wallpapers_published})`, done: stats.wallpapers_published >= 30, href: "/admin/wallpapers/new" },
-    { label: `At least 5 helpful blog posts (${stats.posts_published})`, done: stats.posts_published >= 5, href: "/admin/posts/new" },
-    { label: `Categories created (${stats.categories_total})`, done: stats.categories_total > 0, href: "/admin/categories" },
-    { label: "AdSense publisher ID added", done: Boolean(settings.adsense_client_id), href: "/admin/ads" },
-    { label: "Ads switched on after approval", done: settings.adsense_enabled, href: "/admin/ads" },
-  ];
+  const checklist = buildAdSenseChecklist(stats, settings);
   const completed = checklist.filter((item) => item.done).length;
 
   return (

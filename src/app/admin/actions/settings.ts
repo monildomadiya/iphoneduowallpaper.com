@@ -1,8 +1,8 @@
 "use server";
 
-import { updateTag } from "next/cache";
 import { z } from "zod";
 import { failure, success, type ActionResult } from "@/lib/actions";
+import { refreshTag } from "@/lib/admin/refresh";
 import { emptyToNull } from "@/lib/admin/slugs";
 import { authorize, MANAGER_ROLES } from "@/lib/auth";
 import { getServiceSupabase } from "@/lib/supabase/service";
@@ -53,7 +53,7 @@ export async function saveGeneralSettings(input: z.input<typeof generalSchema>):
       .eq("id", 1);
     if (error) throw error;
 
-    updateTag("settings");
+    refreshTag("settings");
     return success(null, "Settings saved.");
   } catch (error) {
     return failure(error, "Could not save settings.");
@@ -94,7 +94,7 @@ export async function saveAdsSettings(input: z.input<typeof adsSchema>): Promise
       .eq("id", 1);
     if (error) throw error;
 
-    updateTag("settings");
+    refreshTag("settings");
     return success(null, "Ad settings saved.");
   } catch (error) {
     return failure(error, "Could not save ad settings.");

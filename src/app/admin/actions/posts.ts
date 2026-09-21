@@ -1,8 +1,8 @@
 "use server";
 
-import { updateTag } from "next/cache";
 import { z } from "zod";
 import { failure, idsSchema, success, type ActionResult } from "@/lib/actions";
+import { refreshTag } from "@/lib/admin/refresh";
 import { emptyToNull, normalizeTags, uniqueSlug } from "@/lib/admin/slugs";
 import { ActionError, authorize } from "@/lib/auth";
 import { deleteObjects, headObject } from "@/lib/r2";
@@ -61,7 +61,7 @@ export async function savePost(input: z.input<typeof postSchema>): Promise<Actio
       id = inserted.id as string;
     }
 
-    updateTag("posts");
+    refreshTag("posts");
     return success({ id, slug }, data.status === "published" ? "Article published." : "Draft saved.");
   } catch (error) {
     return failure(error, "Could not save the article.");
@@ -74,7 +74,7 @@ export async function deletePosts(ids: string[]): Promise<ActionResult<{ count: 
     const { data, error } = await supabase.from("posts").delete().in("id", idsSchema.parse(ids)).select("cover_key");
     if (error) throw error;
     await deleteObjects((data ?? []).map((row) => row.cover_key as string | null));
-    updateTag("posts");
+    refreshTag("posts");
     const count = data?.length ?? 0;
     return success({ count }, count === 1 ? "Article deleted." : `${count} articles deleted.`);
   } catch (error) {

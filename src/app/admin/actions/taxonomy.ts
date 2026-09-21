@@ -1,9 +1,9 @@
 "use server";
 
 import { randomUUID } from "node:crypto";
-import { updateTag } from "next/cache";
 import { z } from "zod";
 import { failure, idsSchema, success, type ActionResult } from "@/lib/actions";
+import { refreshTag } from "@/lib/admin/refresh";
 import { emptyToNull, uniqueSlug } from "@/lib/admin/slugs";
 import { ActionError, authorize } from "@/lib/auth";
 import { buildCoverKey, createPresignedUpload, deleteObjects, headObject, isOwnedKey, type PresignedUpload } from "@/lib/r2";
@@ -42,8 +42,8 @@ const deviceSchema = baseSchema.extend({
 });
 
 function refreshTags(kind: TaxonomyKind) {
-  updateTag(kind);
-  updateTag("wallpapers");
+  refreshTag(kind);
+  refreshTag("wallpapers");
 }
 
 async function validateCover(coverKey: string | null | undefined) {
