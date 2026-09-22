@@ -13,13 +13,26 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     getDevices(),
   ]);
 
+  // The newest wallpaper dates the hub pages that list it, so crawlers see them change.
+  const libraryUpdated =
+    [...wallpapers, ...posts].map((item) => item.updated_at).sort().at(-1) ?? new Date().toISOString();
+
   const staticPages: MetadataRoute.Sitemap = [
-    { url: absoluteUrl("/"), changeFrequency: "daily", priority: 1 },
-    { url: absoluteUrl("/wallpapers"), changeFrequency: "daily", priority: 0.9 },
-    { url: absoluteUrl("/categories"), changeFrequency: "weekly", priority: 0.7 },
-    { url: absoluteUrl("/collections"), changeFrequency: "weekly", priority: 0.7 },
-    { url: absoluteUrl("/devices"), changeFrequency: "weekly", priority: 0.7 },
-    { url: absoluteUrl("/blog"), changeFrequency: "weekly", priority: 0.6 },
+    { url: absoluteUrl("/"), lastModified: libraryUpdated, changeFrequency: "daily", priority: 1 },
+    { url: absoluteUrl("/wallpapers"), lastModified: libraryUpdated, changeFrequency: "daily", priority: 0.9 },
+    // A hub with nothing in it is noindex, so it stays out of the sitemap until it has something.
+    ...(categories.length
+      ? [{ url: absoluteUrl("/categories"), lastModified: libraryUpdated, changeFrequency: "weekly" as const, priority: 0.7 }]
+      : []),
+    ...(collections.length
+      ? [{ url: absoluteUrl("/collections"), lastModified: libraryUpdated, changeFrequency: "weekly" as const, priority: 0.7 }]
+      : []),
+    ...(devices.length
+      ? [{ url: absoluteUrl("/devices"), lastModified: libraryUpdated, changeFrequency: "weekly" as const, priority: 0.7 }]
+      : []),
+    ...(posts.length
+      ? [{ url: absoluteUrl("/blog"), lastModified: libraryUpdated, changeFrequency: "weekly" as const, priority: 0.6 }]
+      : []),
     { url: absoluteUrl("/about"), changeFrequency: "yearly", priority: 0.4 },
     { url: absoluteUrl("/contact"), changeFrequency: "yearly", priority: 0.3 },
     { url: absoluteUrl("/privacy-policy"), changeFrequency: "yearly", priority: 0.2 },
@@ -63,8 +76,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: item.updated_at,
       changeFrequency: "monthly" as const,
       priority: 0.8,
-      // Image sitemap entries help the wallpapers show up in Google Images.
-      images: [imageUrl(item.preview_key), imageUrl(item.original_key)].filter(Boolean),
+      // Only the preview: it is the image the page actually renders, so it is the one Google Images
+      // can tie to this URL. Listing the original too just offered a second copy of the same picture.
+      images: [imageUrl(item.preview_key)].filter(Boolean),
     })),
   ];
 }

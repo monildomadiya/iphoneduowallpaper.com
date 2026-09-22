@@ -300,7 +300,10 @@ export function Uploader({
             <ul className="divide-y divide-line">
               {items.map((item) => {
                 const warnings = item.width && item.height
-                  ? devices.filter((device) => screenFit(item.width!, item.height!, device.width, device.height).level === "low")
+                  ? devices.filter((device) => {
+                      const level = screenFit(item.width!, item.height!, device.width, device.height).level;
+                      return level === "low" || level === "crop";
+                    })
                   : [];
                 const locked = item.status !== "queued" && item.status !== "error";
                 return (

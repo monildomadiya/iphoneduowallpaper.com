@@ -1,3 +1,5 @@
+import { aspectRatioLabel } from "@/lib/utils";
+
 export const LEGAL_LAST_UPDATED = "September 14, 2026";
 
 /** Lock Screen mockup shows iPhone Duo's launch day. */
@@ -68,7 +70,7 @@ export const HOME_FAQ = [
   {
     question: "What resolution are the wallpapers?",
     answer:
-      "We publish full-resolution originals, most of them 4K-class or higher. The exact resolution and file size are listed on every wallpaper page.",
+      "Every wallpaper is published at its original resolution, never re-compressed. The exact pixel size, the file size and a screen-by-screen fit check — iPhone Duo outer, iPhone Duo inner, iPhone 18 Pro and Pro Max — are on the page before you download, so you always know what you are getting.",
   },
   {
     question: "How do I set a wallpaper on my iPhone?",
@@ -81,3 +83,40 @@ export const HOME_FAQ = [
       "No. This is an independent fan and design website. iPhone and iPhone Duo are trademarks of Apple Inc., used here only to describe device compatibility.",
   },
 ];
+
+/**
+ * Device pages used to be the same template with a different name in it, which gave Google nothing
+ * to tell them apart. This builds copy from the device's own measurements so each page answers the
+ * questions people actually search ("what size wallpaper for iPhone 18 Pro Max", "1320x2868").
+ */
+export function deviceFaq(device: {
+  name: string;
+  family: string;
+  width: number;
+  height: number;
+}): { question: string; answer: string }[] {
+  const { name, width, height } = device;
+  const portrait = height >= width;
+  const megapixels = ((width * height) / 1_000_000).toFixed(1);
+  const ratio = aspectRatioLabel(width, height);
+  const isDuo = /duo/i.test(device.family) || /duo/i.test(name);
+  const inner = isDuo && !portrait;
+
+  const shapeAnswer = inner
+    ? `The unfolded inner display is ${ratio} and wider than it is tall, so a normal portrait phone wallpaper will be cropped hard at the top and bottom. Use a landscape image and keep the subject away from the middle, where the hinge runs.`
+    : isDuo
+      ? `The cover display is ${ratio}, squarer than the 2.17:1 screen on an iPhone 18 Pro Max, so a wallpaper cut for a normal iPhone is filled to the width and loses a band from the top and the bottom. Pick an image made for ${width} × ${height} and the framing stays as intended.`
+      : `${name} is ${ratio}, the usual tall iPhone shape. Landscape images are cropped to a narrow vertical slice, so portrait artwork is what you want.`;
+
+  return [
+    {
+      question: `What size wallpaper does the ${name} need?`,
+      answer: `Exactly ${width} × ${height} pixels — ${megapixels} megapixels, ${portrait ? "portrait" : "landscape"}. iOS scales any image to fill the screen, so a smaller file is enlarged and looks soft. A bigger file at the same shape is safe: it is scaled down and stays sharp.`,
+    },
+    { question: `Will a wallpaper from another iPhone fit the ${name}?`, answer: shapeAnswer },
+    {
+      question: `How do I set one of these as my ${name} wallpaper?`,
+      answer: `Download the image, save it to Photos, then open Settings → Wallpaper → Add New Wallpaper and choose Photos. You can also touch and hold the Lock Screen and tap +. On iPhone, downloads land in Files → Downloads first, so move the image to Photos before you look for it.`,
+    },
+  ];
+}

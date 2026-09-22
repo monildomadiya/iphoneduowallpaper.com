@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { AdSlot } from "@/components/ads/ad-slot";
-import { Breadcrumbs, PageHeader } from "@/components/ui/primitives";
+import { FaqList } from "@/components/site/tiles";
+import { Breadcrumbs, JsonLd, PageHeader, SectionHeading } from "@/components/ui/primitives";
 import { DeviceFrame, bestVariantFor } from "@/components/wallpaper/device-frame";
 import { WallpaperListing } from "@/components/wallpaper/wallpaper-listing";
 import { getDeviceBySlug, getDevices } from "@/lib/data/taxonomy";
-import { buildMetadata } from "@/lib/seo";
-import { imageUrl, orientationLabel } from "@/lib/utils";
+import { buildMetadata, faqJsonLd } from "@/lib/seo";
+import { deviceFaq } from "@/lib/site";
+import { aspectRatioLabel, imageUrl, orientationLabel } from "@/lib/utils";
 
 // Renders on the server before responding so unknown slugs return a real 404 status (better for SEO).
 export const instant = false;
@@ -41,9 +43,11 @@ export default async function DevicePage({ params, searchParams }: PageProps<"/d
   const specs = [
     { label: "Display", value: device.diagonal_in ? `${device.diagonal_in}-inch` : "—" },
     { label: "Resolution", value: `${device.width} × ${device.height} px` },
+    { label: "Aspect ratio", value: aspectRatioLabel(device.width, device.height) },
     { label: "Pixel density", value: device.ppi ? `${device.ppi} ppi` : "—" },
     { label: "Orientation", value: orientationLabel(device.width, device.height) },
   ];
+  const faqs = deviceFaq(device);
 
   return (
     <>
@@ -62,7 +66,7 @@ export default async function DevicePage({ params, searchParams }: PageProps<"/d
           description={device.description}
           className="px-0 pb-0 pt-0 md:pb-0 md:pt-0"
         >
-          <dl className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
+          <dl className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
             {specs.map((spec) => (
               <div key={spec.label} className="rounded-2xl bg-surface p-4">
                 <dt className="text-[12px] font-medium text-fg-3">{spec.label}</dt>
@@ -90,6 +94,14 @@ export default async function DevicePage({ params, searchParams }: PageProps<"/d
           emptyTitle={`No ${device.name} wallpapers yet`}
         />
       </section>
+
+      <section className="container-apple mt-20 mb-8">
+        <SectionHeading title={`${device.name} wallpaper sizes.`} subtitle="The details worth knowing before you download." />
+        <div className="mt-8">
+          <FaqList faqs={faqs} />
+        </div>
+      </section>
+      <JsonLd data={faqJsonLd(faqs)} />
     </>
   );
 }

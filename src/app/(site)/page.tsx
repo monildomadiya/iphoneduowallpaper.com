@@ -13,7 +13,7 @@ import { listWallpapers } from "@/lib/data/wallpapers";
 import { buildMetadata, faqJsonLd, organizationJsonLd, websiteJsonLd } from "@/lib/seo";
 import { HOME_FAQ } from "@/lib/site";
 import type { WallpaperCardData } from "@/lib/types";
-import { formatNumber, imageUrl } from "@/lib/utils";
+import { formatNumber, imageUrl, stockedFirst } from "@/lib/utils";
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings();
@@ -49,7 +49,7 @@ export default async function HomePage() {
 
   const showcase = featured.items.length ? featured.items : latest.items;
   const hero = pickHeroWallpapers(showcase);
-  const featuredCollections = collections.filter((collection) => collection.is_featured).slice(0, 6);
+  const featuredCollections = stockedFirst(collections.filter((collection) => collection.is_featured)).slice(0, 6);
   const hasWallpapers = latest.total > 0;
 
   return (
@@ -200,7 +200,7 @@ export default async function HomePage() {
       {categories.length ? (
         <section className="container-apple mt-24">
           <SectionHeading title="Categories." subtitle="Find your vibe." href="/categories" />
-          <CategoryTiles categories={categories.slice(0, 10)} />
+          <CategoryTiles categories={stockedFirst(categories).slice(0, 10)} />
         </section>
       ) : null}
 

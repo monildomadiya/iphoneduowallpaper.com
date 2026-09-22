@@ -22,6 +22,8 @@ import {
   qualityLabel,
   screenFit,
   truncate,
+  wallpaperAlt,
+  wallpaperPageTitle,
 } from "@/lib/utils";
 
 // Renders on the server before responding so unknown slugs return a real 404 status (better for SEO).
@@ -43,8 +45,7 @@ export async function generateMetadata({ params }: PageProps<"/wallpapers/[slug]
 
   const family = wallpaper.devices[0]?.family ?? "iPhone Duo";
   const title =
-    wallpaper.seo_title ||
-    `${wallpaper.title} ${family} Wallpaper — ${qualityLabel(wallpaper.width, wallpaper.height)} ${wallpaper.width}x${wallpaper.height}`;
+    wallpaper.seo_title || wallpaperPageTitle(wallpaper.title, family, wallpaper.width, wallpaper.height);
   const description =
     wallpaper.seo_description ||
     (wallpaper.description
@@ -59,7 +60,7 @@ export async function generateMetadata({ params }: PageProps<"/wallpapers/[slug]
       url: imageUrl(wallpaper.preview_key),
       width: 1080,
       height: Math.round((1080 * wallpaper.height) / wallpaper.width),
-      alt: `${wallpaper.title} wallpaper`,
+      alt: wallpaperAlt(wallpaper.title, wallpaper.width, wallpaper.height, wallpaper.category?.name),
     },
   });
 }
@@ -68,6 +69,7 @@ const FIT_STYLES = {
   sharp: { label: "Pixel-perfect", icon: Check, className: "text-success" },
   good: { label: "Great fit", icon: Check, className: "text-success" },
   low: { label: "Slightly soft", icon: CircleAlert, className: "text-warning" },
+  crop: { label: "Crops heavily", icon: CircleAlert, className: "text-warning" },
 } as const;
 
 export default async function WallpaperPage({ params }: PageProps<"/wallpapers/[slug]">) {
@@ -111,7 +113,7 @@ export default async function WallpaperPage({ params }: PageProps<"/wallpapers/[
           <div className="lg:sticky lg:top-20 lg:self-start">
             <WallpaperPreview
               src={imageUrl(wallpaper.preview_key)}
-              alt={`${wallpaper.title} wallpaper preview`}
+              alt={wallpaperAlt(wallpaper.title, wallpaper.width, wallpaper.height, wallpaper.category?.name)}
               color={wallpaper.dominant_color}
               width={wallpaper.width}
               height={wallpaper.height}

@@ -6,7 +6,7 @@ import { Breadcrumbs, PageHeader } from "@/components/ui/primitives";
 import { WallpaperListing } from "@/components/wallpaper/wallpaper-listing";
 import { getCategories, getCategoryBySlug } from "@/lib/data/taxonomy";
 import { buildMetadata } from "@/lib/seo";
-import { imageUrl } from "@/lib/utils";
+import { imageUrl, stockedFirst } from "@/lib/utils";
 
 // Renders on the server before responding so unknown slugs return a real 404 status (better for SEO).
 export const instant = false;
@@ -39,7 +39,8 @@ export default async function CategoryPage({ params, searchParams }: PageProps<"
   const [category, categories] = await Promise.all([getCategoryBySlug(slug), getCategories()]);
   if (!category) notFound();
 
-  const others = categories.filter((item) => item.id !== category.id).slice(0, 8);
+  // Lateral links are only worth following when there is something on the other end.
+  const others = stockedFirst(categories.filter((item) => item.id !== category.id)).slice(0, 8);
 
   return (
     <>

@@ -2,7 +2,7 @@
 import { Download } from "lucide-react";
 import Link from "next/link";
 import type { WallpaperCardData } from "@/lib/types";
-import { cn, formatCompact, imageUrl, qualityLabel } from "@/lib/utils";
+import { cn, formatCompact, imageUrl, qualityLabel, wallpaperAlt } from "@/lib/utils";
 
 interface WallpaperCardProps {
   wallpaper: WallpaperCardData;
@@ -23,7 +23,7 @@ export function WallpaperCard({ wallpaper, priority = false, className, sizes = 
       >
         <img
           src={imageUrl(wallpaper.thumb_key)}
-          alt={`${wallpaper.title} wallpaper`}
+          alt={wallpaperAlt(wallpaper.title, wallpaper.width, wallpaper.height, wallpaper.category?.name)}
           width={480}
           height={Math.round((480 * wallpaper.height) / wallpaper.width)}
           loading={priority ? "eager" : "lazy"}
