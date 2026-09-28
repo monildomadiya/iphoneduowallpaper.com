@@ -1,15 +1,17 @@
 import type { Metadata } from "next";
 import { CategoryTiles } from "@/components/site/tiles";
-import { EmptyState, PageHeader } from "@/components/ui/primitives";
+import { EmptyState, JsonLd, PageHeader } from "@/components/ui/primitives";
 import { getCategories } from "@/lib/data/taxonomy";
-import { buildMetadata } from "@/lib/seo";
+import { buildMetadata, collectionPageJsonLd } from "@/lib/seo";
 import { stockedFirst } from "@/lib/utils";
+
+const DESCRIPTION =
+  "Find the perfect iPhone Duo wallpaper by style — abstract, gradients, nature, space, minimal, dark AMOLED, architecture and more.";
 
 export async function generateMetadata(): Promise<Metadata> {
   return buildMetadata({
     title: "Wallpaper Categories",
-    description:
-      "Find the perfect iPhone Duo wallpaper by style — abstract, gradients, nature, space, minimal, dark AMOLED, architecture and more.",
+    description: DESCRIPTION,
     path: "/categories",
     noIndex: (await getCategories()).length === 0,
   });
@@ -20,6 +22,17 @@ export default async function CategoriesPage() {
 
   return (
     <>
+      <JsonLd
+        data={collectionPageJsonLd({
+          name: "Wallpaper Categories",
+          description: DESCRIPTION,
+          path: "/categories",
+          breadcrumb: [{ name: "Categories", path: "/categories" }],
+          items: categories
+            .filter((item) => item.wallpaper_count > 0)
+            .map((item) => ({ name: `${item.name} Wallpapers`, path: `/categories/${item.slug}` })),
+        })}
+      />
       <PageHeader
         eyebrow="Categories"
         title="Find your style."

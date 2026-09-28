@@ -1,16 +1,19 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { PostCard } from "@/components/site/tiles";
-import { EmptyState, PageHeader, Pagination } from "@/components/ui/primitives";
+import { EmptyState, JsonLd, PageHeader, Pagination } from "@/components/ui/primitives";
 import { listPosts } from "@/lib/data/posts";
-import { buildMetadata } from "@/lib/seo";
+import { buildMetadata, collectionPageJsonLd } from "@/lib/seo";
 import { clampPage } from "@/lib/utils";
+
+const TITLE = "Guides & Tips for iPhone Wallpapers";
+const DESCRIPTION =
+  "Practical guides for iPhone Duo and iPhone 18 Pro: wallpaper sizes for the inner and outer displays, how to set a wallpaper, depth effect tips and more.";
 
 export async function generateMetadata(): Promise<Metadata> {
   return buildMetadata({
-    title: "Guides & Tips for iPhone Wallpapers",
-    description:
-      "Practical guides for iPhone Duo and iPhone 18 Pro: wallpaper sizes for the inner and outer displays, how to set a wallpaper, depth effect tips and more.",
+    title: TITLE,
+    description: DESCRIPTION,
     path: "/blog",
   });
 }
@@ -41,6 +44,14 @@ async function PostList({ searchParams }: { searchParams: PageProps<"/blog">["se
 export default function BlogPage({ searchParams }: PageProps<"/blog">) {
   return (
     <>
+      <JsonLd
+        data={collectionPageJsonLd({
+          name: TITLE,
+          description: DESCRIPTION,
+          path: "/blog",
+          breadcrumb: [{ name: "Guides", path: "/blog" }],
+        })}
+      />
       <PageHeader
         eyebrow="Guides"
         title="Tips, tricks and the details that matter."

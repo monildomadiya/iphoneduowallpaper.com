@@ -1,14 +1,17 @@
 import type { Metadata } from "next";
 import { AdSlot } from "@/components/ads/ad-slot";
-import { PageHeader } from "@/components/ui/primitives";
+import { JsonLd, PageHeader } from "@/components/ui/primitives";
 import { WallpaperListing } from "@/components/wallpaper/wallpaper-listing";
-import { buildMetadata } from "@/lib/seo";
+import { buildMetadata, collectionPageJsonLd } from "@/lib/seo";
+
+const TITLE = "All iPhone Duo Wallpapers — Free 4K Downloads";
+const DESCRIPTION =
+  "Browse every wallpaper in our library. Full-resolution designs for iPhone Duo's inner and outer displays, iPhone 18 Pro and Pro Max — sorted by newest or most downloaded.";
 
 export async function generateMetadata(): Promise<Metadata> {
   return buildMetadata({
-    title: "All iPhone Duo Wallpapers — Free 4K Downloads",
-    description:
-      "Browse every wallpaper in our library. Full-resolution designs for iPhone Duo's inner and outer displays, iPhone 18 Pro and Pro Max — sorted by newest or most downloaded.",
+    title: TITLE,
+    description: DESCRIPTION,
     path: "/wallpapers",
   });
 }
@@ -16,6 +19,14 @@ export async function generateMetadata(): Promise<Metadata> {
 export default function WallpapersPage({ searchParams }: PageProps<"/wallpapers">) {
   return (
     <>
+      <JsonLd
+        data={collectionPageJsonLd({
+          name: TITLE,
+          description: DESCRIPTION,
+          path: "/wallpapers",
+          breadcrumb: [{ name: "Wallpapers", path: "/wallpapers" }],
+        })}
+      />
       <PageHeader
         eyebrow="Wallpapers"
         title="Every wallpaper. Every screen."

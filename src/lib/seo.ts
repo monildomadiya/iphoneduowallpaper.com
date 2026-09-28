@@ -64,14 +64,32 @@ export async function buildMetadata(input: MetadataInput): Promise<Metadata> {
 
 type JsonLd = Record<string, unknown>;
 
+// Stable ids let every page point back at one WebSite and one Organization, so Google reads the
+// site as a single entity with a single name — what it groups sitelinks and the site name under.
+const WEBSITE_ID = `${siteUrl}/#website`;
+const ORGANIZATION_ID = `${siteUrl}/#organization`;
+
+// Names people may search the brand by; Google falls back to these when choosing the site name.
+const SITE_ALTERNATE_NAMES = ["Duo Wallpapers", "iphoneduowallpaper.com"];
+
 export function organizationJsonLd(settings: SiteSettings): JsonLd {
   const sameAs = Object.values(settings.social_links ?? {}).filter(Boolean);
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
+    "@id": ORGANIZATION_ID,
     name: settings.site_name,
+    alternateName: SITE_ALTERNATE_NAMES,
     url: siteUrl,
-    logo: absoluteUrl("/apple-icon"),
+    description: settings.tagline,
+    logo: {
+      "@type": "ImageObject",
+      "@id": `${siteUrl}/#logo`,
+      url: absoluteUrl("/apple-icon"),
+      width: 180,
+      height: 180,
+      caption: settings.site_name,
+    },
     email: settings.contact_email,
     ...(sameAs.length ? { sameAs } : {}),
   };
@@ -81,9 +99,13 @@ export function websiteJsonLd(settings: SiteSettings): JsonLd {
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
+    "@id": WEBSITE_ID,
     name: settings.site_name,
+    alternateName: SITE_ALTERNATE_NAMES,
     url: siteUrl,
     description: settings.tagline,
+    inLanguage: "en-US",
+    publisher: { "@id": ORGANIZATION_ID },
     potentialAction: {
       "@type": "SearchAction",
       target: { "@type": "EntryPoint", urlTemplate: `${siteUrl}/search?q={search_term_string}` },
@@ -159,26 +181,41 @@ export function faqJsonLd(faqs: { question: string; answer: string }[]): JsonLd 
   };
 }
 
+/**
+ * A listing page (a hub or a taxonomy page), tied to the WebSite entity and carrying its own
+ * breadcrumb, so Google sees where it sits in the site — the structure it picks sitelinks from.
+ */
 export function collectionPageJsonLd(input: {
   name: string;
   description: string;
   path: string;
-  items: { title: string; slug: string }[];
+  breadcrumb: { name: string; path: string }[];
+  items?: { name: string; path: string }[];
 }): JsonLd {
+  const items = input.items ?? [];
   return {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
+    "@id": `${absoluteUrl(input.path)}#webpage`,
     name: input.name,
     description: input.description,
     url: absoluteUrl(input.path),
-    mainEntity: {
-      "@type": "ItemList",
-      itemListElement: input.items.slice(0, 30).map((item, index) => ({
-        "@type": "ListItem",
-        position: index + 1,
-        url: absoluteUrl(`/wallpapers/${item.slug}`),
-        name: item.title,
-      })),
-    },
+    inLanguage: "en-US",
+    isPartOf: { "@id": WEBSITE_ID },
+    breadcrumb: breadcrumbJsonLd([{ name: "Home", path: "/" }, ...input.breadcrumb]),
+    ...(items.length
+      ? {
+          mainEntity: {
+            "@type": "ItemList",
+            numberOfItems: items.length,
+            itemListElement: items.slice(0, 30).map((item, index) => ({
+              "@type": "ListItem",
+              position: index + 1,
+              url: absoluteUrl(item.path),
+              name: item.name,
+            })),
+          },
+        }
+      : {}),
   };
 }

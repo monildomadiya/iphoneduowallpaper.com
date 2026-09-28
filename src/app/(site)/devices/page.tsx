@@ -1,15 +1,18 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { DeviceTiles } from "@/components/site/tiles";
-import { EmptyState, PageHeader } from "@/components/ui/primitives";
+import { EmptyState, JsonLd, PageHeader } from "@/components/ui/primitives";
 import { getDevices } from "@/lib/data/taxonomy";
-import { buildMetadata } from "@/lib/seo";
+import { buildMetadata, collectionPageJsonLd } from "@/lib/seo";
+
+const TITLE = "Wallpapers by Device — iPhone Duo, iPhone 18 Pro & Pro Max";
+const DESCRIPTION =
+  "Wallpapers sized for each screen: iPhone Duo outer display (1398 × 2034), inner display (2670 × 1878), iPhone 18 Pro Max (1320 × 2868) and iPhone 18 Pro (1206 × 2622).";
 
 export async function generateMetadata(): Promise<Metadata> {
   return buildMetadata({
-    title: "Wallpapers by Device — iPhone Duo, iPhone 18 Pro & Pro Max",
-    description:
-      "Wallpapers sized for each screen: iPhone Duo outer display (1398 × 2034), inner display (2670 × 1878), iPhone 18 Pro Max (1320 × 2868) and iPhone 18 Pro (1206 × 2622).",
+    title: TITLE,
+    description: DESCRIPTION,
     path: "/devices",
   });
 }
@@ -19,6 +22,17 @@ export default async function DevicesPage() {
 
   return (
     <>
+      <JsonLd
+        data={collectionPageJsonLd({
+          name: TITLE,
+          description: DESCRIPTION,
+          path: "/devices",
+          breadcrumb: [{ name: "Devices", path: "/devices" }],
+          items: devices
+            .filter((item) => item.wallpaper_count > 0)
+            .map((item) => ({ name: `${item.name} Wallpapers`, path: `/devices/${item.slug}` })),
+        })}
+      />
       <PageHeader
         eyebrow="Devices"
         title="The right size for every screen."
