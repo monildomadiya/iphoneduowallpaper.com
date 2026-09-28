@@ -6,7 +6,7 @@ import { buildMetadata, collectionPageJsonLd } from "@/lib/seo";
 
 const TITLE = "All iPhone Duo Wallpapers — Free 4K Downloads";
 const DESCRIPTION =
-  "Browse every wallpaper in our library. Full-resolution designs for iPhone Duo's inner and outer displays, iPhone 18 Pro and Pro Max — sorted by newest or most downloaded.";
+  "Every wallpaper in the library, in full resolution for iPhone Duo's inner and outer displays, iPhone 18 Pro and Pro Max. Sort by newest or most downloaded.";
 
 export async function generateMetadata(): Promise<Metadata> {
   return buildMetadata({

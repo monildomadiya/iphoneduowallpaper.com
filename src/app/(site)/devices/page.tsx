@@ -7,7 +7,7 @@ import { buildMetadata, collectionPageJsonLd } from "@/lib/seo";
 
 const TITLE = "Wallpapers by Device — iPhone Duo, iPhone 18 Pro & Pro Max";
 const DESCRIPTION =
-  "Wallpapers sized for each screen: iPhone Duo outer display (1398 × 2034), inner display (2670 × 1878), iPhone 18 Pro Max (1320 × 2868) and iPhone 18 Pro (1206 × 2622).";
+  "Wallpapers sized per screen: iPhone Duo outer (1398 × 2034) and inner (2670 × 1878), iPhone 18 Pro Max (1320 × 2868) and iPhone 18 Pro (1206 × 2622).";
 
 export async function generateMetadata(): Promise<Metadata> {
   return buildMetadata({

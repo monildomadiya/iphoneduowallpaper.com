@@ -15,7 +15,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     metadataBase: new URL(siteUrl),
     title: {
-      default: `${settings.site_name} — Free 4K Wallpapers for iPhone Duo`,
+      default: `${settings.site_name} — Free 4K for Duo & iPhone 18 Pro`,
       template: `%s | ${settings.site_name}`,
     },
     description,
@@ -26,7 +26,7 @@ export async function generateMetadata(): Promise<Metadata> {
       siteName: settings.site_name,
       locale: "en_US",
       url: "/",
-      title: `${settings.site_name} — Free 4K Wallpapers for iPhone Duo`,
+      title: `${settings.site_name} — Free 4K for Duo & iPhone 18 Pro`,
       description,
     },
     twitter: { card: "summary_large_image" },

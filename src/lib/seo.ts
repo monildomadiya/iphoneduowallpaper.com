@@ -6,6 +6,9 @@ import type { Post, SiteSettings, WallpaperDetail } from "@/lib/types";
 import { absoluteUrl, imageUrl, stripMarkdown, truncate } from "@/lib/utils";
 import { wallpaperOverview } from "@/lib/wallpaper-copy";
 
+const MAX_TITLE = 60;
+const MAX_DESCRIPTION = 160;
+
 interface MetadataInput {
   title: string;
   description: string;
@@ -21,7 +24,13 @@ interface MetadataInput {
 export async function buildMetadata(input: MetadataInput): Promise<Metadata> {
   const settings = await getSiteSettings();
   const url = absoluteUrl(input.path);
-  const description = truncate(input.description, 300);
+  // Google cuts snippets at roughly 160 characters; anything past that never shows.
+  const description = truncate(input.description, MAX_DESCRIPTION);
+  // The "| Site Name" suffix pushed most titles past what Google shows (~60 characters) and cut
+  // the page's own words off instead. When there is no room for it, the title stands alone.
+  const suffix = ` | ${settings.site_name}`;
+  const absoluteTitle =
+    input.absoluteTitle || input.title.includes(settings.site_name) || input.title.length + suffix.length > MAX_TITLE;
   const images = input.image
     ? [
         {
@@ -34,7 +43,7 @@ export async function buildMetadata(input: MetadataInput): Promise<Metadata> {
     : undefined;
 
   return {
-    title: input.absoluteTitle ? { absolute: input.title } : input.title,
+    title: absoluteTitle ? { absolute: input.title } : input.title,
     description,
     alternates: { canonical: url },
     openGraph: {
