@@ -6,7 +6,7 @@ export function AuthShell({ title, subtitle, children }: { title: string; subtit
     <div className="relative flex min-h-dvh items-center justify-center overflow-hidden px-4 py-12">
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute left-1/2 top-1/3 h-[520px] w-[820px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-60 blur-3xl dark:opacity-35"
+        className="pointer-events-none absolute left-1/2 top-1/3 h-[520px] w-[820px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-60 blur-3xl"
         style={{ background: "radial-gradient(closest-side, rgba(10,132,255,0.3), rgba(110,91,255,0.18) 50%, transparent)" }}
       />
       <div className="relative w-full max-w-[400px]">

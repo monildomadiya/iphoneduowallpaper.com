@@ -318,7 +318,7 @@ export function WallpaperEditor({
         <Card title="Search engine listing" description="Leave empty to use smart defaults.">
           <div className="mb-5 rounded-xl border border-line p-4">
             <p className="truncate text-[12px] text-fg-3">{siteUrl.replace(/^https?:\/\//, "")} › wallpapers › {slug}</p>
-            <p className="mt-1 line-clamp-1 text-[18px] text-[#1a0dab] dark:text-[#8ab4f8]">{googleTitle}</p>
+            <p className="mt-1 line-clamp-1 text-[18px] text-[#1a0dab]">{googleTitle}</p>
             <p className="mt-1 line-clamp-2 text-[13px] leading-5 text-fg-2">{googleDescription}</p>
           </div>
           <div className="space-y-5">

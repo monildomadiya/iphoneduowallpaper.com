@@ -109,7 +109,7 @@ export default async function WallpaperPage({ params }: PageProps<"/wallpapers/[
           ]}
         />
 
-        <div className="mt-6 grid gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-16">
+        <div className="mt-6 grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-16">
           <div className="lg:sticky lg:top-20 lg:self-start">
             <WallpaperPreview
               src={imageUrl(wallpaper.preview_key)}
@@ -132,7 +132,7 @@ export default async function WallpaperPage({ params }: PageProps<"/wallpapers/[
             <h1 className="headline-page mt-2 text-balance">{wallpaper.title}</h1>
             <p className="mt-3 text-[17px] text-fg-2">
               {wallpaper.width} × {wallpaper.height} · {formatBytes(wallpaper.file_size)} ·{" "}
-              {formatNumber(wallpaper.downloads)} downloads
+              {formatNumber(wallpaper.downloads)} {wallpaper.downloads === 1 ? "download" : "downloads"}
             </p>
             {wallpaper.description ? (
               <p className="mt-5 whitespace-pre-line text-[17px] leading-7 text-fg-2">{wallpaper.description}</p>

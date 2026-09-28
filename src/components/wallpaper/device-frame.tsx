@@ -153,7 +153,7 @@ export function DeviceFrame({
   return (
     <div className={cn("@container relative", className)} style={{ aspectRatio: `${spec.width} / ${spec.height}` }}>
       <div
-        className="absolute inset-0 bg-linear-to-br from-[#e3e3e8] via-[#9a9aa0] to-[#56565b] shadow-float dark:from-[#6b6b70] dark:via-[#36363a] dark:to-[#161618]"
+        className="absolute inset-0 bg-linear-to-br from-[#e3e3e8] via-[#9a9aa0] to-[#56565b] shadow-float"
         style={{ borderRadius: outerRadius, padding: `${edge}cqw` }}
       >
         <div

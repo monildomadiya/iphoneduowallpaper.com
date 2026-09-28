@@ -15,7 +15,7 @@ A fast, Apple-inspired wallpaper website for **iPhone Duo** (outer 1398 × 2034 
 
 **Public website**
 
-- Apple-style design with light/dark mode, frosted-glass navigation and CSS device mockups of iPhone Duo (folded and unfolded) and iPhone 18 Pro Max
+- Apple-style light design, fully responsive across phone, tablet and desktop, with frosted-glass navigation and CSS device mockups of iPhone Duo (folded and unfolded) and iPhone 18 Pro Max
 - Wallpaper pages with a live preview switcher (Duo Outer / Duo Inner / 18 Pro Max × Lock Screen / Home Screen), a “Screen fit” check for every device, one-tap download, “View full size” and share
 - Categories, curated collections, device pages, full-text search, sorting and pagination
 - Blog / guides with Markdown (3 helpful starter articles included)

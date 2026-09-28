@@ -23,7 +23,6 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { signOut } from "@/app/admin/actions/auth";
 import { LogoMark } from "@/components/site/logo";
-import { ThemeToggle } from "@/components/site/theme-toggle";
 import { cn } from "@/lib/utils";
 
 interface SidebarProps {
@@ -138,7 +137,6 @@ function NavContent({ admin, counts, onNavigate }: SidebarProps & { onNavigate?:
             <p className="truncate text-[13px] font-medium">{admin.displayName || admin.email}</p>
             <p className="text-[11px] capitalize text-fg-3">{admin.role}</p>
           </div>
-          <ThemeToggle className="size-8" />
           <form action={signOut}>
             <button
               type="submit"

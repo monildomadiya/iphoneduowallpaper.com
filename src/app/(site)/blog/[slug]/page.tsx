@@ -59,7 +59,7 @@ export default async function PostPage({ params }: PageProps<"/blog/[slug]">) {
           ) : null}
           <h1 className="headline-page mt-3 text-balance">{post.title}</h1>
           {post.excerpt ? (
-            <p className="mx-auto mt-5 max-w-2xl text-pretty text-[21px] leading-8 text-fg-2">{post.excerpt}</p>
+            <p className="mx-auto mt-5 max-w-2xl text-pretty text-[18px] leading-7 text-fg-2 md:text-[21px] md:leading-8">{post.excerpt}</p>
           ) : null}
           <p className="mt-6 text-[14px] text-fg-3">
             By {post.author_name} · <time dateTime={post.published_at ?? undefined}>{formatDate(post.published_at)}</time> ·{" "}
@@ -68,7 +68,7 @@ export default async function PostPage({ params }: PageProps<"/blog/[slug]">) {
         </header>
 
         {post.cover_key ? (
-          <div className="mx-auto mt-10 max-w-5xl overflow-hidden rounded-[32px] bg-surface">
+          <div className="mx-auto mt-10 max-w-5xl overflow-hidden rounded-[20px] bg-surface md:rounded-[32px]">
             <img src={imageUrl(post.cover_key)} alt="" className="aspect-[16/9] w-full object-cover" fetchPriority="high" />
           </div>
         ) : null}

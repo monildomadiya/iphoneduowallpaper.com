@@ -80,7 +80,7 @@ export function Breadcrumbs({ items }: { items: { name: string; path: string }[]
           {all.map((item, index) => {
             const last = index === all.length - 1;
             return (
-              <li key={item.path} className="flex items-center gap-1">
+              <li key={item.path} className="flex min-w-0 max-w-full items-center gap-1">
                 {last ? (
                   <span aria-current="page" className="truncate text-fg-3">
                     {item.name}

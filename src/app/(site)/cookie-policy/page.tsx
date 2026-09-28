@@ -46,8 +46,8 @@ export default async function CookiePolicyPage() {
                 <td>
                   <strong>Strictly necessary</strong>
                 </td>
-                <td>Keep the Site secure and working, remember your theme and cookie-notice choice, and keep administrators signed in.</td>
-                <td>theme, cookie-notice-accepted (local storage); sb-* authentication cookies (admins only)</td>
+                <td>Keep the Site secure and working, remember your cookie-notice choice, and keep administrators signed in.</td>
+                <td>cookie-notice-accepted (local storage); sb-* authentication cookies (admins only)</td>
               </tr>
               <tr>
                 <td>

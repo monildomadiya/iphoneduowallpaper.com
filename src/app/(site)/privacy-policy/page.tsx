@@ -59,8 +59,8 @@ export default async function PrivacyPolicyPage() {
           </p>
           <h3>Cookies and similar technologies</h3>
           <p>
-            We and our partners use cookies, local storage and similar technologies. For example, we remember your
-            light or dark theme preference and whether you have dismissed our cookie notice. Advertising and analytics
+            We and our partners use cookies, local storage and similar technologies. For example, we remember
+            whether you have dismissed our cookie notice. Advertising and analytics
             partners may also set cookies, as described below and in our <Link href="/cookie-policy">Cookie Policy</Link>.
           </p>
         </>

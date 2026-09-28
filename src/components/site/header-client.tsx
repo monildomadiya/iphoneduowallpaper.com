@@ -7,7 +7,6 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { MAIN_NAV } from "@/lib/site";
 import { cn } from "@/lib/utils";
-import { ThemeToggle } from "./theme-toggle";
 
 /** Plain nav links. Rendered without an active state as the prerendered fallback. */
 export function NavLinks({ pathname }: { pathname: string | null }) {
@@ -97,7 +96,6 @@ export function HeaderControls({ quickLinks }: { quickLinks: QuickLink[] }) {
         >
           {panel === "search" ? <X className="size-[18px]" /> : <Search className="size-[17px]" strokeWidth={1.8} />}
         </button>
-        <ThemeToggle />
         <button
           type="button"
           aria-label={panel === "menu" ? "Close menu" : "Open menu"}
@@ -116,7 +114,7 @@ export function HeaderControls({ quickLinks }: { quickLinks: QuickLink[] }) {
                 type="button"
                 aria-label="Close"
                 tabIndex={-1}
-                className="absolute inset-0 animate-fade-in bg-black/20 backdrop-blur-sm dark:bg-black/50"
+                className="absolute inset-0 animate-fade-in bg-black/20 backdrop-blur-sm"
                 onClick={close}
               />
               <div className="relative animate-fade-in border-b border-line bg-bg/95 shadow-float backdrop-blur-2xl">

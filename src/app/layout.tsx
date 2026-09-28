@@ -1,15 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import { Toaster } from "sonner";
-import { InlineScript } from "@/components/site/inline-script";
 import { getSiteSettings } from "@/lib/data/settings";
 import { siteUrl } from "@/lib/env";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
-
-// Runs before first paint so the saved theme never flashes.
-const THEME_SCRIPT = `(function(){try{var t=localStorage.getItem("theme");var d=t==="dark"||(t!=="light"&&window.matchMedia("(prefers-color-scheme: dark)").matches);var r=document.documentElement;r.classList.toggle("dark",d);r.style.colorScheme=d?"dark":"light"}catch(e){}})();`;
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings();
@@ -35,7 +31,7 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     twitter: { card: "summary_large_image" },
     formatDetection: { telephone: false, email: false, address: false },
-    appleWebApp: { capable: true, title: "Duo Wallpapers", statusBarStyle: "black-translucent" },
+    appleWebApp: { capable: true, title: "Duo Wallpapers", statusBarStyle: "default" },
     ...(settings.adsense_client_id
       ? { other: { "google-adsense-account": settings.adsense_client_id } }
       : {}),
@@ -46,18 +42,13 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#fbfbfd" },
-    { media: "(prefers-color-scheme: dark)", color: "#000000" },
-  ],
+  themeColor: "#fbfbfd",
+  colorScheme: "light",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={inter.variable} suppressHydrationWarning data-scroll-behavior="smooth">
-      <head>
-        <InlineScript html={THEME_SCRIPT} />
-      </head>
+    <html lang="en" className={inter.variable} data-scroll-behavior="smooth">
       <body className="min-h-dvh">
         {children}
         <Toaster position="top-center" richColors closeButton />

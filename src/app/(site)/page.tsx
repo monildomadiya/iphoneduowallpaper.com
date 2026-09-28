@@ -60,7 +60,7 @@ export default async function HomePage() {
       <section className="relative overflow-hidden">
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
           <div
-            className="absolute left-1/2 top-[-18%] h-[720px] w-[1200px] -translate-x-1/2 rounded-full opacity-70 blur-3xl dark:opacity-45"
+            className="absolute left-1/2 top-[-18%] h-[720px] w-[1200px] -translate-x-1/2 rounded-full opacity-70 blur-3xl"
             style={{
               background:
                 "radial-gradient(closest-side, rgba(10,132,255,0.28), rgba(110,91,255,0.18) 45%, rgba(216,91,176,0.1) 70%, transparent)",
