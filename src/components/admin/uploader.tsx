@@ -21,6 +21,7 @@ import { Card, Field, buttonClass, inputClass } from "./ui";
 import {
   CategorySelect,
   CharCount,
+  DescriptionWords,
   ChipMultiSelect,
   SourceSelect,
   StatusToggle,
@@ -353,11 +354,7 @@ export function Uploader({
                               className={cn(inputClass, "resize-y text-[13px] leading-5")}
                             />
                             <div className="mt-1 flex items-center justify-between gap-3">
-                              {item.description.trim() ? (
-                                <span />
-                              ) : (
-                                <span className="text-[12px] text-warning">No description yet</span>
-                              )}
+                              <DescriptionWords value={item.description} />
                               <CharCount value={item.description} max={2000} />
                             </div>
                           </div>

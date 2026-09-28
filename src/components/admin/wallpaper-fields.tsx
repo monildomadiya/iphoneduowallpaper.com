@@ -140,4 +140,16 @@ export function CharCount({ value, max }: { value: string; max: number }) {
   );
 }
 
+/** Word count with a nudge: one-line descriptions leave wallpaper pages too thin to get indexed. */
+export function DescriptionWords({ value }: { value: string }) {
+  const words = value.trim() ? value.trim().split(/\s+/).length : 0;
+  const tone = words >= 80 ? "text-success" : words >= 40 ? "text-warning" : "text-fg-3";
+  const note = words >= 80 ? "good length" : words ? "aim for 80+" : "no description yet";
+  return (
+    <span className={cn("text-[12px]", tone)}>
+      {words} {words === 1 ? "word" : "words"} · {note}
+    </span>
+  );
+}
+
 export { inputClass };

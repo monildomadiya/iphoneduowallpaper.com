@@ -4,6 +4,7 @@ import { getSiteSettings } from "@/lib/data/settings";
 import { siteUrl } from "@/lib/env";
 import type { Post, SiteSettings, WallpaperDetail } from "@/lib/types";
 import { absoluteUrl, imageUrl, stripMarkdown, truncate } from "@/lib/utils";
+import { wallpaperOverview } from "@/lib/wallpaper-copy";
 
 interface MetadataInput {
   title: string;
@@ -110,7 +111,7 @@ export function wallpaperJsonLd(wallpaper: WallpaperDetail, settings: SiteSettin
     "@context": "https://schema.org",
     "@type": "ImageObject",
     name: wallpaper.title,
-    description: wallpaper.description ?? undefined,
+    description: wallpaper.description || wallpaperOverview(wallpaper)[0],
     contentUrl: imageUrl(wallpaper.original_key),
     thumbnailUrl: imageUrl(wallpaper.thumb_key),
     url: absoluteUrl(`/wallpapers/${wallpaper.slug}`),

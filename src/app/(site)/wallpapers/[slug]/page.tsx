@@ -25,6 +25,7 @@ import {
   wallpaperAlt,
   wallpaperPageTitle,
 } from "@/lib/utils";
+import { fitNote, screenFitDetail, wallpaperOverview } from "@/lib/wallpaper-copy";
 
 // Renders on the server before responding so unknown slugs return a real 404 status (better for SEO).
 export const instant = false;
@@ -50,7 +51,7 @@ export async function generateMetadata({ params }: PageProps<"/wallpapers/[slug]
     wallpaper.seo_description ||
     (wallpaper.description
       ? truncate(wallpaper.description, 155)
-      : `Download the ${wallpaper.title} wallpaper free in full ${wallpaper.width} × ${wallpaper.height} resolution for iPhone Duo, iPhone 18 Pro and more.`);
+      : truncate(`Free download. ${wallpaperOverview(wallpaper)[0]}`, 155));
 
   return buildMetadata({
     title,
@@ -84,6 +85,7 @@ export default async function WallpaperPage({ params }: PageProps<"/wallpapers/[
   ]);
 
   const path = `/wallpapers/${wallpaper.slug}`;
+  const overview = wallpaperOverview(wallpaper);
   const details = [
     { label: "Resolution", value: `${wallpaper.width} × ${wallpaper.height} px (${qualityLabel(wallpaper.width, wallpaper.height)})` },
     { label: "Orientation", value: orientationLabel(wallpaper.width, wallpaper.height) },
@@ -166,8 +168,17 @@ export default async function WallpaperPage({ params }: PageProps<"/wallpapers/[
               </span>
             </p>
 
+            <section className="mt-10">
+              <h2 className="text-[19px] font-semibold tracking-tight">About this wallpaper</h2>
+              {overview.map((paragraph) => (
+                <p key={paragraph} className="mt-3 text-[15px] leading-6 text-fg-2">
+                  {paragraph}
+                </p>
+              ))}
+            </section>
+
             {devices.length ? (
-              <section className="mt-10 rounded-[24px] bg-surface p-5 md:p-6">
+              <section className="mt-8 rounded-[24px] bg-surface p-5 md:p-6">
                 <h2 className="text-[19px] font-semibold tracking-tight">Screen fit</h2>
                 <ul className="mt-3 divide-y divide-line">
                   {devices.map((device) => {
@@ -181,7 +192,8 @@ export default async function WallpaperPage({ params }: PageProps<"/wallpapers/[
                             {device.name}
                           </Link>
                           <p className="text-[13px] text-fg-3">
-                            {device.width} × {device.height} px
+                            {device.width} × {device.height} px ·{" "}
+                            {fitNote(screenFitDetail(wallpaper.width, wallpaper.height, device))}
                           </p>
                         </div>
                         <span className={cn("inline-flex shrink-0 items-center gap-1 text-[13px] font-medium", style.className)}>

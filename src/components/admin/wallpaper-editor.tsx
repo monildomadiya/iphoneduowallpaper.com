@@ -22,6 +22,7 @@ import {
   CategorySelect,
   CharCount,
   ChipMultiSelect,
+  DescriptionWords,
   SourceSelect,
   StatusToggle,
   type TaxonomyOption,
@@ -255,16 +256,17 @@ export function WallpaperEditor({
             <Field
               label="Description"
               htmlFor="description"
-              hint="Describe colors, mood and subject in 2–3 unique sentences. Great for SEO and AdSense."
+              hint="Aim for 80+ words only this wallpaper could have: what is in it, colors, mood, where the subject sits on each screen. Pages with a one-line description rarely get indexed."
             >
               <textarea
                 id="description"
-                rows={4}
+                rows={5}
                 value={description}
                 onChange={(event) => setDescription(event.target.value)}
                 className={cn(inputClass, "resize-y")}
               />
-              <div className="mt-1 text-right">
+              <div className="mt-1 flex items-center justify-between gap-3">
+                <DescriptionWords value={description} />
                 <CharCount value={description} max={2000} />
               </div>
             </Field>
