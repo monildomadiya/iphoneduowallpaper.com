@@ -57,7 +57,8 @@ export default async function HomePage() {
       <JsonLd data={[websiteJsonLd(settings), organizationJsonLd(settings), faqJsonLd(HOME_FAQ)]} />
 
       {/* ------------------------------------------------------------ Hero */}
-      <section className="relative overflow-hidden">
+      {/* Slides up under the floating header so the glow runs to the top edge instead of starting below it. */}
+      <section className="relative -mt-[4.25rem] overflow-hidden pt-[4.25rem] md:-mt-20 md:pt-20">
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
           <div
             className="absolute left-1/2 top-[-18%] h-[720px] w-[1200px] -translate-x-1/2 rounded-full opacity-70 blur-3xl"

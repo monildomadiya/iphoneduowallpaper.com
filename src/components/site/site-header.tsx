@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { getCategories } from "@/lib/data/taxonomy";
-import { Logo } from "./logo";
-import { DesktopNav, HeaderControls, NavLinks } from "./header-client";
+import { LogoMark } from "./logo";
+import { DesktopNav, HeaderBar, HeaderControls, NavLinks } from "./header-client";
 
 export async function SiteHeader({ siteName, announcement }: { siteName: string; announcement: string | null }) {
   const categories = await getCategories();
@@ -24,22 +24,27 @@ export async function SiteHeader({ siteName, announcement }: { siteName: string;
       >
         Skip to content
       </a>
-      <header className="glass sticky top-0 z-50 border-b border-line">
-        <div className="container-apple flex h-12 items-center justify-between gap-6">
-          <Link href="/" aria-label={`${siteName} home`} className="shrink-0 text-fg">
-            <Logo name={siteName} />
+      {announcement ? (
+        <div className="bg-linear-to-r from-[#0a84ff] via-[#6e5bff] to-[#d85bb0]">
+          <p className="container-apple py-2 text-center text-[13px] font-medium text-white">{announcement}</p>
+        </div>
+      ) : null}
+      <header className="pointer-events-none sticky top-0 z-50 px-3 pt-3 md:px-6 md:pt-4">
+        <HeaderBar>
+          <Link
+            href="/"
+            aria-label={`${siteName} home`}
+            className="flex min-w-0 items-center gap-2 rounded-full py-1 pl-1.5 pr-3 text-fg transition hover:bg-black/[0.04] md:shrink-0"
+          >
+            <LogoMark className="size-7 shrink-0 drop-shadow-[0_3px_6px_rgba(110,91,255,0.35)]" />
+            <span className="truncate text-[15px] font-semibold tracking-tight md:hidden lg:inline">{siteName}</span>
           </Link>
           <Suspense fallback={<NavLinks pathname={null} />}>
             <DesktopNav />
           </Suspense>
           <HeaderControls quickLinks={quickLinks} />
-        </div>
+        </HeaderBar>
       </header>
-      {announcement ? (
-        <div className="border-b border-line bg-surface">
-          <p className="container-apple py-2.5 text-center text-[13px] text-fg-2">{announcement}</p>
-        </div>
-      ) : null}
     </>
   );
 }

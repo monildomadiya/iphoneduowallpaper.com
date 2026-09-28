@@ -32,7 +32,7 @@ export function CookieBanner() {
     <div
       role="region"
       aria-label="Cookie notice"
-      className="fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-50 mx-auto max-w-2xl animate-fade-up md:bottom-6"
+      className="fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-30 mx-auto max-w-2xl animate-fade-up md:bottom-6"
     >
       <div className="glass flex flex-col gap-3 rounded-2xl border border-line p-4 shadow-float sm:flex-row sm:items-center sm:gap-5">
         <p className="text-[13px] leading-5 text-fg-2">
