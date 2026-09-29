@@ -3,7 +3,7 @@ import { CheckCircle2, Circle, Download, Eye, Flag, Images, Mail, Upload } from 
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ActivityChart } from "@/components/admin/activity-chart";
-import { AdminHeader, Badge, buttonClass, Card, StatCard } from "@/components/admin/ui";
+import { AdminHeader, buttonClass, Card, StatCard, StatusBadge } from "@/components/admin/ui";
 import { buildAdSenseChecklist } from "@/lib/admin/checklist";
 import { getAdminSettings, getDashboardStats, getRecentWallpapers, getTopWallpapers } from "@/lib/admin/queries";
 import { requireAdmin } from "@/lib/auth";
@@ -47,7 +47,7 @@ export default async function DashboardPage({ searchParams }: PageProps<"/admin"
         }
       />
 
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
         <StatCard
           label="Published"
           value={formatNumber(stats.wallpapers_published)}
@@ -66,7 +66,7 @@ export default async function DashboardPage({ searchParams }: PageProps<"/admin"
         />
       </div>
 
-      <div className="mt-6 grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
+      <div className="mt-4 grid gap-4 sm:mt-6 sm:gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
         <Card title="Last 30 days" description="Daily downloads and wallpaper views">
           <ActivityChart series={stats.series} />
         </Card>
@@ -84,7 +84,7 @@ export default async function DashboardPage({ searchParams }: PageProps<"/admin"
                   <Circle className="mt-px size-4 shrink-0 text-fg-3" />
                 )}
                 {item.href && !item.done ? (
-                  <Link href={item.href} className="text-fg hover:text-link">
+                  <Link href={item.href} className="text-fg underline decoration-line-strong underline-offset-2 hover:text-link">
                     {item.label}
                   </Link>
                 ) : (
@@ -96,13 +96,13 @@ export default async function DashboardPage({ searchParams }: PageProps<"/admin"
         </Card>
       </div>
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-2">
+      <div className="mt-4 grid gap-4 sm:mt-6 sm:gap-6 lg:grid-cols-2">
         <Card title="Top wallpapers" description="Most downloaded" bodyClassName="p-2">
           {top.length ? (
             <ul className="divide-y divide-line">
               {top.map((item, index) => (
                 <li key={item.id}>
-                  <Link href={`/admin/wallpapers/${item.id}`} className="flex items-center gap-3 rounded-xl px-3 py-2.5 hover:bg-surface">
+                  <Link href={`/admin/wallpapers/${item.id}`} className="flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors hover:bg-surface active:bg-surface">
                     <span className="w-4 text-[13px] font-semibold text-fg-3">{index + 1}</span>
                     <img
                       src={imageUrl(item.thumb_key)}
@@ -134,7 +134,7 @@ export default async function DashboardPage({ searchParams }: PageProps<"/admin"
             <ul className="divide-y divide-line">
               {recent.map((item) => (
                 <li key={item.id}>
-                  <Link href={`/admin/wallpapers/${item.id}`} className="flex items-center gap-3 rounded-xl px-3 py-2.5 hover:bg-surface">
+                  <Link href={`/admin/wallpapers/${item.id}`} className="flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors hover:bg-surface active:bg-surface">
                     <img
                       src={imageUrl(item.thumb_key)}
                       alt=""
@@ -145,7 +145,7 @@ export default async function DashboardPage({ searchParams }: PageProps<"/admin"
                       <span className="block truncate text-[14px] font-medium">{item.title}</span>
                       <span className="text-[12px] text-fg-3">{formatDate(item.created_at, { month: "short", day: "numeric", year: "numeric" })}</span>
                     </span>
-                    <Badge tone={item.status === "published" ? "green" : "gray"}>{item.status}</Badge>
+                    <StatusBadge status={item.status} />
                   </Link>
                 </li>
               ))}

@@ -156,20 +156,27 @@ export function Modal({
         if (event.target === ref.current) onClose();
       }}
       className={cn(
-        "m-auto w-[calc(100%-2rem)] rounded-[24px] border border-line bg-elevated p-0 text-fg shadow-float backdrop:bg-black/40 backdrop:backdrop-blur-sm",
+        // Phones: a sheet that rises from the bottom edge. Larger screens: a centred card.
+        "m-auto w-[calc(100%-2rem)] rounded-[24px] border border-line bg-elevated p-0 text-fg shadow-float backdrop:bg-black/40 backdrop:backdrop-blur-sm open:animate-pop-in open:backdrop:animate-backdrop-in",
+        "max-sm:mb-0 max-sm:w-full max-sm:max-w-none max-sm:rounded-b-none max-sm:border-x-0 max-sm:border-b-0 max-sm:open:animate-sheet-up",
         size === "lg" ? "max-w-3xl" : "max-w-lg",
       )}
     >
       {open ? (
-        <div className="flex max-h-[85vh] flex-col">
-          <header className="flex items-center justify-between border-b border-line px-5 py-4">
-            <h2 className="text-[17px] font-semibold tracking-tight">{title}</h2>
-            <button type="button" onClick={onClose} aria-label="Close" className="grid size-8 place-items-center rounded-full hover:bg-surface">
+        <div className="flex max-h-[85dvh] flex-col sm:max-h-[85vh]">
+          <div className="mx-auto mt-2 h-1 w-9 shrink-0 rounded-full bg-line-strong sm:hidden" aria-hidden />
+          <header className="flex items-center justify-between gap-3 border-b border-line px-5 py-3.5 sm:py-4">
+            <h2 className="min-w-0 truncate text-[17px] font-semibold tracking-tight">{title}</h2>
+            <button type="button" onClick={onClose} aria-label="Close" className="grid size-9 shrink-0 place-items-center rounded-full bg-surface text-fg-2 hover:bg-surface-hover hover:text-fg sm:size-8 sm:bg-transparent">
               <X className="size-4" />
             </button>
           </header>
-          <div className="overflow-y-auto px-5 py-5">{children}</div>
-          {footer ? <footer className="flex justify-end gap-2 border-t border-line px-5 py-4">{footer}</footer> : null}
+          <div className="overflow-y-auto overscroll-contain px-5 py-5">{children}</div>
+          {footer ? (
+            <footer className="flex justify-end gap-2 border-t border-line px-5 py-3.5 pb-[calc(0.875rem+env(safe-area-inset-bottom))] max-sm:*:flex-1 sm:py-4 sm:pb-4">
+              {footer}
+            </footer>
+          ) : null}
         </div>
       ) : null}
     </dialog>
@@ -215,7 +222,7 @@ export function ConfirmProvider({ children }: { children: React.ReactNode }) {
             <button
               type="button"
               autoFocus
-              className={state?.destructive ? "inline-flex items-center justify-center rounded-full bg-danger px-4 py-2 text-[14px] font-medium text-white hover:opacity-90" : buttonClass.primary}
+              className={state?.destructive ? cn(buttonClass.primary, "bg-danger hover:bg-danger hover:opacity-90") : buttonClass.primary}
               onClick={() => close(true)}
             >
               {state?.confirmLabel ?? "Confirm"}

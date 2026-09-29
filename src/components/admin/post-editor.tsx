@@ -221,17 +221,17 @@ export function PostEditor({ post }: { post: Post | null }) {
         </Card>
       </div>
 
-      <div className="glass fixed inset-x-0 bottom-0 z-30 border-t border-line lg:left-64">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 md:px-8">
+      <div className="glass fixed inset-x-0 bottom-0 z-30 border-t border-line pb-[env(safe-area-inset-bottom)] lg:left-64">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-2 px-4 py-3 sm:gap-3 md:px-8">
           {post ? (
             <button type="button" onClick={remove} className={buttonClass.danger}>
               <Trash2 className="size-4" />
-              Delete
+              <span className="max-sm:sr-only">Delete</span>
             </button>
           ) : (
             <span />
           )}
-          <div className="flex gap-2">
+          <div className="flex min-w-0 gap-2">
             <Link href="/admin/posts" className={buttonClass.secondary}>
               Back
             </Link>

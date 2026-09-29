@@ -58,6 +58,10 @@
   --animate-float: float 9s ease-in-out infinite;
   --animate-float-delayed: float 9s ease-in-out 1.5s infinite;
   --animate-shimmer: shimmer 1.6s linear infinite;
+  --animate-page-in: page-in 0.35s var(--ease-apple) both;
+  --animate-pop-in: pop-in 0.22s var(--ease-apple) both;
+  --animate-sheet-up: sheet-up 0.32s var(--ease-apple) both;
+  --animate-backdrop-in: fade-in 0.2s ease both;
 
   @keyframes fade-up {
     from {
@@ -75,6 +79,34 @@
     }
     to {
       opacity: 1;
+    }
+  }
+  @keyframes page-in {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes pop-in {
+    from {
+      opacity: 0;
+      transform: scale(0.97);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes sheet-up {
+    from {
+      transform: translateY(100%);
+    }
+    to {
+      transform: none;
     }
   }
   @keyframes float {
@@ -354,6 +386,29 @@
   }
   .prose-apple td {
     color: var(--fg-secondary);
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Admin shell                                                        */
+/* ------------------------------------------------------------------ */
+.admin-shell {
+  /* Nothing in the admin may push the page sideways. */
+  overflow-x: clip;
+  /* Height of the phone tab bar; floating bars sit above it. */
+  --tabbar-h: calc(4rem + env(safe-area-inset-bottom));
+}
+@media (min-width: 1024px) {
+  .admin-shell {
+    --tabbar-h: 0px;
+  }
+}
+@media (max-width: 639px) {
+  /* iOS zooms into any field under 16px; keep the admin still while typing. */
+  .admin-shell input:not([type="checkbox"]):not([type="radio"]),
+  .admin-shell select,
+  .admin-shell textarea {
+    font-size: 16px;
   }
 }
 

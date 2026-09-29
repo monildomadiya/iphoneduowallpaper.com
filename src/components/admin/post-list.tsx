@@ -1,6 +1,6 @@
 "use client";
 
-import { Trash2 } from "lucide-react";
+import { ChevronRight, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
@@ -10,7 +10,7 @@ import type { Post } from "@/lib/types";
 import { cn, formatDate } from "@/lib/utils";
 import { useConfirm } from "./client";
 import { BulkBar, SelectBox, useSelection } from "./selection";
-import { Badge, buttonClass } from "./ui";
+import { StatusBadge, buttonClass } from "./ui";
 
 type PostListItem = Pick<Post, "id" | "title" | "slug" | "status" | "updated_at" | "author_name">;
 
@@ -44,7 +44,7 @@ export function PostList({ posts }: { posts: PostListItem[] }) {
   return (
     <>
       <div className="overflow-hidden rounded-[22px] border border-line bg-elevated shadow-card">
-        <label className="flex cursor-pointer items-center gap-3 border-b border-line px-5 py-2.5 text-[12px] font-medium text-fg-3">
+        <label className="flex cursor-pointer items-center gap-3 border-b border-line px-4 py-3 text-[13px] font-medium text-fg-2 sm:px-5 sm:py-2.5 sm:text-[12px] sm:text-fg-3">
           <SelectBox
             checked={selection.allSelected}
             indeterminate={selection.someSelected}
@@ -56,21 +56,31 @@ export function PostList({ posts }: { posts: PostListItem[] }) {
         <ul className={cn("divide-y divide-line", pending && "opacity-60")}>
           {posts.map((post) => (
             <li key={post.id} className={cn("flex items-center", selection.isSelected(post.id) && "bg-accent/5")}>
-              <div className="py-4 pl-5">
+              <label className="grid cursor-pointer place-items-center self-stretch pl-4 sm:pl-5">
                 <SelectBox
                   checked={selection.isSelected(post.id)}
                   label={`Select ${post.title}`}
                   onToggle={(range) => selection.toggle(post.id, range)}
                 />
-              </div>
-              <Link href={`/admin/posts/${post.id}`} className="flex min-w-0 flex-1 items-center gap-4 px-4 py-4 transition hover:bg-surface/60">
+              </label>
+              <Link
+                href={`/admin/posts/${post.id}`}
+                className="flex min-w-0 flex-1 items-center gap-3 px-3 py-3.5 transition hover:bg-surface/60 active:bg-surface/60 sm:gap-4 sm:px-4 sm:py-4"
+              >
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-[15px] font-medium">{post.title}</p>
+                  <p className="line-clamp-2 text-[15px] font-medium sm:truncate">{post.title}</p>
                   <p className="mt-0.5 truncate text-[12px] text-fg-3">
-                    /blog/{post.slug} · {post.author_name} · updated {formatDate(post.updated_at, { month: "short", day: "numeric", year: "numeric" })}
+                    <span className="max-sm:hidden">/blog/{post.slug} · {post.author_name} · </span>
+                    Updated {formatDate(post.updated_at, { month: "short", day: "numeric", year: "numeric" })}
                   </p>
+                  <span className="mt-1.5 block sm:hidden">
+                    <StatusBadge status={post.status} />
+                  </span>
                 </div>
-                <Badge tone={post.status === "published" ? "green" : "gray"}>{post.status}</Badge>
+                <span className="max-sm:hidden">
+                  <StatusBadge status={post.status} />
+                </span>
+                <ChevronRight className="size-4 shrink-0 text-fg-3" />
               </Link>
             </li>
           ))}

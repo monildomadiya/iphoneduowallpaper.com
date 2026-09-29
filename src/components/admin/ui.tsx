@@ -1,3 +1,4 @@
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
@@ -6,16 +7,19 @@ export const inputClass =
 
 export const selectClass = `${inputClass} select-chevron appearance-none pr-9`;
 
+const buttonBase =
+  "inline-flex min-h-10 select-none items-center justify-center gap-2 whitespace-nowrap rounded-full py-2 text-[14px] font-medium transition active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-60 disabled:active:scale-100";
+
 export const buttonClass = {
-  primary:
-    "inline-flex items-center justify-center gap-2 rounded-full bg-accent px-4 py-2 text-[14px] font-medium text-white transition hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-60",
-  secondary:
-    "inline-flex items-center justify-center gap-2 rounded-full bg-surface px-4 py-2 text-[14px] font-medium text-fg transition hover:bg-surface-hover disabled:cursor-not-allowed disabled:opacity-60",
-  ghost:
-    "inline-flex items-center justify-center gap-2 rounded-full px-3 py-2 text-[14px] font-medium text-fg-2 transition hover:bg-surface hover:text-fg disabled:opacity-60",
-  danger:
-    "inline-flex items-center justify-center gap-2 rounded-full bg-danger/10 px-4 py-2 text-[14px] font-medium text-danger transition hover:bg-danger/15 disabled:opacity-60",
+  primary: `${buttonBase} bg-accent px-4 text-white hover:bg-accent-hover`,
+  secondary: `${buttonBase} bg-surface px-4 text-fg hover:bg-surface-hover`,
+  ghost: `${buttonBase} px-3 text-fg-2 hover:bg-surface hover:text-fg`,
+  danger: `${buttonBase} bg-danger/10 px-4 text-danger hover:bg-danger/15`,
 };
+
+/** Round icon-only button; always pair with aria-label and title. */
+export const iconButtonClass =
+  "grid size-9 shrink-0 place-items-center rounded-full text-fg-2 transition hover:bg-surface hover:text-fg active:scale-95 disabled:opacity-50";
 
 export function AdminHeader({
   title,
@@ -29,17 +33,23 @@ export function AdminHeader({
   back?: { href: string; label: string };
 }) {
   return (
-    <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+    <div className="mb-6 flex flex-col gap-4 sm:mb-8 md:flex-row md:items-end md:justify-between">
       <div className="min-w-0">
         {back ? (
-          <Link href={back.href} className="mb-2 inline-block text-[13px] font-medium text-link hover:underline">
-            ‹ {back.label}
+          <Link
+            href={back.href}
+            className="-ml-1.5 mb-1.5 inline-flex items-center gap-0.5 rounded-full py-1 pl-0.5 pr-2.5 text-[14px] font-medium text-link transition hover:bg-accent/10"
+          >
+            <ChevronLeft className="size-4" />
+            {back.label}
           </Link>
         ) : null}
-        <h1 className="text-[28px] font-bold leading-tight tracking-tight md:text-[34px]">{title}</h1>
-        {description ? <div className="mt-1.5 max-w-2xl text-[15px] text-fg-2">{description}</div> : null}
+        <h1 className="text-[26px] font-bold leading-tight tracking-tight sm:text-[28px] md:text-[34px]">{title}</h1>
+        {description ? (
+          <div className="mt-1 max-w-2xl text-[14px] leading-snug text-fg-2 sm:mt-1.5 sm:text-[15px]">{description}</div>
+        ) : null}
       </div>
-      {actions ? <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div> : null}
+      {actions ? <div className="flex shrink-0 flex-wrap items-center gap-2 max-sm:*:flex-1">{actions}</div> : null}
     </div>
   );
 }
@@ -62,15 +72,15 @@ export function Card({
   return (
     <section className={cn("rounded-[22px] border border-line bg-elevated shadow-card", className)}>
       {title || actions ? (
-        <header className="flex items-start justify-between gap-4 border-b border-line px-5 py-4">
-          <div>
+        <header className="flex items-start justify-between gap-4 border-b border-line px-4 py-3.5 sm:px-5 sm:py-4">
+          <div className="min-w-0">
             {title ? <h2 className="text-[17px] font-semibold tracking-tight">{title}</h2> : null}
             {description ? <p className="mt-0.5 text-[13px] text-fg-2">{description}</p> : null}
           </div>
           {actions}
         </header>
       ) : null}
-      <div className={cn("p-5", bodyClassName)}>{children}</div>
+      <div className={cn("p-4 sm:p-5", bodyClassName)}>{children}</div>
     </section>
   );
 }
@@ -95,13 +105,24 @@ export function Badge({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[12px] font-medium",
+        "inline-flex shrink-0 items-center gap-1 rounded-full px-2 py-0.5 text-[12px] font-medium capitalize",
         BADGE_TONES[tone],
         className,
       )}
     >
       {children}
     </span>
+  );
+}
+
+/** Published / draft pill with a status dot, used by every content list. */
+export function StatusBadge({ status }: { status: string }) {
+  const live = status === "published";
+  return (
+    <Badge tone={live ? "green" : "gray"}>
+      <span className={cn("size-1.5 rounded-full", live ? "bg-success" : "bg-fg-3")} />
+      {live ? "Published" : "Draft"}
+    </Badge>
   );
 }
 
@@ -129,7 +150,7 @@ export function Field({
       {error ? (
         <p className="mt-1.5 text-[12px] text-danger">{error}</p>
       ) : hint ? (
-        <p className="mt-1.5 text-[12px] text-fg-3">{hint}</p>
+        <p className="mt-1.5 text-[12px] leading-relaxed text-fg-3 [overflow-wrap:anywhere]">{hint}</p>
       ) : null}
     </div>
   );
@@ -150,17 +171,17 @@ export function StatCard({
 }) {
   const body = (
     <>
-      <div className="flex items-center justify-between">
-        <p className="text-[13px] font-medium text-fg-2">{label}</p>
-        {icon ? <span className="text-fg-3">{icon}</span> : null}
+      <div className="flex items-center justify-between gap-2">
+        <p className="truncate text-[13px] font-medium text-fg-2">{label}</p>
+        {icon ? <span className="grid size-7 shrink-0 place-items-center rounded-full bg-surface text-fg-2">{icon}</span> : null}
       </div>
-      <p className="mt-2 text-[30px] font-bold leading-none tracking-tight">{value}</p>
-      {hint ? <p className="mt-2 text-[12px] text-fg-3">{hint}</p> : null}
+      <p className="mt-2 text-[26px] font-bold leading-none tracking-tight tabular-nums sm:text-[30px]">{value}</p>
+      {hint ? <p className="mt-2 truncate text-[12px] text-fg-3">{hint}</p> : null}
     </>
   );
-  const className = "block rounded-[22px] border border-line bg-elevated p-5 shadow-card transition";
+  const className = "block min-w-0 rounded-[22px] border border-line bg-elevated p-4 shadow-card transition sm:p-5";
   return href ? (
-    <Link href={href} className={cn(className, "hover:border-line-strong")}>
+    <Link href={href} className={cn(className, "hover:-translate-y-0.5 hover:border-line-strong active:scale-[0.98]")}>
       {body}
     </Link>
   ) : (
@@ -178,7 +199,7 @@ export function AdminEmpty({
   action?: React.ReactNode;
 }) {
   return (
-    <div className="rounded-[22px] border border-dashed border-line-strong px-6 py-14 text-center">
+    <div className="rounded-[22px] border border-dashed border-line-strong px-5 py-12 text-center sm:px-6 sm:py-14">
       <p className="text-[17px] font-semibold">{title}</p>
       {description ? <p className="mx-auto mt-1 max-w-md text-[14px] text-fg-2">{description}</p> : null}
       {action ? <div className="mt-5 flex justify-center">{action}</div> : null}
@@ -196,23 +217,34 @@ export function AdminPagination({
   href: (page: number) => string;
 }) {
   if (totalPages <= 1) return null;
+  const disabled = cn(buttonClass.secondary, "pointer-events-none opacity-40");
   return (
-    <div className="mt-6 flex items-center justify-between text-[14px]">
-      <p className="text-fg-2">
-        Page {page} of {totalPages}
+    <nav aria-label="Pages" className="mt-6 flex items-center justify-between gap-3 text-[14px]">
+      {page > 1 ? (
+        <Link href={href(page - 1)} className={buttonClass.secondary}>
+          <ChevronLeft className="-ml-1 size-4" />
+          Previous
+        </Link>
+      ) : (
+        <span className={disabled} aria-hidden>
+          <ChevronLeft className="-ml-1 size-4" />
+          Previous
+        </span>
+      )}
+      <p className="text-fg-2 tabular-nums">
+        <strong className="font-semibold text-fg">{page}</strong> / {totalPages}
       </p>
-      <div className="flex gap-2">
-        {page > 1 ? (
-          <Link href={href(page - 1)} className={buttonClass.secondary}>
-            Previous
-          </Link>
-        ) : null}
-        {page < totalPages ? (
-          <Link href={href(page + 1)} className={buttonClass.secondary}>
-            Next
-          </Link>
-        ) : null}
-      </div>
-    </div>
+      {page < totalPages ? (
+        <Link href={href(page + 1)} className={buttonClass.secondary}>
+          Next
+          <ChevronRight className="-mr-1 size-4" />
+        </Link>
+      ) : (
+        <span className={disabled} aria-hidden>
+          Next
+          <ChevronRight className="-mr-1 size-4" />
+        </span>
+      )}
+    </nav>
   );
 }

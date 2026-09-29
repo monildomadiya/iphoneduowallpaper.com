@@ -17,7 +17,7 @@ import { siteUrl } from "@/lib/env";
 import type { WallpaperAdminRow } from "@/lib/types";
 import { cn, formatBytes, formatCompact, formatDate, imageUrl, slugify } from "@/lib/utils";
 import { Switch, TagInput, useConfirm } from "./client";
-import { Badge, Card, Field, buttonClass, inputClass } from "./ui";
+import { Card, Field, StatusBadge, buttonClass, inputClass } from "./ui";
 import {
   CategorySelect,
   CharCount,
@@ -169,7 +169,10 @@ export function WallpaperEditor({
     <div className="grid gap-6 lg:grid-cols-[300px_minmax(0,1fr)]">
       <div className="space-y-4 lg:sticky lg:top-6 lg:self-start">
         <div className="overflow-hidden rounded-[22px] border border-line bg-elevated shadow-card">
-          <div className="relative flex aspect-[3/4] items-center justify-center p-4" style={{ backgroundColor: wallpaper.dominant_color }}>
+          <div
+            className="relative flex h-72 items-center justify-center p-4 sm:h-96 lg:aspect-[3/4] lg:h-auto"
+            style={{ backgroundColor: wallpaper.dominant_color }}
+          >
             <img src={imageUrl(previewKey)} alt={wallpaper.title} className="max-h-full max-w-full rounded-xl object-contain shadow-float" />
             {replacing !== null ? (
               <div className="absolute inset-0 grid place-items-center bg-black/55 text-white">
@@ -182,7 +185,7 @@ export function WallpaperEditor({
           </div>
           <div className="space-y-3 p-4 text-[13px]">
             <div className="flex items-center justify-between">
-              <Badge tone={wallpaper.status === "published" ? "green" : "gray"}>{wallpaper.status}</Badge>
+              <StatusBadge status={wallpaper.status} />
               <span className="text-fg-3">
                 {wallpaper.width} × {wallpaper.height} · {formatBytes(wallpaper.file_size)}
               </span>
@@ -346,13 +349,13 @@ export function WallpaperEditor({
         </Card>
       </div>
 
-      <div className="glass fixed inset-x-0 bottom-0 z-30 border-t border-line lg:left-64">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 md:px-8">
+      <div className="glass fixed inset-x-0 bottom-0 z-30 border-t border-line pb-[env(safe-area-inset-bottom)] lg:left-64">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-2 px-4 py-3 sm:gap-3 md:px-8">
           <button type="button" onClick={remove} className={buttonClass.danger}>
             <Trash2 className="size-4" />
-            Delete
+            <span className="max-sm:sr-only">Delete</span>
           </button>
-          <div className="flex gap-2">
+          <div className="flex min-w-0 gap-2">
             <Link href="/admin/wallpapers" className={buttonClass.secondary}>
               Back
             </Link>

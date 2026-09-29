@@ -1,7 +1,7 @@
 "use client";
 
 /* eslint-disable @next/next/no-img-element -- cover thumbnails come from R2 */
-import { ExternalLink, Pencil, Plus, Star, Trash2 } from "lucide-react";
+import { ChevronRight, ExternalLink, Pencil, Plus, Star, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
@@ -11,7 +11,7 @@ import { cn, imageUrl, slugify } from "@/lib/utils";
 import { CoverPicker } from "./cover-picker";
 import { Modal, PendingButton, Switch, useConfirm } from "./client";
 import { BulkBar, SelectBox, useSelection } from "./selection";
-import { AdminEmpty, Badge, Field, buttonClass, inputClass } from "./ui";
+import { AdminEmpty, Badge, Field, buttonClass, iconButtonClass, inputClass } from "./ui";
 
 type Kind = "categories" | "collections" | "devices";
 type Row = (CategoryRow | CollectionRow | DeviceRow) & { wallpaper_count: number };
@@ -149,17 +149,76 @@ export function TaxonomyManager({ kind, rows }: { kind: Kind; rows: Row[] }) {
 
   return (
     <>
-      <div className="mb-5 flex justify-end">
-        <button type="button" className={buttonClass.primary} onClick={() => open(null)}>
+      <div className="mb-5 flex items-center justify-between gap-3">
+        <p className="text-[13px] text-fg-2 max-sm:hidden">
+          {rows.length} {rows.length === 1 ? label.singular : kind}
+        </p>
+        <button type="button" className={cn(buttonClass.primary, "max-sm:w-full")} onClick={() => open(null)}>
           <Plus className="size-4" />
           New {label.singular}
         </button>
       </div>
 
       {rows.length ? (
-        <div className="overflow-hidden rounded-[22px] border border-line bg-elevated shadow-card">
+        <>
+        {/* Phones: tap a card to edit; the checkbox is for bulk delete. */}
+        <div className={cn("overflow-hidden rounded-[22px] border border-line bg-elevated shadow-card md:hidden", deleting && "opacity-60")}>
+          <label className="flex cursor-pointer items-center gap-3 border-b border-line px-4 py-3 text-[13px] font-medium text-fg-2">
+            <SelectBox
+              checked={selection.allSelected}
+              indeterminate={selection.someSelected}
+              label={`Select all ${kind}`}
+              onToggle={selection.toggleAll}
+            />
+            Select all · {rows.length} {rows.length === 1 ? label.singular : kind}
+          </label>
+          <ul className="divide-y divide-line">
+            {rows.map((row) => {
+              const cover = (row as CategoryRow).cover_key;
+              const device = row as DeviceRow;
+              return (
+                <li key={row.id} className={cn("flex items-center", selection.isSelected(row.id) && "bg-accent/5")}>
+                  <label className="grid cursor-pointer place-items-center self-stretch pl-4 pr-1">
+                    <SelectBox
+                      checked={selection.isSelected(row.id)}
+                      label={`Select ${row.name}`}
+                      onToggle={(range) => selection.toggle(row.id, range)}
+                    />
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => open(row)}
+                    className="flex min-w-0 flex-1 items-center gap-3 py-3 pl-2 pr-3 text-left active:bg-surface/70"
+                  >
+                    {kind !== "devices" ? (
+                      <span className="h-14 w-11 shrink-0 overflow-hidden rounded-lg bg-surface">
+                        {cover ? <img src={imageUrl(cover)} alt="" className="size-full object-cover" /> : null}
+                      </span>
+                    ) : null}
+                    <span className="min-w-0 flex-1">
+                      <span className="flex items-center gap-1.5 text-[15px] font-medium">
+                        <span className="truncate">{row.name}</span>
+                        {(row as CollectionRow).is_featured ? <Star className="size-3.5 shrink-0 fill-warning text-warning" /> : null}
+                      </span>
+                      <span className="mt-0.5 block truncate text-[12px] text-fg-3">
+                        {kind === "devices" ? `${device.width} × ${device.height} · ` : `/${row.slug} · `}
+                        {row.wallpaper_count} wallpaper{row.wallpaper_count === 1 ? "" : "s"}
+                      </span>
+                      <span className="mt-1.5 block">
+                        <Badge tone={row.is_active ? "green" : "gray"}>{row.is_active ? "Visible" : "Hidden"}</Badge>
+                      </span>
+                    </span>
+                    <ChevronRight className="size-4 shrink-0 text-fg-3" />
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+
+        <div className="hidden overflow-hidden rounded-[22px] border border-line bg-elevated shadow-card md:block">
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[680px] text-left text-[14px]">
+            <table className="w-full text-left text-[14px]">
               <thead className="border-b border-line text-[12px] text-fg-3">
                 <tr>
                   <th className="w-10 py-3 pl-5 pr-2">
@@ -213,12 +272,12 @@ export function TaxonomyManager({ kind, rows }: { kind: Kind; rows: Row[] }) {
                       ) : null}
                       <td className="px-3 py-3 text-right tabular-nums text-fg-2">{row.wallpaper_count}</td>
                       <td className="px-3 py-3">
-                        <Badge tone={row.is_active ? "green" : "gray"}>{row.is_active ? "Active" : "Hidden"}</Badge>
+                        <Badge tone={row.is_active ? "green" : "gray"}>{row.is_active ? "Visible" : "Hidden"}</Badge>
                       </td>
                       <td className="px-3 py-3 text-right tabular-nums text-fg-2">{row.sort_order}</td>
                       <td className="px-5 py-3">
                         <div className="flex justify-end gap-1">
-                          <button type="button" aria-label="Edit" onClick={() => open(row)} className="grid size-8 place-items-center rounded-full text-fg-2 hover:bg-surface hover:text-fg">
+                          <button type="button" aria-label="Edit" title="Edit" onClick={() => open(row)} className={iconButtonClass}>
                             <Pencil className="size-4" />
                           </button>
                           {row.is_active ? (
@@ -227,12 +286,13 @@ export function TaxonomyManager({ kind, rows }: { kind: Kind; rows: Row[] }) {
                               target="_blank"
                               rel="noreferrer"
                               aria-label="View on site"
-                              className="grid size-8 place-items-center rounded-full text-fg-2 hover:bg-surface hover:text-fg"
+                              title="View on site"
+                              className={iconButtonClass}
                             >
                               <ExternalLink className="size-4" />
                             </a>
                           ) : null}
-                          <button type="button" aria-label="Delete" disabled={deleting} onClick={() => remove([row])} className="grid size-8 place-items-center rounded-full text-fg-2 hover:bg-danger/10 hover:text-danger">
+                          <button type="button" aria-label="Delete" title="Delete" disabled={deleting} onClick={() => remove([row])} className={cn(iconButtonClass, "hover:bg-danger/10 hover:text-danger")}>
                             <Trash2 className="size-4" />
                           </button>
                         </div>
@@ -244,6 +304,7 @@ export function TaxonomyManager({ kind, rows }: { kind: Kind; rows: Row[] }) {
             </table>
           </div>
         </div>
+        </>
       ) : (
         <AdminEmpty title={`No ${kind} yet`} description={`Create your first ${label.singular} to organize wallpapers.`} />
       )}

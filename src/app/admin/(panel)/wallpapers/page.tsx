@@ -63,10 +63,20 @@ export default async function AdminWallpapersPage({ searchParams }: PageProps<"/
         }
       />
 
-      <form className="mb-5 grid gap-3 md:grid-cols-[minmax(0,1fr)_150px_180px_160px_120px_auto]" role="search">
-        <div className="relative">
+      <form
+        className="mb-5 grid grid-cols-2 gap-2.5 sm:gap-3 md:grid-cols-[minmax(0,1fr)_150px_180px_160px_120px_auto]"
+        role="search"
+      >
+        <div className="relative col-span-2 md:col-span-1">
           <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-fg-3" />
-          <input name="q" defaultValue={filters.q} placeholder="Search title or slug" className={`${inputClass} pl-9`} />
+          <input
+            name="q"
+            type="search"
+            enterKeyHint="search"
+            defaultValue={filters.q}
+            placeholder="Search title or slug"
+            className={`${inputClass} pl-9`}
+          />
         </div>
         <select name="status" defaultValue={filters.status} className={selectClass} aria-label="Status">
           <option value="all">All statuses</option>
@@ -95,9 +105,9 @@ export default async function AdminWallpapersPage({ searchParams }: PageProps<"/
             </option>
           ))}
         </select>
-        <div className="flex gap-2">
-          <button type="submit" className={buttonClass.secondary}>
-            Filter
+        <div className="col-span-2 flex gap-2 md:col-span-1">
+          <button type="submit" className={`${buttonClass.primary} max-md:flex-1`}>
+            Apply
           </button>
           {filters.q || filters.status !== "all" || filters.categoryId || filters.sort !== "newest" || filters.perPage !== PAGE_SIZES[0] ? (
             <Link href="/admin/wallpapers" className={buttonClass.ghost}>

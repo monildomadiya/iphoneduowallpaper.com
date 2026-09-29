@@ -62,7 +62,7 @@ export function SelectBox({
       checked={checked}
       readOnly
       onClick={(event) => onToggle(event.shiftKey)}
-      className="size-4 shrink-0 cursor-pointer accent-[var(--accent)]"
+      className="size-5 shrink-0 cursor-pointer accent-[var(--accent)] sm:size-4"
     />
   );
 }
@@ -74,18 +74,19 @@ export function BulkBar({ count, onClear, children }: { count: number; onClear: 
     <div
       role="toolbar"
       aria-label="Bulk actions"
-      className="fixed inset-x-4 bottom-5 z-40 mx-auto flex w-fit max-w-[calc(100%-2rem)] flex-wrap items-center justify-center gap-2 rounded-2xl border border-line bg-elevated/95 p-2 shadow-card backdrop-blur sm:rounded-full"
+      className="fixed inset-x-3 bottom-[calc(var(--tabbar-h,0px)+0.75rem)] z-40 mx-auto flex w-fit max-w-[calc(100%-1.5rem)] animate-pop-in flex-wrap items-center justify-center gap-1.5 rounded-[22px] border border-line bg-elevated/95 p-1.5 shadow-float backdrop-blur sm:rounded-full lg:bottom-5"
     >
-      <span className="px-2 text-[13px] font-medium tabular-nums">{count} selected</span>
-      {children}
       <button
         type="button"
         onClick={onClear}
         aria-label="Clear selection"
-        className="grid size-8 place-items-center rounded-full text-fg-2 hover:bg-surface hover:text-fg"
+        title="Clear selection"
+        className="grid size-9 shrink-0 place-items-center rounded-full bg-surface text-fg-2 hover:bg-surface-hover hover:text-fg"
       >
         <X className="size-4" />
       </button>
+      <span className="shrink-0 pl-1 pr-1.5 text-[13px] font-semibold tabular-nums">{count} selected</span>
+      <div className="flex min-w-0 flex-wrap items-center justify-center gap-1.5 max-sm:*:min-h-9 max-sm:*:px-3 max-sm:*:text-[13px]">{children}</div>
     </div>
   );
 }

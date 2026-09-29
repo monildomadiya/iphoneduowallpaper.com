@@ -14,9 +14,9 @@ export default async function AdminPanelLayout({ children }: LayoutProps<"/admin
 
   return (
     <ConfirmProvider>
-      <div className="min-h-dvh bg-surface/50 lg:flex">
+      <div className="admin-shell min-h-dvh bg-surface/50 lg:flex">
         <AdminSidebar admin={{ email: admin.email, displayName: admin.displayName, role: admin.role }} counts={counts} />
-        <main className="mx-auto w-full min-w-0 max-w-6xl flex-1 px-4 py-8 pb-[calc(2rem+env(safe-area-inset-bottom))] md:px-8 md:py-10">
+        <main className="mx-auto w-full min-w-0 max-w-6xl flex-1 px-4 pt-5 pb-[calc(var(--tabbar-h)+2rem)] sm:pt-8 md:px-8 md:pt-10 lg:pb-10">
           {children}
         </main>
       </div>

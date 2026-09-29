@@ -259,12 +259,16 @@ export function Uploader({
             addFiles(event.dataTransfer.files);
           }}
           className={cn(
-            "flex cursor-pointer flex-col items-center justify-center rounded-[22px] border-2 border-dashed px-6 py-14 text-center transition",
+            "flex cursor-pointer flex-col items-center justify-center rounded-[22px] border-2 border-dashed px-5 text-center transition active:scale-[0.99]",
+            items.length ? "py-8 sm:py-10" : "py-12 sm:py-14",
             dragging ? "border-accent bg-accent/5" : "border-line-strong bg-elevated hover:border-accent/60",
           )}
         >
           <UploadCloud className="size-10 text-accent" strokeWidth={1.5} />
-          <p className="mt-4 text-[17px] font-semibold">Drop wallpapers here or click to browse</p>
+          <p className="mt-4 text-[17px] font-semibold">
+            <span className="sm:hidden">{items.length ? "Tap to add more wallpapers" : "Tap to choose wallpapers"}</span>
+            <span className="max-sm:hidden">Drop wallpapers here or click to browse</span>
+          </p>
           <p className="mt-1 text-[13px] text-fg-2">
             JPG, PNG, WebP or AVIF · up to 40 MB each · previews and thumbnails are generated automatically
           </p>
@@ -308,8 +312,8 @@ export function Uploader({
                   : [];
                 const locked = item.status !== "queued" && item.status !== "error";
                 return (
-                  <li key={item.key} className="flex gap-4 p-4">
-                    <img src={item.objectUrl} alt="" className="h-24 w-14 shrink-0 rounded-lg bg-surface object-cover" />
+                  <li key={item.key} className="flex gap-3 p-3.5 sm:gap-4 sm:p-4">
+                    <img src={item.objectUrl} alt="" className="h-20 w-12 shrink-0 rounded-lg bg-surface object-cover sm:h-24 sm:w-14" />
                     <div className="min-w-0 flex-1">
                       <div className="flex items-start gap-2">
                         <input
@@ -330,7 +334,7 @@ export function Uploader({
                           </button>
                         ) : null}
                       </div>
-                      <p className="mt-1.5 text-[12px] text-fg-3">
+                      <p className="mt-1.5 truncate text-[12px] text-fg-3">
                         {item.width ? `${item.width} × ${item.height} · ` : ""}
                         {formatBytes(item.file.size)} · {item.file.name}
                       </p>

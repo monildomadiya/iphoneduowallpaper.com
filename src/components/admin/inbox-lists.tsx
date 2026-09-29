@@ -1,6 +1,6 @@
 "use client";
 
-import { Archive, ExternalLink, Mail, MailOpen, Trash2 } from "lucide-react";
+import { Archive, ChevronDown, ExternalLink, Mail, MailOpen, Reply, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
@@ -47,7 +47,7 @@ export function MessageList({ messages }: { messages: ContactMessage[] }) {
   return (
     <>
       <div className={cn("overflow-hidden rounded-[22px] border border-line bg-elevated shadow-card", pending && "opacity-70")}>
-        <label className="flex cursor-pointer items-center gap-3 border-b border-line px-5 py-2.5 text-[12px] font-medium text-fg-3">
+        <label className="flex cursor-pointer items-center gap-3 border-b border-line px-4 py-3 text-[13px] font-medium text-fg-2 sm:px-5 sm:py-2.5 sm:text-[12px] sm:text-fg-3">
           <SelectBox
             checked={selection.allSelected}
             indeterminate={selection.someSelected}
@@ -62,20 +62,21 @@ export function MessageList({ messages }: { messages: ContactMessage[] }) {
             return (
               <li key={message.id} className={cn(selection.isSelected(message.id) && "bg-accent/5")}>
                 <div className="flex items-start">
-                  <div className="pl-5 pt-[18px]">
+                  <label className="cursor-pointer self-stretch pl-4 pt-[17px] sm:pl-5 sm:pt-[18px]">
                     <SelectBox
                       checked={selection.isSelected(message.id)}
                       label={`Select message from ${message.name}`}
                       onToggle={(range) => selection.toggle(message.id, range)}
                     />
-                  </div>
+                  </label>
                   <button
                     type="button"
                     onClick={() => {
                       setOpenId(open ? null : message.id);
                       if (!open && message.status === "new") run(() => setMessageStatus(message.id, "read"), true);
                     }}
-                    className="flex min-w-0 flex-1 items-start gap-3 px-4 py-4 text-left transition hover:bg-surface/60"
+                    aria-expanded={open}
+                    className="flex min-w-0 flex-1 items-start gap-3 px-4 py-4 text-left transition hover:bg-surface/60 active:bg-surface/60"
                   >
                     {message.status === "new" ? (
                       <Mail className="mt-0.5 size-4 shrink-0 text-accent" />
@@ -83,27 +84,36 @@ export function MessageList({ messages }: { messages: ContactMessage[] }) {
                       <MailOpen className="mt-0.5 size-4 shrink-0 text-fg-3" />
                     )}
                     <div className="min-w-0 flex-1">
-                      <div className="flex items-center justify-between gap-3">
+                      <div className="flex items-baseline justify-between gap-3">
                         <p className={cn("truncate text-[14px]", message.status === "new" ? "font-semibold" : "font-medium")}>
-                          {message.name} <span className="font-normal text-fg-3">· {message.email}</span>
+                          {message.name} <span className="font-normal text-fg-3 max-sm:hidden">· {message.email}</span>
                         </p>
-                        <span className="shrink-0 text-[12px] text-fg-3">{formatDate(message.created_at, dateOptions)}</span>
+                        <span className="shrink-0 text-[12px] text-fg-3">
+                          <span className="sm:hidden">{formatDate(message.created_at, { month: "short", day: "numeric" })}</span>
+                          <span className="max-sm:hidden">{formatDate(message.created_at, dateOptions)}</span>
+                        </span>
                       </div>
-                      <p className="mt-0.5 truncate text-[13px] text-fg-2">
+                      <p className={cn("mt-0.5 text-[13px] text-fg-2", open ? "line-clamp-1" : "line-clamp-2 sm:line-clamp-1")}>
                         {message.subject ? <strong className="font-medium text-fg">{message.subject} — </strong> : null}
                         {message.message}
                       </p>
                     </div>
+                    <ChevronDown className={cn("mt-0.5 size-4 shrink-0 text-fg-3 transition-transform", open && "rotate-180")} />
                   </button>
                 </div>
                 {open ? (
-                  <div className="border-t border-line bg-surface/40 px-5 py-4">
-                    <p className="whitespace-pre-wrap text-[14px] leading-6">{message.message}</p>
+                  <div className="animate-page-in border-t border-line bg-surface/40 px-4 py-4 sm:px-5">
+                    <p className="mb-3 text-[12px] text-fg-3">
+                      From <span className="font-medium text-fg">{message.name}</span> · <span className="break-all">{message.email}</span>
+                      <span className="sm:hidden"> · {formatDate(message.created_at, dateOptions)}</span>
+                    </p>
+                    <p className="whitespace-pre-wrap break-words text-[14px] leading-6">{message.message}</p>
                     <div className="mt-4 flex flex-wrap gap-2">
                       <a
                         href={`mailto:${message.email}?subject=${encodeURIComponent(`Re: ${message.subject || "Your message"}`)}`}
-                        className={buttonClass.primary}
+                        className={cn(buttonClass.primary, "max-sm:w-full")}
                       >
+                        <Reply className="size-4" />
                         Reply by email
                       </a>
                       {message.status !== "archived" ? (
@@ -185,7 +195,7 @@ export function ReportList({ reports }: { reports: ReportWithWallpaper[] }) {
           <li
             key={report.id}
             className={cn(
-              "rounded-[22px] border border-line bg-elevated p-5 shadow-card",
+              "rounded-[22px] border border-line bg-elevated p-4 shadow-card transition-colors sm:p-5",
               selection.isSelected(report.id) && "border-accent/40 bg-accent/5",
             )}
           >
@@ -200,9 +210,9 @@ export function ReportList({ reports }: { reports: ReportWithWallpaper[] }) {
               <span className="ml-auto text-[12px] text-fg-3">{formatDate(report.created_at, dateOptions)}</span>
             </div>
             <p className="mt-3 text-[14px] font-medium">
-              {report.name} <span className="font-normal text-fg-3">· {report.email}</span>
+              {report.name} <span className="break-all font-normal text-fg-3">· {report.email}</span>
             </p>
-            <p className="mt-2 whitespace-pre-wrap text-[14px] leading-6 text-fg-2">{report.details}</p>
+            <p className="mt-2 whitespace-pre-wrap break-words text-[14px] leading-6 text-fg-2">{report.details}</p>
             <dl className="mt-3 space-y-1 text-[13px]">
               {report.wallpaper ? (
                 <div className="flex gap-2">
