@@ -36,12 +36,8 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,130 +46,40 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.iphoneduowallpaper.admin.AdminViewModel
-import com.iphoneduowallpaper.admin.data.ApiResult
-import com.iphoneduowallpaper.admin.data.ImagePipeline
-import com.iphoneduowallpaper.admin.data.UploadEngine
-import com.iphoneduowallpaper.admin.data.WallpaperForm
+import com.iphoneduowallpaper.admin.UploadItem
+import com.iphoneduowallpaper.admin.data.DeviceOption
+import com.iphoneduowallpaper.admin.data.fitReport
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-
-private class UploadItem(val uri: Uri) {
-    var title by mutableStateOf("")
-    // Per-file, because these have to differ from wallpaper to wallpaper.
-    var description by mutableStateOf("")
-    var slug by mutableStateOf("")
-    var seoTitle by mutableStateOf("")
-    var seoDescription by mutableStateOf("")
-    var expanded by mutableStateOf(false)
-    var stage by mutableStateOf("Waiting")
-    var progress by mutableFloatStateOf(0f)
-    var saved by mutableStateOf(false)
-    var error by mutableStateOf<String?>(null)
-}
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun UploadScreen(vm: AdminViewModel, nav: Navigator) {
-    val context = LocalContext.current
-    val scope = rememberCoroutineScope()
-    val items = remember { mutableStateListOf<UploadItem>() }
-
-    var status by remember { mutableStateOf("draft") }
-    var categoryId by remember { mutableStateOf<String?>(null) }
-    val deviceIds = remember { mutableStateListOf<String>() }
-    val collectionIds = remember { mutableStateListOf<String>() }
-    var sourceType by remember { mutableStateOf("original") }
-    var creditName by remember { mutableStateOf("") }
-    var running by remember { mutableStateOf(false) }
-    var savedCount by remember { mutableIntStateOf(0) }
+    val queue = vm.upload
+    val running = queue.running
 
     val picker = rememberLauncherForActivityResult(
         ActivityResultContracts.PickMultipleVisualMedia(30),
-    ) { uris ->
-        savedCount = 0
-        uris.forEach { uri -> if (items.none { it.uri == uri }) items.add(UploadItem(uri)) }
-    }
+    ) { uris -> queue.add(uris) }
 
-    // Titles come from the file names, read off the main thread.
-    LaunchedEffect(items.size) {
-        items.filter { it.title.isBlank() }.forEach { item ->
-            val name = withContext(Dispatchers.IO) {
-                ImagePipeline.readSource(context, item.uri).getOrNull()?.displayName
-            }
-            if (name != null) {
-                item.title = ImagePipeline.titleFromFilename(name)
-            } else {
-                item.error = "This file could not be read."
-                item.title = "Wallpaper"
-            }
-        }
-    }
+    // Names and pixel sizes are read on the view model, so they outlive this screen.
+    LaunchedEffect(queue.items.size) { vm.inspectPicked() }
 
-    fun startUpload() {
-        if (running || items.isEmpty()) return
-        running = true
-        savedCount = 0
-        scope.launch {
-            for (item in items.toList()) {
-                if (item.saved) continue
-                item.error = null
-                item.progress = 0f
-
-                val uploaded = UploadEngine.uploadImage(
-                    context = context,
-                    repo = vm.repo,
-                    uri = item.uri,
-                    onStage = { item.stage = it },
-                    onProgress = { item.progress = it },
-                )
-                val payload = uploaded.getOrElse {
-                    item.stage = "Failed"
-                    item.error = UploadEngine.describe(it)
-                    continue
-                }
-
-                item.stage = "Saving"
-                val form = WallpaperForm(
-                    title = item.title.trim().ifBlank { "Wallpaper" },
-                    slug = item.slug.trim().ifBlank { null },
-                    description = item.description.trim(),
-                    seoTitle = item.seoTitle.trim(),
-                    seoDescription = item.seoDescription.trim(),
-                    categoryId = categoryId,
-                    deviceIds = deviceIds.toList(),
-                    collectionIds = collectionIds.toList(),
-                    status = status,
-                    sourceType = sourceType,
-                    creditName = creditName.trim(),
-                )
-                when (val result = vm.repo.createWallpaper(form, payload)) {
-                    is ApiResult.Ok -> {
-                        item.saved = true
-                        item.stage = "Saved"
-                        savedCount++
-                    }
-                    is ApiResult.Err -> {
-                        item.stage = "Failed"
-                        item.error = result.message
-                        if (result.signedOut) {
-                            vm.forceSignOut()
-                            running = false
-                            return@launch
-                        }
-                    }
-                }
-            }
-            running = false
-            vm.refreshShell()
-            if (savedCount > 0) vm.notify("$savedCount wallpaper(s) uploaded.")
-        }
+    // A wallpaper is judged against the screens it is tagged for; against all of them until then.
+    val targets: List<DeviceOption> = if (queue.deviceIds.isEmpty()) {
+        vm.pickers.devices
+    } else {
+        vm.pickers.devices.filter { queue.deviceIds.contains(it.id) }
     }
 
     Column(Modifier.fillMaxSize()) {
         ScreenTopBar(
             title = "Upload",
-            subtitle = if (items.isEmpty()) "Pick images from your phone" else "${items.size} selected",
+            subtitle = when {
+                running -> "Uploading ${queue.pending} of ${queue.items.size}"
+                queue.items.isEmpty() -> "Pick images from your phone"
+                else -> "${queue.items.size} selected"
+            },
         )
 
         LazyColumn(
@@ -188,10 +94,10 @@ fun UploadScreen(vm: AdminViewModel, nav: Navigator) {
                     },
                     enabled = !running,
                     modifier = Modifier.fillMaxWidth().height(48.dp),
-                ) { Text(if (items.isEmpty()) "Choose images" else "Add more images") }
+                ) { Text(if (queue.items.isEmpty()) "Choose images" else "Add more images") }
             }
 
-            if (items.isEmpty()) {
+            if (queue.items.isEmpty()) {
                 item {
                     EmptyState(
                         title = "Nothing picked yet",
@@ -202,241 +108,296 @@ fun UploadScreen(vm: AdminViewModel, nav: Navigator) {
                 }
             }
 
-            items(items.size) { index ->
-                val item = items[index]
-                SectionCard(bodyPadding = PaddingValues(12.dp)) {
-                    Column {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Box(
-                                Modifier
-                                    .width(44.dp)
-                                    .aspectRatio(9f / 16f)
-                                    .clip(RoundedCornerShape(8.dp)),
-                            ) {
-                                LocalImage(item.uri)
-                            }
-                            Spacer(Modifier.width(12.dp))
-                            Field(
-                                label = "Title",
-                                value = item.title,
-                                onValueChange = { item.title = it },
-                                modifier = Modifier.weight(1f),
-                                enabled = !running && !item.saved,
-                            )
-                            if (!running && !item.saved) {
-                                IconButton(onClick = { items.remove(item) }) {
-                                    Icon(Icons.Default.Close, contentDescription = "Remove")
-                                }
-                            }
-                            if (item.saved) {
-                                Icon(
-                                    Icons.Default.CheckCircle,
-                                    contentDescription = "Saved",
-                                    tint = LocalAccents.current.success,
-                                    modifier = Modifier.size(22.dp).padding(start = 4.dp),
-                                )
-                            }
-                        }
-
-                        if (!item.saved) {
-                            Spacer(Modifier.height(10.dp))
-                            Field(
-                                label = "Description",
-                                value = item.description,
-                                onValueChange = { item.description = it },
-                                singleLine = false,
-                                minLines = 3,
-                                enabled = !running,
-                                placeholder = "Colours, mood and subject in 2–3 sentences.",
-                                helper = if (item.description.isBlank()) {
-                                    "No description yet — unique text per wallpaper is what SEO and AdSense reward."
-                                } else {
-                                    "${item.description.length}/2000"
-                                },
-                            )
-
-                            TextButton(
-                                onClick = { item.expanded = !item.expanded },
-                                enabled = !running,
-                            ) {
-                                Text(
-                                    if (item.expanded) "Hide link & search listing" else "Link & search listing",
-                                    style = MaterialTheme.typography.labelMedium,
-                                )
-                            }
-
-                            if (item.expanded) {
-                                Field(
-                                    label = "URL slug",
-                                    value = item.slug,
-                                    onValueChange = { item.slug = it },
-                                    enabled = !running,
-                                    placeholder = slugFrom(item.title),
-                                    helper = "Leave empty to build it from the title.",
-                                )
-                                FormSpacer()
-                                Field(
-                                    label = "SEO title",
-                                    value = item.seoTitle,
-                                    onValueChange = { item.seoTitle = it },
-                                    enabled = !running,
-                                    placeholder = item.title,
-                                    helper = "${item.seoTitle.length}/60",
-                                )
-                                FormSpacer()
-                                Field(
-                                    label = "Meta description",
-                                    value = item.seoDescription,
-                                    onValueChange = { item.seoDescription = it },
-                                    singleLine = false,
-                                    minLines = 2,
-                                    enabled = !running,
-                                    placeholder = "Leave empty to reuse the description above.",
-                                    helper = "${item.seoDescription.length}/160",
-                                )
-                            }
-                        }
-
-                        if (running && !item.saved && item.error == null) {
-                            Spacer(Modifier.height(8.dp))
-                            Text(
-                                "${item.stage}…",
-                                style = MaterialTheme.typography.labelMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                            Spacer(Modifier.height(4.dp))
-                            LinearProgressIndicator(
-                                progress = { item.progress },
-                                modifier = Modifier.fillMaxWidth(),
-                            )
-                        }
-                        item.error?.let {
-                            Spacer(Modifier.height(6.dp))
-                            Text(it, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.error)
-                        }
-                    }
-                }
+            // Settings first: they are chosen once and apply to everything below, so burying them
+            // under thirty image cards meant scrolling to the end and back before you could start.
+            if (queue.items.isNotEmpty()) {
+                item { BatchSettings(vm, running) }
             }
 
-            if (items.isNotEmpty()) {
-                item {
-                    SectionCard(title = "Applies to every image") {
-                        Column {
-                            Text("Status", style = MaterialTheme.typography.labelLarge)
-                            Spacer(Modifier.height(6.dp))
-                            ChoiceRow(
-                                options = listOf("draft" to "Draft", "published" to "Published"),
-                                selected = status,
-                                onSelect = { status = it },
-                            )
-
-                            FormSpacer()
-                            Text("Category", style = MaterialTheme.typography.labelLarge)
-                            Spacer(Modifier.height(6.dp))
-                            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                FilterChip(
-                                    selected = categoryId == null,
-                                    onClick = { categoryId = null },
-                                    label = { Text("None") },
-                                )
-                                vm.pickers.categories.forEach { option ->
-                                    FilterChip(
-                                        selected = categoryId == option.id,
-                                        onClick = { categoryId = option.id },
-                                        label = { Text(option.name) },
-                                    )
-                                }
-                            }
-
-                            FormSpacer()
-                            Text("Devices", style = MaterialTheme.typography.labelLarge)
-                            Spacer(Modifier.height(6.dp))
-                            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                vm.pickers.devices.forEach { device ->
-                                    val on = deviceIds.contains(device.id)
-                                    FilterChip(
-                                        selected = on,
-                                        onClick = { if (on) deviceIds.remove(device.id) else deviceIds.add(device.id) },
-                                        label = {
-                                            Text(device.screen_label?.takeIf { it.isNotBlank() } ?: device.name)
-                                        },
-                                    )
-                                }
-                            }
-
-                            if (vm.pickers.collections.isNotEmpty()) {
-                                FormSpacer()
-                                Text("Collections", style = MaterialTheme.typography.labelLarge)
-                                Spacer(Modifier.height(6.dp))
-                                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                    vm.pickers.collections.forEach { option ->
-                                        val on = collectionIds.contains(option.id)
-                                        FilterChip(
-                                            selected = on,
-                                            onClick = {
-                                                if (on) collectionIds.remove(option.id)
-                                                else collectionIds.add(option.id)
-                                            },
-                                            label = { Text(option.name) },
-                                        )
-                                    }
-                                }
-                            }
-
-                            FormSpacer()
-                            Text("Source", style = MaterialTheme.typography.labelLarge)
-                            Spacer(Modifier.height(6.dp))
-                            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                SOURCE_TYPES.forEach { (value, label) ->
-                                    FilterChip(
-                                        selected = sourceType == value,
-                                        onClick = { sourceType = value },
-                                        label = { Text(label) },
-                                    )
-                                }
-                            }
-
-                            FormSpacer()
-                            Field("Credit name", creditName, { creditName = it })
-                        }
-                    }
-                }
+            items(queue.items.size, key = { queue.items[it].uri.toString() }) { index ->
+                val item = queue.items.getOrNull(index) ?: return@items
+                UploadCard(item = item, targets = targets, running = running, onRemove = { queue.remove(item) })
             }
         }
 
-        if (items.isNotEmpty()) {
-            Column(Modifier.padding(16.dp)) {
-                val pending = items.count { !it.saved }
-                val missing = items.count { !it.saved && it.description.isBlank() }
-                if (missing > 0 && !running) {
+        if (queue.items.isNotEmpty()) {
+            UploadBar(vm, nav)
+        }
+    }
+}
+
+@Composable
+private fun UploadCard(
+    item: UploadItem,
+    targets: List<DeviceOption>,
+    running: Boolean,
+    onRemove: () -> Unit,
+) {
+    SectionCard(bodyPadding = PaddingValues(12.dp)) {
+        Column {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    Modifier
+                        .width(44.dp)
+                        .aspectRatio(9f / 16f)
+                        .clip(RoundedCornerShape(8.dp)),
+                ) {
+                    LocalImage(item.uri)
+                }
+                Spacer(Modifier.width(12.dp))
+                Field(
+                    label = "Title",
+                    value = item.title,
+                    onValueChange = { item.title = it },
+                    modifier = Modifier.weight(1f),
+                    enabled = !running && !item.saved,
+                )
+                if (!running && !item.saved) {
+                    IconButton(onClick = onRemove) {
+                        Icon(Icons.Default.Close, contentDescription = "Remove")
+                    }
+                }
+                if (item.saved) {
+                    Icon(
+                        Icons.Default.CheckCircle,
+                        contentDescription = "Saved",
+                        tint = LocalAccents.current.success,
+                        modifier = Modifier.size(22.dp).padding(start = 4.dp),
+                    )
+                }
+            }
+
+            // The same verdict the site will show visitors, while there is still time to swap the file.
+            if (item.measured) {
+                val report = fitReport(item.width, item.height, targets)
+                Spacer(Modifier.height(6.dp))
+                Text(
+                    buildString {
+                        append("${item.width} × ${item.height}")
+                        if (item.bytes > 0) append(" · ${formatBytes(item.bytes)}")
+                    },
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                if (report.hasProblem) {
                     Text(
-                        "$missing of $pending still have no description. You can upload anyway and add them " +
-                            "later, but unique descriptions are what AdSense looks for.",
+                        report.summary(),
                         style = MaterialTheme.typography.labelMedium,
                         color = LocalAccents.current.warning,
                     )
-                    Spacer(Modifier.height(8.dp))
+                } else if (targets.isNotEmpty()) {
+                    Text(
+                        "Fits every screen it is tagged for.",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = LocalAccents.current.success,
+                    )
                 }
-                Button(
-                    onClick = { startUpload() },
-                    enabled = !running && items.any { !it.saved },
-                    modifier = Modifier.fillMaxWidth().height(50.dp),
-                ) {
-                    Text(if (running) "Uploading…" else "Upload ${items.count { !it.saved }} wallpaper(s)")
+            }
+
+            if (!item.saved) {
+                Spacer(Modifier.height(10.dp))
+                Field(
+                    label = "Description",
+                    value = item.description,
+                    onValueChange = { item.description = it },
+                    singleLine = false,
+                    minLines = 3,
+                    enabled = !running,
+                    placeholder = "Colours, mood and subject in 2–3 sentences.",
+                    helper = if (item.description.isBlank()) {
+                        "No description yet — unique text per wallpaper is what SEO and AdSense reward."
+                    } else {
+                        "${item.description.length}/2000"
+                    },
+                )
+
+                TextButton(onClick = { item.expanded = !item.expanded }, enabled = !running) {
+                    Text(
+                        if (item.expanded) "Hide link & search listing" else "Link & search listing",
+                        style = MaterialTheme.typography.labelMedium,
+                    )
                 }
-                if (!running && savedCount > 0) {
-                    Spacer(Modifier.height(8.dp))
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        OutlinedButton(
-                            onClick = { items.clear(); savedCount = 0 },
-                            modifier = Modifier.weight(1f),
-                        ) { Text("Clear list") }
-                        OutlinedButton(
-                            onClick = { nav.selectRoot(Screen.Wallpapers) },
-                            modifier = Modifier.weight(1f),
-                        ) { Text("Open library") }
+
+                if (item.expanded) {
+                    Field(
+                        label = "URL slug",
+                        value = item.slug,
+                        onValueChange = { item.slug = it },
+                        enabled = !running,
+                        placeholder = slugFrom(item.title),
+                        helper = "Leave empty to build it from the title.",
+                    )
+                    FormSpacer()
+                    Field(
+                        label = "SEO title",
+                        value = item.seoTitle,
+                        onValueChange = { item.seoTitle = it },
+                        enabled = !running,
+                        placeholder = item.title,
+                        helper = "${item.seoTitle.length}/60",
+                    )
+                    FormSpacer()
+                    Field(
+                        label = "Meta description",
+                        value = item.seoDescription,
+                        onValueChange = { item.seoDescription = it },
+                        singleLine = false,
+                        minLines = 2,
+                        enabled = !running,
+                        placeholder = "Leave empty to reuse the description above.",
+                        helper = "${item.seoDescription.length}/160",
+                    )
+                }
+            }
+
+            if (running && !item.saved && item.error == null) {
+                Spacer(Modifier.height(8.dp))
+                Text(
+                    "${item.stage}…",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Spacer(Modifier.height(4.dp))
+                LinearProgressIndicator(progress = { item.progress }, modifier = Modifier.fillMaxWidth())
+            }
+            item.error?.let {
+                Spacer(Modifier.height(6.dp))
+                Text(it, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.error)
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun BatchSettings(vm: AdminViewModel, running: Boolean) {
+    val queue = vm.upload
+    SectionCard(
+        title = "Applies to every image",
+        description = "Set these once; each image keeps its own title and description.",
+    ) {
+        Column {
+            Text("Status", style = MaterialTheme.typography.labelLarge)
+            Spacer(Modifier.height(6.dp))
+            ChoiceRow(
+                options = listOf("draft" to "Draft", "published" to "Published"),
+                selected = queue.status,
+                onSelect = { if (!running) queue.status = it },
+            )
+
+            FormSpacer()
+            Text("Category", style = MaterialTheme.typography.labelLarge)
+            Spacer(Modifier.height(6.dp))
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                FilterChip(
+                    selected = queue.categoryId == null,
+                    onClick = { if (!running) queue.categoryId = null },
+                    label = { Text("None") },
+                )
+                vm.pickers.categories.forEach { option ->
+                    FilterChip(
+                        selected = queue.categoryId == option.id,
+                        onClick = { if (!running) queue.categoryId = option.id },
+                        label = { Text(option.name) },
+                    )
+                }
+            }
+
+            FormSpacer()
+            Text("Devices", style = MaterialTheme.typography.labelLarge)
+            Spacer(Modifier.height(6.dp))
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                vm.pickers.devices.forEach { device ->
+                    val on = queue.deviceIds.contains(device.id)
+                    FilterChip(
+                        selected = on,
+                        onClick = {
+                            if (running) return@FilterChip
+                            if (on) queue.deviceIds.remove(device.id) else queue.deviceIds.add(device.id)
+                        },
+                        label = { Text(device.screen_label?.takeIf { it.isNotBlank() } ?: device.name) },
+                    )
+                }
+            }
+
+            if (vm.pickers.collections.isNotEmpty()) {
+                FormSpacer()
+                Text("Collections", style = MaterialTheme.typography.labelLarge)
+                Spacer(Modifier.height(6.dp))
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    vm.pickers.collections.forEach { option ->
+                        val on = queue.collectionIds.contains(option.id)
+                        FilterChip(
+                            selected = on,
+                            onClick = {
+                                if (running) return@FilterChip
+                                if (on) queue.collectionIds.remove(option.id)
+                                else queue.collectionIds.add(option.id)
+                            },
+                            label = { Text(option.name) },
+                        )
                     }
                 }
+            }
+
+            FormSpacer()
+            Text("Source", style = MaterialTheme.typography.labelLarge)
+            Spacer(Modifier.height(6.dp))
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                SOURCE_TYPES.forEach { (value, label) ->
+                    FilterChip(
+                        selected = queue.sourceType == value,
+                        onClick = { if (!running) queue.sourceType = value },
+                        label = { Text(label) },
+                    )
+                }
+            }
+
+            FormSpacer()
+            Field("Credit name", queue.creditName, { queue.creditName = it }, enabled = !running)
+        }
+    }
+}
+
+@Composable
+private fun UploadBar(vm: AdminViewModel, nav: Navigator) {
+    val queue = vm.upload
+    val pending = queue.pending
+    val missing = queue.missingDescriptions
+
+    Column(Modifier.padding(16.dp)) {
+        if (missing > 0 && !queue.running) {
+            Text(
+                "$missing of $pending still ${if (missing == 1) "has" else "have"} no description. You can " +
+                    "upload anyway and add them later, but unique descriptions are what AdSense looks for.",
+                style = MaterialTheme.typography.labelMedium,
+                color = LocalAccents.current.warning,
+            )
+            Spacer(Modifier.height(8.dp))
+        }
+        if (queue.running) {
+            OutlinedButton(
+                onClick = { vm.cancelUpload() },
+                modifier = Modifier.fillMaxWidth().height(50.dp),
+            ) { Text("Stop after this one") }
+        } else {
+            Button(
+                onClick = { vm.startUpload() },
+                enabled = pending > 0,
+                modifier = Modifier.fillMaxWidth().height(50.dp),
+            ) { Text("Upload $pending ${plural(pending, "wallpaper")}") }
+        }
+        if (!queue.running && queue.savedCount > 0) {
+            Spacer(Modifier.height(8.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedButton(
+                    onClick = { if (pending > 0) queue.clearSaved() else queue.clear() },
+                    modifier = Modifier.weight(1f),
+                ) { Text(if (pending > 0) "Clear uploaded" else "Clear list") }
+                OutlinedButton(
+                    onClick = { nav.selectRoot(Screen.Wallpapers) },
+                    modifier = Modifier.weight(1f),
+                ) { Text("Open library") }
             }
         }
     }

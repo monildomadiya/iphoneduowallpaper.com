@@ -57,13 +57,24 @@ do not.
 Same shape as the web panel, done on the phone instead of in the browser:
 
 1. Pick up to 30 images with the system photo picker (no storage permission needed).
-2. Each image is decoded, then a preview (fits 1080 × 2340) and a 9:16 thumbnail
+2. Each one is measured straight away and the card says how it will land on the screens
+   it is tagged for — "Soft on Duo Inner", "Crops on 18 Pro Max" — using the same
+   `screenFit` rule the website shows visitors (`data/DeviceFit.kt`). An image that was
+   never going to fit is caught here rather than after it is published.
+3. Settings that apply to the whole batch (status, category, devices, collections,
+   source, credit) sit above the images, because they are chosen once.
+4. Each image is decoded, then a preview (fits 1080 × 2340) and a 9:16 thumbnail
    (540 × 960) are encoded as WebP, and the dominant colour is averaged from a 16 × 16
    sample — the same numbers `src/lib/admin/image-client.ts` uses.
-3. The server issues presigned Cloudflare R2 URLs; the app PUTs the three objects
+5. The server issues presigned Cloudflare R2 URLs; the app PUTs the three objects
    directly to R2. The original file is streamed as picked and never re-encoded.
-4. The wallpaper row is created through the API, which is what invalidates the site's
+6. The wallpaper row is created through the API, which is what invalidates the site's
    caches.
+
+The queue lives on `AdminViewModel` (`UploadQueue.kt`), not in the screen, so switching
+tabs mid-batch no longer cancels the transfer or throws away typed titles. The Upload
+tab carries a badge with what is left, and **Stop after this one** ends a batch without
+losing what has already been saved.
 
 Large photos are decoded subsampled so a 50 MP picture does not exhaust the heap. The
 recorded width and height are always the original ones.

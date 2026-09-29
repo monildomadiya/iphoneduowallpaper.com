@@ -39,7 +39,11 @@ fun AdminApp(vm: AdminViewModel) {
     val current = nav.current
     val isRoot = ROOT_SCREENS.contains(current)
 
-    BackHandler(enabled = nav.canGoBack) { nav.back() }
+    // Back walks the stack, then returns to the Dashboard. Only from there does it leave the app,
+    // which is what Android users expect — closing the app from the Wallpapers tab was a surprise.
+    BackHandler(enabled = nav.canGoBack || current != Screen.Dashboard) {
+        if (nav.canGoBack) nav.back() else nav.selectRoot(Screen.Dashboard)
+    }
     LaunchedEffect(Unit) { vm.refreshShell() }
 
     Scaffold(
@@ -50,6 +54,7 @@ fun AdminApp(vm: AdminViewModel) {
                 BottomBar(
                     current = current,
                     inboxBadge = vm.inbox.messages + vm.inbox.reports,
+                    uploadBadge = if (vm.upload.running) vm.upload.pending else 0,
                     onSelect = { nav.selectRoot(it) },
                 )
             }
@@ -75,16 +80,22 @@ fun AdminApp(vm: AdminViewModel) {
 }
 
 @Composable
-private fun BottomBar(current: Screen, inboxBadge: Int, onSelect: (Screen) -> Unit) {
+private fun BottomBar(current: Screen, inboxBadge: Int, uploadBadge: Int, onSelect: (Screen) -> Unit) {
     NavigationBar(containerColor = MaterialTheme.colorScheme.surface) {
         ROOT_SCREENS.forEach { screen ->
+            // An upload now keeps going after you leave the tab, so the tab has to say so.
+            val badge = when (screen) {
+                Screen.Inbox -> inboxBadge
+                Screen.Upload -> uploadBadge
+                else -> 0
+            }
             NavigationBarItem(
                 selected = current == screen,
                 onClick = { onSelect(screen) },
                 icon = {
                     val icon = iconFor(screen)
-                    if (screen == Screen.Inbox && inboxBadge > 0) {
-                        BadgedBox(badge = { Badge { Text(if (inboxBadge > 99) "99+" else "$inboxBadge") } }) {
+                    if (badge > 0) {
+                        BadgedBox(badge = { Badge { Text(if (badge > 99) "99+" else "$badge") } }) {
                             Icon(icon, contentDescription = screen.title)
                         }
                     } else {

@@ -53,8 +53,10 @@ fun DashboardScreen(vm: AdminViewModel, nav: Navigator) {
                 }
             },
         )
-        LoadBox(loader.state, loader.refresh) { data ->
-            DashboardContent(vm, nav, data)
+        RefreshBox(refreshing = loader.refreshing, onRefresh = { loader.refresh(); vm.refreshShell() }) {
+            LoadBox(loader.state, loader.refresh) { data ->
+                DashboardContent(vm, nav, data)
+            }
         }
     }
 }

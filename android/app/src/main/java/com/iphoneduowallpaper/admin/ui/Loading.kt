@@ -16,7 +16,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Stable
-class LoadHandle<T>(val state: Load<T>, val refresh: () -> Unit)
+class LoadHandle<T>(val state: Load<T>, val refreshing: Boolean, val refresh: () -> Unit)
 
 /** Loads a screen's data, re-running whenever `keys` change or `refresh()` is called. */
 @Composable
@@ -27,10 +27,13 @@ fun <T> rememberLoad(
 ): LoadHandle<T> {
     var tick by remember { mutableIntStateOf(0) }
     var state by remember { mutableStateOf<Load<T>>(Load.Loading) }
+    var refreshing by remember { mutableStateOf(false) }
     val currentLoad by rememberUpdatedState(load)
 
     LaunchedEffect(tick, *keys) {
-        state = Load.Loading
+        // A refresh of a page already on screen leaves it there and spins the pull indicator
+        // instead; blanking the page to a spinner for a reload of the same thing reads as a bug.
+        if (!refreshing) state = Load.Loading
         state = when (val result = currentLoad()) {
             is ApiResult.Ok -> Load.Ready(result.data)
             is ApiResult.Err -> {
@@ -38,9 +41,13 @@ fun <T> rememberLoad(
                 Load.Failed(result.message)
             }
         }
+        refreshing = false
     }
 
-    return LoadHandle(state) { tick++ }
+    return LoadHandle(state, refreshing) {
+        if (state is Load.Ready) refreshing = true
+        tick++
+    }
 }
 
 /** Runs a mutation, keeping a busy flag and surfacing the server's message. */

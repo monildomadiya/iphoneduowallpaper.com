@@ -2,10 +2,12 @@ package com.iphoneduowallpaper.admin.data
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.ImageDecoder
 import android.graphics.Paint
 import android.graphics.Rect
+import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
 import android.provider.OpenableColumns
@@ -158,6 +160,39 @@ object ImagePipeline {
 
     fun openOriginal(context: Context, source: Source): InputStream? =
         context.contentResolver.openInputStream(source.uri)
+
+    /**
+     * Pixel size without decoding the pixels, so the upload screen can warn about a wallpaper that
+     * is too small for the phone it is meant for while it is still just a row in a list. Reported in
+     * the orientation the image is displayed in, which is what `process` records.
+     */
+    fun readDimensions(context: Context, uri: Uri): Pair<Int, Int>? {
+        val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+        runCatching {
+            context.contentResolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, bounds) }
+        }
+        if (bounds.outWidth <= 0 || bounds.outHeight <= 0) return null
+
+        val quarterTurn = runCatching {
+            context.contentResolver.openInputStream(uri)?.use { stream ->
+                when (
+                    ExifInterface(stream).getAttributeInt(
+                        ExifInterface.TAG_ORIENTATION,
+                        ExifInterface.ORIENTATION_NORMAL,
+                    )
+                ) {
+                    ExifInterface.ORIENTATION_ROTATE_90,
+                    ExifInterface.ORIENTATION_ROTATE_270,
+                    ExifInterface.ORIENTATION_TRANSPOSE,
+                    ExifInterface.ORIENTATION_TRANSVERSE,
+                    -> true
+                    else -> false
+                }
+            }
+        }.getOrNull() ?: false
+
+        return if (quarterTurn) bounds.outHeight to bounds.outWidth else bounds.outWidth to bounds.outHeight
+    }
 
     /** "sunset_glow-1320x2868.jpg" -> "Sunset Glow" */
     fun titleFromFilename(name: String): String {

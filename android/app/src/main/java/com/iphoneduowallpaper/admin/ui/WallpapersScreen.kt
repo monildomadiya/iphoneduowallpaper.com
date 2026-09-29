@@ -85,6 +85,7 @@ fun WallpapersScreen(vm: AdminViewModel, nav: Navigator) {
     var totalPages by remember { mutableIntStateOf(1) }
     var total by remember { mutableIntStateOf(0) }
     var loading by remember { mutableStateOf(true) }
+    var refreshing by remember { mutableStateOf(false) }
     var loadingMore by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf<String?>(null) }
     var reloadTick by remember { mutableIntStateOf(0) }
@@ -102,7 +103,8 @@ fun WallpapersScreen(vm: AdminViewModel, nav: Navigator) {
 
     // Filters changed: start again from the first page.
     LaunchedEffect(debouncedQuery, status, sort, featuredOnly, categoryId, reloadTick) {
-        loading = true
+        // A pull-to-refresh leaves the grid in place; a filter change starts from the spinner.
+        if (!refreshing) loading = true
         error = null
         selected.clear()
         when (val result = vm.repo.wallpapers(debouncedQuery, status, categoryId, featuredOnly, sort, 1)) {
@@ -119,6 +121,7 @@ fun WallpapersScreen(vm: AdminViewModel, nav: Navigator) {
             }
         }
         loading = false
+        refreshing = false
     }
 
     // Endless scrolling: fetch the next page as the last row comes into view.
@@ -145,6 +148,11 @@ fun WallpapersScreen(vm: AdminViewModel, nav: Navigator) {
     }
 
     fun refresh() {
+        reloadTick++
+    }
+
+    fun pullRefresh() {
+        if (items.isNotEmpty()) refreshing = true
         reloadTick++
     }
 
@@ -244,39 +252,41 @@ fun WallpapersScreen(vm: AdminViewModel, nav: Navigator) {
         }
 
         Box(Modifier.fillMaxSize()) {
-            when {
-                loading -> Box(Modifier.fillMaxSize(), Alignment.Center) { CircularProgressIndicator() }
-                error != null -> ErrorState(error!!) { refresh() }
-                items.isEmpty() -> EmptyState(
-                    title = "No wallpapers found",
-                    description = if (debouncedQuery.isBlank()) "Upload your first wallpaper to get started."
-                    else "Nothing matches “$debouncedQuery”.",
-                )
-                else -> LazyVerticalGrid(
-                    state = gridState,
-                    columns = GridCells.Adaptive(minSize = 118.dp),
-                    contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 96.dp),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp),
-                ) {
-                    items(items.size, key = { items[it].id }) { index ->
-                        val item = items[index]
-                        WallpaperTile(
-                            item = item,
-                            imageUrl = vm.repo.imageUrl(item.thumb_key),
-                            selected = selected.contains(item.id),
-                            selectionMode = selected.isNotEmpty(),
-                            onClick = {
-                                if (selected.isNotEmpty()) toggle(selected, item.id)
-                                else nav.push(Screen.WallpaperEditor(item.id))
-                            },
-                            onLongClick = { toggle(selected, item.id) },
-                        )
-                    }
-                    if (loadingMore) {
-                        item {
-                            Box(Modifier.fillMaxWidth().height(80.dp), Alignment.Center) {
-                                CircularProgressIndicator(Modifier.size(22.dp), strokeWidth = 2.dp)
+            RefreshBox(refreshing = refreshing, onRefresh = { pullRefresh() }) {
+                when {
+                    loading -> Box(Modifier.fillMaxSize(), Alignment.Center) { CircularProgressIndicator() }
+                    error != null -> ErrorState(error!!) { refresh() }
+                    items.isEmpty() -> EmptyState(
+                        title = "No wallpapers found",
+                        description = if (debouncedQuery.isBlank()) "Upload your first wallpaper to get started."
+                        else "Nothing matches “$debouncedQuery”.",
+                    )
+                    else -> LazyVerticalGrid(
+                        state = gridState,
+                        columns = GridCells.Adaptive(minSize = 118.dp),
+                        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 96.dp),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        verticalArrangement = Arrangement.spacedBy(10.dp),
+                    ) {
+                        items(items.size, key = { items[it].id }) { index ->
+                            val item = items[index]
+                            WallpaperTile(
+                                item = item,
+                                imageUrl = vm.repo.imageUrl(item.thumb_key),
+                                selected = selected.contains(item.id),
+                                selectionMode = selected.isNotEmpty(),
+                                onClick = {
+                                    if (selected.isNotEmpty()) toggle(selected, item.id)
+                                    else nav.push(Screen.WallpaperEditor(item.id))
+                                },
+                                onLongClick = { toggle(selected, item.id) },
+                            )
+                        }
+                        if (loadingMore) {
+                            item {
+                                Box(Modifier.fillMaxWidth().height(80.dp), Alignment.Center) {
+                                    CircularProgressIndicator(Modifier.size(22.dp), strokeWidth = 2.dp)
+                                }
                             }
                         }
                     }
@@ -297,7 +307,7 @@ fun WallpapersScreen(vm: AdminViewModel, nav: Navigator) {
     if (confirmDelete) {
         val ids = selected.toList()
         ConfirmDialog(
-            title = "Delete ${ids.size} wallpaper(s)?",
+            title = "Delete ${ids.size} ${plural(ids.size, "wallpaper")}?",
             message = "Their image files are removed from storage too. This cannot be undone.",
             onConfirm = { runner.run(onSuccess = { refresh() }) { vm.repo.deleteWallpapers(ids) } },
             onDismiss = { confirmDelete = false },

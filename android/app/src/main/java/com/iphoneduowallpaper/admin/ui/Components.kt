@@ -81,6 +81,20 @@ fun <T> LoadBox(
     }
 }
 
+/**
+ * Pull down to reload. Every Android list is expected to answer this gesture; without it the only
+ * way to see fresh numbers was a refresh button hidden in the top bar.
+ */
+@OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
+@Composable
+fun RefreshBox(refreshing: Boolean, onRefresh: () -> Unit, content: @Composable () -> Unit) {
+    androidx.compose.material3.pulltorefresh.PullToRefreshBox(
+        isRefreshing = refreshing,
+        onRefresh = onRefresh,
+        modifier = Modifier.fillMaxSize(),
+    ) { content() }
+}
+
 @Composable
 fun ErrorState(message: String, onRetry: (() -> Unit)? = null) {
     Column(
@@ -403,6 +417,10 @@ fun KeyValueRow(label: String, value: String) {
 // ------------------------------------------------------------------ formatting
 
 fun formatNumber(value: Long): String = String.format(Locale.US, "%,d", value)
+
+/** "3 wallpapers", "1 wallpaper" — buttons and dialogs read better than "wallpaper(s)". */
+fun plural(count: Int, singular: String, plural: String = "${singular}s"): String =
+    if (count == 1) singular else plural
 
 fun formatCompact(value: Long): String = when {
     value >= 1_000_000 -> oneDecimal(value / 1_000_000.0) + "M"
