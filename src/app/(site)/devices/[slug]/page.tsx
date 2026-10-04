@@ -25,10 +25,10 @@ export async function generateMetadata({ params }: PageProps<"/devices/[slug]">)
 
   return buildMetadata({
     // "1320x2868" is how people type resolutions into search.
-    title: device.seo_title || `${device.name} Wallpapers ${device.width}x${device.height} — Free HD & 4K`,
+    title: device.seo_title || `${device.name} Wallpapers ${device.width}x${device.height} — Free HD`,
     description:
       device.seo_description ||
-      `Free ${device.name} wallpapers made for the ${device.width}x${device.height} screen. Full-resolution HD and 4K downloads that fit pixel for pixel, no sign-up.`,
+      `Free ${device.name} wallpapers for the ${device.width}x${device.height} screen. Full-resolution downloads, each with a fit check for this display. No sign-up.`,
     path: `/devices/${device.slug}`,
     noIndex: device.wallpaper_count === 0,
   });

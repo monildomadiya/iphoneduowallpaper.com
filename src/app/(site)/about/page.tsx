@@ -82,8 +82,37 @@ export default async function AboutPage() {
           <h2>Guides that actually help</h2>
           <p>
             Beyond wallpapers, we publish practical <Link href="/blog">guides</Link> — from the exact screen sizes of
-            iPhone Duo to step-by-step instructions for setting a wallpaper and saving images to Photos.
+            iPhone Duo to step-by-step instructions for setting a wallpaper, fixing a blurry one and getting the Lock
+            Screen depth effect to work.
           </p>
+          <h2 id="editorial-team">Our editorial team and standards</h2>
+          <p>
+            Our guides are written and edited by the {settings.site_name} editorial team — the same people who review
+            every wallpaper before it goes live. We write about the questions we get asked most, and we hold every guide
+            to the same standards:
+          </p>
+          <ul>
+            <li>
+              <strong>Specific and practical.</strong> Exact screen sizes, real menu paths and step-by-step instructions
+              instead of filler.
+            </li>
+            <li>
+              <strong>Checked before publishing.</strong> Steps are compared with Apple&apos;s own documentation and the
+              current version of iOS. Where menu names differ between iOS versions, we say so.
+            </li>
+            <li>
+              <strong>Kept up to date.</strong> Every guide shows the date it was last updated, and we revise guides when
+              iOS changes how something works.
+            </li>
+            <li>
+              <strong>Independent.</strong> We don&apos;t accept payment for coverage. Advertising is clearly labeled and
+              kept separate from our content.
+            </li>
+            <li>
+              <strong>Open to corrections.</strong> If something is wrong or out of date,{" "}
+              <Link href="/contact">tell us</Link> and we&apos;ll fix it.
+            </li>
+          </ul>
           <h2>Independent and free</h2>
           <p>
             We are not affiliated with Apple Inc. The Site is free to use and supported by clearly labeled advertising.

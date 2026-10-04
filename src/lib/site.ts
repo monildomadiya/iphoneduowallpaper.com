@@ -40,6 +40,7 @@ export const FOOTER_NAV: { title: string; links: { href: string; label: string }
       { href: "/blog", label: "Guides & Tips" },
       { href: "/blog/iphone-duo-wallpaper-sizes-explained", label: "Wallpaper Sizes" },
       { href: "/blog/how-to-set-wallpaper-on-iphone", label: "How to Set a Wallpaper" },
+      { href: "/blog/why-is-my-iphone-wallpaper-blurry", label: "Fix a Blurry Wallpaper" },
       { href: "/about", label: "About Us" },
       { href: "/contact", label: "Contact" },
     ],
@@ -55,6 +56,42 @@ export const FOOTER_NAV: { title: string; links: { href: string; label: string }
     ],
   },
 ];
+
+type GuideLink = { href: string; label: string };
+
+/** The guide that goes deepest on each category, linked from the category and its wallpapers. */
+const CATEGORY_GUIDES: Record<string, GuideLink> = {
+  "anime-4k": {
+    href: "/blog/anime-wallpapers-iphone-lock-screen",
+    label: "How to pick anime art that works on a Lock Screen",
+  },
+  minimal: {
+    href: "/blog/minimal-iphone-wallpapers-guide",
+    label: "Why minimal wallpapers make your iPhone easier to use",
+  },
+  car: {
+    href: "/blog/car-wallpapers-iphone-framing",
+    label: "How to fit a wide car on a tall screen",
+  },
+  "ios-inspired-wallpapers": {
+    href: "/blog/ios-style-wallpapers-glass-gradients",
+    label: "Glass, gradients and orbs: what makes a wallpaper feel like iOS",
+  },
+};
+
+const AMOLED_GUIDE: GuideLink = {
+  href: "/blog/amoled-wallpapers-iphone-battery",
+  label: "Do true-black AMOLED wallpapers save battery?",
+};
+
+export function categoryGuide(categorySlug: string | null | undefined): GuideLink | null {
+  return (categorySlug && CATEGORY_GUIDES[categorySlug]) || null;
+}
+
+/** A wallpaper's category guide, or the AMOLED explainer for dark designs that have no category guide. */
+export function wallpaperGuide(categorySlug: string | null | undefined, tags: string[]): GuideLink | null {
+  return categoryGuide(categorySlug) ?? (tags.some((tag) => /\b(a?moled)\b/i.test(tag)) ? AMOLED_GUIDE : null);
+}
 
 export const HOME_FAQ = [
   {

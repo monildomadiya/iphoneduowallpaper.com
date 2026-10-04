@@ -1,3 +1,4 @@
+import { ChevronRight } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -6,6 +7,7 @@ import { Breadcrumbs, PageHeader } from "@/components/ui/primitives";
 import { WallpaperListing } from "@/components/wallpaper/wallpaper-listing";
 import { getCategories, getCategoryBySlug } from "@/lib/data/taxonomy";
 import { buildMetadata } from "@/lib/seo";
+import { categoryGuide } from "@/lib/site";
 import { imageUrl, stockedFirst } from "@/lib/utils";
 
 // Renders on the server before responding so unknown slugs return a real 404 status (better for SEO).
@@ -22,7 +24,7 @@ export async function generateMetadata({ params }: PageProps<"/categories/[slug]
   if (!category) return { title: "Category not found", robots: { index: false, follow: true } };
 
   return buildMetadata({
-    title: category.seo_title || `${category.name} Wallpapers for iPhone Duo — Free 4K & HD`,
+    title: category.seo_title || `${category.name} Wallpapers for iPhone Duo — Free HD Downloads`,
     description:
       category.seo_description ||
       category.description ||
@@ -41,6 +43,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps<"
 
   // Lateral links are only worth following when there is something on the other end.
   const others = stockedFirst(categories.filter((item) => item.id !== category.id)).slice(0, 8);
+  const guide = categoryGuide(category.slug);
 
   return (
     <>
@@ -58,6 +61,14 @@ export default async function CategoryPage({ params, searchParams }: PageProps<"
         description={category.description}
         className="pt-6 md:pt-10"
       >
+        {guide ? (
+          <p className="mt-4 text-[17px]">
+            <Link href={guide.href} className="link-apple">
+              Guide: {guide.label}
+              <ChevronRight className="ml-0.5 inline size-4 align-[-3px]" />
+            </Link>
+          </p>
+        ) : null}
         {others.length ? (
           <nav aria-label="Other categories" className="no-scrollbar -mx-1 mt-7 flex gap-2 overflow-x-auto px-1 pb-1">
             {others.map((item) => (

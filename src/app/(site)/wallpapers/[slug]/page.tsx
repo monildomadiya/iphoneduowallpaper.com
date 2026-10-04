@@ -11,6 +11,7 @@ import { getSiteSettings } from "@/lib/data/settings";
 import { getDevices } from "@/lib/data/taxonomy";
 import { getPrerenderWallpaperSlugs, getRelatedWallpapers, getWallpaperBySlug } from "@/lib/data/wallpapers";
 import { buildMetadata, wallpaperJsonLd } from "@/lib/seo";
+import { wallpaperGuide } from "@/lib/site";
 import { SOURCE_TYPE_LABELS } from "@/lib/types";
 import {
   cn,
@@ -86,6 +87,7 @@ export default async function WallpaperPage({ params }: PageProps<"/wallpapers/[
 
   const path = `/wallpapers/${wallpaper.slug}`;
   const overview = wallpaperOverview(wallpaper);
+  const guide = wallpaperGuide(wallpaper.category?.slug, wallpaper.tags);
   const details = [
     { label: "Resolution", value: `${wallpaper.width} × ${wallpaper.height} px (${qualityLabel(wallpaper.width, wallpaper.height)})` },
     { label: "Orientation", value: orientationLabel(wallpaper.width, wallpaper.height) },
@@ -175,6 +177,13 @@ export default async function WallpaperPage({ params }: PageProps<"/wallpapers/[
                   {paragraph}
                 </p>
               ))}
+              {guide ? (
+                <p className="mt-3 text-[15px] leading-6">
+                  <Link href={guide.href} className="link-apple">
+                    {guide.label}
+                  </Link>
+                </p>
+              ) : null}
             </section>
 
             {devices.length ? (

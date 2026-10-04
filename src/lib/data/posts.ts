@@ -68,6 +68,21 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
   return (data as Post | null) ?? null;
 }
 
+/**
+ * Guides on the same topic, ranked by shared tags and then by date. "Keep reading" used to show
+ * the three newest posts everywhere, so a guide only ever linked to whatever was published last.
+ */
+export async function getRelatedPosts(post: Pick<Post, "id" | "tags">, limit = 3): Promise<PostCardData[]> {
+  const { items } = await listPosts(1, 50);
+  const tags = new Set(post.tags.map((tag) => tag.toLowerCase()));
+  return items
+    .filter((item) => item.id !== post.id)
+    .map((item, index) => ({ item, index, shared: item.tags.filter((tag) => tags.has(tag.toLowerCase())).length }))
+    .sort((a, b) => b.shared - a.shared || a.index - b.index)
+    .slice(0, limit)
+    .map(({ item }) => item);
+}
+
 export async function getPrerenderPostSlugs(): Promise<string[]> {
   "use cache";
   cacheTag("posts");

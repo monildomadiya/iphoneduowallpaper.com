@@ -27,7 +27,7 @@ export default function OpenGraphImage() {
             <span style={{ color: "#8f7bff" }}>unfolded.</span>
           </div>
           <div style={{ display: "flex", fontSize: 30, color: "#a1a1a6", marginTop: 26 }}>
-            Free 4K wallpapers for the inner and outer displays.
+            Free HD wallpapers for the inner and outer displays.
           </div>
         </div>
         <div style={{ display: "flex", alignItems: "flex-end", gap: 26 }}>

@@ -10,12 +10,12 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "sw
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings();
   const description =
-    "Free 4K wallpapers made for iPhone Duo's inner and outer displays, iPhone 18 Pro and iPhone 18 Pro Max. Hand-picked, full resolution, no sign-up.";
+    "Free HD wallpapers made for iPhone Duo's inner and outer displays, iPhone 18 Pro and iPhone 18 Pro Max. Hand-picked, full resolution, no sign-up.";
 
   return {
     metadataBase: new URL(siteUrl),
     title: {
-      default: `${settings.site_name} — Free 4K for Duo & iPhone 18 Pro`,
+      default: `${settings.site_name} — Free HD for Duo & iPhone 18 Pro`,
       template: `%s | ${settings.site_name}`,
     },
     description,
@@ -26,7 +26,7 @@ export async function generateMetadata(): Promise<Metadata> {
       siteName: settings.site_name,
       locale: "en_US",
       url: "/",
-      title: `${settings.site_name} — Free 4K for Duo & iPhone 18 Pro`,
+      title: `${settings.site_name} — Free HD for Duo & iPhone 18 Pro`,
       description,
     },
     twitter: { card: "summary_large_image" },

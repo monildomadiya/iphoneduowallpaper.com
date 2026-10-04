@@ -13,7 +13,8 @@ interface MetadataInput {
   title: string;
   description: string;
   path: string;
-  image?: { url: string; width?: number; height?: number; alt?: string } | null;
+  /** `false`: the route segment has its own opengraph-image file, so leave og:image to Next. */
+  image?: { url: string; width?: number; height?: number; alt?: string } | null | false;
   type?: "website" | "article";
   noIndex?: boolean;
   absoluteTitle?: boolean;
@@ -31,15 +32,14 @@ export async function buildMetadata(input: MetadataInput): Promise<Metadata> {
   const suffix = ` | ${settings.site_name}`;
   const absoluteTitle =
     input.absoluteTitle || input.title.includes(settings.site_name) || input.title.length + suffix.length > MAX_TITLE;
-  const images = input.image
-    ? [
-        {
-          url: input.image.url,
-          width: input.image.width,
-          height: input.image.height,
-          alt: input.image.alt ?? input.title,
-        },
-      ]
+  // Setting openGraph here replaces the inherited one wholesale, image included, so a page without
+  // its own picture used to be shared with no preview at all. The site card is the fallback.
+  const image =
+    input.image === false
+      ? null
+      : (input.image ?? { url: absoluteUrl("/opengraph-image"), width: 1200, height: 630, alt: settings.site_name });
+  const images = image
+    ? [{ url: image.url, width: image.width, height: image.height, alt: image.alt ?? input.title }]
     : undefined;
 
   return {
@@ -65,7 +65,7 @@ export async function buildMetadata(input: MetadataInput): Promise<Metadata> {
       card: "summary_large_image",
       title: input.title,
       description,
-      ...(images ? { images: images.map((image) => image.url) } : {}),
+      ...(images ? { images: images.map((item) => item.url) } : {}),
     },
     ...(input.noIndex ? { robots: { index: false, follow: true } } : {}),
   };
@@ -160,21 +160,42 @@ export function wallpaperJsonLd(wallpaper: WallpaperDetail, settings: SiteSettin
 }
 
 export function articleJsonLd(post: Post, settings: SiteSettings): JsonLd {
+  const url = absoluteUrl(`/blog/${post.slug}`);
+  const text = stripMarkdown(post.content);
+  // "Editorial Team" alone names nobody; tie the byline to the site and to the page that says who we are.
+  const authorName =
+    !post.author_name || post.author_name === "Editorial Team"
+      ? `${settings.site_name} Editorial Team`
+      : post.author_name;
   return {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
+    "@id": `${url}#article`,
     headline: post.title,
-    description: post.excerpt ?? truncate(stripMarkdown(post.content), 200),
-    image: post.cover_key ? [imageUrl(post.cover_key)] : undefined,
+    description: post.excerpt ?? truncate(text, 200),
+    // Article rich results want an image. The guide's own card lives at a URL with a build hash in it,
+    // so posts without a cover point at the site card, which has a stable address.
+    image: [post.cover_key ? imageUrl(post.cover_key) : absoluteUrl("/opengraph-image")],
     datePublished: post.published_at ?? post.created_at,
     dateModified: post.updated_at,
-    author: { "@type": "Organization", name: post.author_name || settings.site_name },
+    inLanguage: "en-US",
+    wordCount: text.split(/\s+/).filter(Boolean).length,
+    articleSection: "Guides",
+    ...(post.tags.length ? { keywords: post.tags.join(", ") } : {}),
+    author: {
+      "@type": /\b(team|staff|editors?)\b/i.test(authorName) ? "Organization" : "Person",
+      name: authorName,
+      url: absoluteUrl("/about#editorial-team"),
+    },
     publisher: {
       "@type": "Organization",
+      "@id": ORGANIZATION_ID,
       name: settings.site_name,
-      logo: { "@type": "ImageObject", url: absoluteUrl("/apple-icon") },
+      url: siteUrl,
+      logo: { "@type": "ImageObject", url: absoluteUrl("/apple-icon"), width: 180, height: 180 },
     },
-    mainEntityOfPage: absoluteUrl(`/blog/${post.slug}`),
+    isPartOf: { "@id": WEBSITE_ID },
+    mainEntityOfPage: { "@type": "WebPage", "@id": url },
   };
 }
 

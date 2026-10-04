@@ -6,10 +6,14 @@ import { AdSlot } from "@/components/ads/ad-slot";
 import { Markdown } from "@/components/site/markdown";
 import { PostCard } from "@/components/site/tiles";
 import { Breadcrumbs, JsonLd, SectionHeading } from "@/components/ui/primitives";
-import { getPostBySlug, getPrerenderPostSlugs, listPosts } from "@/lib/data/posts";
+import { WallpaperGrid } from "@/components/wallpaper/wallpaper-card";
+import { getPostBySlug, getPrerenderPostSlugs, getRelatedPosts } from "@/lib/data/posts";
 import { getSiteSettings } from "@/lib/data/settings";
+import { getCategories } from "@/lib/data/taxonomy";
+import { listWallpapers } from "@/lib/data/wallpapers";
 import { articleJsonLd, buildMetadata } from "@/lib/seo";
-import { formatDate, imageUrl, readingMinutes, stripMarkdown, truncate } from "@/lib/utils";
+import { categoryGuide } from "@/lib/site";
+import { formatDate, imageUrl, readingMinutes, slugify, stripMarkdown, truncate } from "@/lib/utils";
 
 // Renders on the server before responding so unknown slugs return a real 404 status (better for SEO).
 export const instant = false;
@@ -31,8 +35,26 @@ export async function generateMetadata({ params }: PageProps<"/blog/[slug]">): P
     type: "article",
     publishedTime: post.published_at,
     modifiedTime: post.updated_at,
-    image: post.cover_key ? { url: imageUrl(post.cover_key), alt: post.title } : null,
+    // Without a cover, ./opengraph-image draws the card. Its URL carries a hash Next adds inside
+    // the (site) group, so Next has to fill it in rather than this hard-coding a path.
+    image: post.cover_key ? { url: imageUrl(post.cover_key), alt: post.title } : false,
   });
+}
+
+/** The article's H2s, with the same ids the Markdown renderer gives them. */
+function tableOfContents(markdown: string) {
+  return [...markdown.matchAll(/^##\s+(.+?)\s*#*\s*$/gm)].map(([, heading]) => {
+    const text = heading.replace(/\[([^\]]+)]\([^)]*\)/g, "$1").replace(/[*_`]/g, "").trim();
+    return { id: slugify(text), text };
+  });
+}
+
+/** Wallpapers from the category this guide is about, or the newest ones when it isn't about one. */
+async function wallpapersFor(postSlug: string) {
+  const categories = await getCategories();
+  const category = categories.find((item) => categoryGuide(item.slug)?.href === `/blog/${postSlug}`) ?? null;
+  const { items } = await listWallpapers({ categoryId: category?.id, perPage: 5 });
+  return { category, items };
 }
 
 export default async function PostPage({ params }: PageProps<"/blog/[slug]">) {
@@ -40,8 +62,12 @@ export default async function PostPage({ params }: PageProps<"/blog/[slug]">) {
   const post = await getPostBySlug(slug);
   if (!post) notFound();
 
-  const [settings, recent] = await Promise.all([getSiteSettings(), listPosts(1, 4)]);
-  const more = recent.items.filter((item) => item.id !== post.id).slice(0, 3);
+  const [settings, more, wallpapers] = await Promise.all([
+    getSiteSettings(),
+    getRelatedPosts(post, 3),
+    wallpapersFor(post.slug),
+  ]);
+  const toc = tableOfContents(post.content);
 
   return (
     <>
@@ -62,7 +88,11 @@ export default async function PostPage({ params }: PageProps<"/blog/[slug]">) {
             <p className="mx-auto mt-5 max-w-2xl text-pretty text-[18px] leading-7 text-fg-2 md:text-[21px] md:leading-8">{post.excerpt}</p>
           ) : null}
           <p className="mt-6 text-[14px] text-fg-3">
-            By {post.author_name} · <time dateTime={post.published_at ?? undefined}>{formatDate(post.published_at)}</time> ·{" "}
+            By{" "}
+            <Link href="/about#editorial-team" rel="author" className="hover:text-fg hover:underline">
+              {post.author_name}
+            </Link>{" "}
+            · <time dateTime={post.published_at ?? undefined}>{formatDate(post.published_at)}</time> ·{" "}
             {readingMinutes(post.content)} min read
           </p>
         </header>
@@ -75,9 +105,29 @@ export default async function PostPage({ params }: PageProps<"/blog/[slug]">) {
 
         <div className="mx-auto mt-10 max-w-3xl">
           <AdSlot placement="post_top" className="mb-10" />
+          {toc.length >= 4 ? (
+            <nav aria-labelledby="toc-heading" className="mb-10 rounded-[24px] bg-surface p-5 md:p-6">
+              <h2 id="toc-heading" className="text-[15px] font-semibold text-fg">
+                In this guide
+              </h2>
+              <ol className="mt-3 space-y-2 text-[15px] leading-6">
+                {toc.map((item) => (
+                  <li key={item.id}>
+                    <a href={`#${item.id}`} className="text-fg-2 hover:text-link hover:underline">
+                      {item.text}
+                    </a>
+                  </li>
+                ))}
+              </ol>
+            </nav>
+          ) : null}
           <Markdown content={post.content} />
           <p className="mt-12 border-t border-line pt-6 text-[14px] text-fg-3">
-            Last updated {formatDate(post.updated_at)}. Spotted something out of date?{" "}
+            Last updated {formatDate(post.updated_at)}. Written and checked by the {settings.site_name}{" "}
+            <Link href="/about#editorial-team" className="link-apple">
+              editorial team
+            </Link>
+            . Spotted something out of date?{" "}
             <Link href="/contact" className="link-apple">
               Let us know
             </Link>
@@ -86,6 +136,17 @@ export default async function PostPage({ params }: PageProps<"/blog/[slug]">) {
           <AdSlot placement="post_bottom" className="mt-12" />
         </div>
       </article>
+
+      {wallpapers.items.length ? (
+        <section className="container-apple mt-24">
+          <SectionHeading
+            title="Wallpapers to try."
+            subtitle={wallpapers.category ? `From our ${wallpapers.category.name} category.` : "Fresh from the library."}
+            href={wallpapers.category ? `/categories/${wallpapers.category.slug}` : "/wallpapers"}
+          />
+          <WallpaperGrid wallpapers={wallpapers.items} />
+        </section>
+      ) : null}
 
       {more.length ? (
         <section className="container-apple mt-24">

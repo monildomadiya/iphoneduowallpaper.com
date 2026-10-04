@@ -18,7 +18,7 @@ A fast, Apple-inspired wallpaper website for **iPhone Duo** (outer 1398 × 2034 
 - Apple-style light design, fully responsive across phone, tablet and desktop, with frosted-glass navigation and CSS device mockups of iPhone Duo (folded and unfolded) and iPhone 18 Pro Max
 - Wallpaper pages with a live preview switcher (Duo Outer / Duo Inner / 18 Pro Max × Lock Screen / Home Screen), a “Screen fit” check for every device, one-tap download, “View full size” and share
 - Categories, curated collections, device pages, full-text search, sorting and pagination
-- Blog / guides with Markdown (3 helpful starter articles included)
+- Blog / guides with Markdown (15 guides included), with a table of contents, topic-based related guides and a generated share image per guide
 - AdSense-ready pages: About, Contact (form), Privacy Policy, Terms of Use, Cookie Policy, Disclaimer, DMCA & Copyright (report form)
 - SEO: per-page metadata, canonical URLs, Open Graph images, `sitemap.xml`, `robots.txt`, JSON-LD (WebSite, Organization, Breadcrumbs, ImageObject with license info, BlogPosting, FAQ)
 - `ads.txt` and AdSense slots managed from the admin panel, cookie notice, optional Google Analytics 4
@@ -42,7 +42,7 @@ A fast, Apple-inspired wallpaper website for **iPhone Duo** (outer 1398 × 2034 
 
 1. Create a project at [supabase.com](https://supabase.com) (choose a region close to your visitors, e.g. Mumbai).
 2. Open **SQL Editor → New query**, paste the contents of [`supabase/migrations/0001_init.sql`](supabase/migrations/0001_init.sql) and run it.
-3. Run [`supabase/seed.sql`](supabase/seed.sql) the same way. It adds the iPhone Duo and iPhone 18 Pro devices, 10 categories, 5 collections and 3 guides (edit them later in the admin panel).
+3. Run [`supabase/seed.sql`](supabase/seed.sql) the same way. It adds the iPhone Duo and iPhone 18 Pro devices, 10 categories, 5 collections and 15 guides (edit them later in the admin panel).
 4. **Authentication → Sign In / Providers → Email**: turn **off** “Allow new users to sign up”. Admin accounts are created with the script below.
 5. **Authentication → URL Configuration**:
    - Site URL: `https://iphoneduowallpaper.com`
@@ -87,7 +87,7 @@ Useful scripts: `npm run build`, `npm run start`, `npm run lint`, `npm run typec
 
 - [ ] Site is live on `https://iphoneduowallpaper.com` (not the `onrender.com` address)
 - [ ] 30+ published wallpapers, each with a unique title and a 2–3 sentence description
-- [ ] 5+ helpful blog guides (3 are included — review them and add more)
+- [ ] 5+ helpful blog guides (15 are included — review them and keep adding)
 - [ ] Contact email in **Admin → Site settings** is a real inbox you check
 - [ ] Legal details (owner name, jurisdiction) filled in — they appear in the Terms and Privacy Policy
 - [ ] Only wallpapers you created, generated or have a license to share (use the Source & credit fields)

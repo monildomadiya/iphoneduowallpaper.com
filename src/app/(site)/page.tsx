@@ -18,7 +18,7 @@ import { formatNumber, imageUrl, stockedFirst } from "@/lib/utils";
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings();
   return buildMetadata({
-    title: `${settings.site_name} — Free 4K for Duo & iPhone 18 Pro`,
+    title: `${settings.site_name} — Free HD for Duo & iPhone 18 Pro`,
     absoluteTitle: true,
     description:
       "Free full-resolution wallpapers for iPhone Duo's 5.4-inch outer and 7.6-inch inner displays, plus iPhone 18 Pro and Pro Max. Hand-picked, no sign-up.",

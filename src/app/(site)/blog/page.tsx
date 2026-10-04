@@ -29,6 +29,16 @@ async function PostList({ searchParams }: { searchParams: PageProps<"/blog">["se
 
   return (
     <>
+      {/* Lives with the list so the structured data names the guides on this page, not just the hub. */}
+      <JsonLd
+        data={collectionPageJsonLd({
+          name: TITLE,
+          description: DESCRIPTION,
+          path: "/blog",
+          breadcrumb: [{ name: "Guides", path: "/blog" }],
+          items: posts.items.map((post) => ({ name: post.title, path: `/blog/${post.slug}` })),
+        })}
+      />
       <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {posts.items.map((post) => (
           <li key={post.id}>
@@ -44,14 +54,6 @@ async function PostList({ searchParams }: { searchParams: PageProps<"/blog">["se
 export default function BlogPage({ searchParams }: PageProps<"/blog">) {
   return (
     <>
-      <JsonLd
-        data={collectionPageJsonLd({
-          name: TITLE,
-          description: DESCRIPTION,
-          path: "/blog",
-          breadcrumb: [{ name: "Guides", path: "/blog" }],
-        })}
-      />
       <PageHeader
         eyebrow="Guides"
         title="Tips, tricks and the details that matter."
