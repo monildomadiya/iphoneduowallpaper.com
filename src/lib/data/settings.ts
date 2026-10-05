@@ -9,7 +9,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   contact_email: "contact@iphoneduowallpaper.com",
   announcement: null,
   adsense_enabled: false,
-  adsense_client_id: null,
+  adsense_client_id: "ca-pub-1402332345910017",
   adsense_auto_ads: false,
   ad_slots: {},
   ads_txt: null,

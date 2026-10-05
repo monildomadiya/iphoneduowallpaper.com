@@ -188,7 +188,7 @@ export function AdsSettingsForm({ settings, siteHost }: { settings: SiteSettings
             </Field>
             <Switch
               label="Serve ads"
-              description="Loads the AdSense script on public pages (never on the admin panel). Turn this on after your site is approved — or while applying if AdSense asks for the code snippet."
+              description="Shows the manual ad units below. The AdSense script itself loads on public pages (never on the admin panel) whenever a publisher ID is set, so AdSense can verify the site."
               checked={enabled}
               onChange={setEnabled}
             />
