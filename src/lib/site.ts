@@ -91,6 +91,19 @@ export function wallpaperGuide(categorySlug: string | null | undefined, tags: st
   return categoryGuide(categorySlug) ?? (tags.some((tag) => /\b(a?moled)\b/i.test(tag)) ? AMOLED_GUIDE : null);
 }
 
+/**
+ * Search Console shows "iphone duo wallpaper" bringing most impressions, "iphone duo wallpaper 4k"
+ * the best click-through, and "iPhone 18 Duo" as the next way people name the phone — and no
+ * searches at all for the iPhone 18 Pro angle the title used to lead with. The site name already is
+ * the main phrase, so "4K" lands right after it in the order people type it. 60 characters.
+ */
+export function homeTitle(siteName: string): string {
+  return `${siteName} 4K & HD — Free iPhone 18 Duo Downloads`;
+}
+
+export const HOME_DESCRIPTION =
+  "Download free 4K & HD iPhone Duo wallpapers for the 7.6-inch inner and 5.4-inch outer displays of the foldable iPhone 18 Duo. No app, no sign-up.";
+
 export const HOME_FAQ = [
   {
     question: "Are the wallpapers free to download?",
@@ -101,6 +114,16 @@ export const HOME_FAQ = [
     question: "Will these wallpapers fit the iPhone Duo inner and outer displays?",
     answer:
       "Each wallpaper page shows how the image fits the iPhone Duo outer display (1398 × 2034), the unfolded inner display (2670 × 1878) and iPhone 18 Pro models, so you can pick the right one before downloading.",
+  },
+  {
+    question: "Is iPhone Duo the same as iPhone 18 Duo or the iPhone Fold?",
+    answer:
+      "Yes — they are names for the same foldable iPhone. It has a 5.4-inch outer display (1398 × 2034) you use when it is closed and a 7.6-inch inner display (2670 × 1878) that opens like a small tablet. Every wallpaper here is checked against both screens.",
+  },
+  {
+    question: "Are these iPhone Duo wallpapers 4K?",
+    answer:
+      "Look for the 4K label. Every wallpaper is published at its original resolution, and its page shows the exact pixel size with a quality label — 4K for files 3840 pixels or more on the long edge, QHD+ or HD below that. The largest iPhone Duo screen, the 7.6-inch inner display, is 2670 × 1878, so a 4K or QHD+ file stays pixel-sharp on it.",
   },
   {
     question: "What resolution are the wallpapers?",

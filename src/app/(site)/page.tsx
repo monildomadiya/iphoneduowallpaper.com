@@ -11,17 +11,16 @@ import { getSiteSettings } from "@/lib/data/settings";
 import { getCategories, getDevices } from "@/lib/data/taxonomy";
 import { listWallpapers } from "@/lib/data/wallpapers";
 import { buildMetadata, faqJsonLd, organizationJsonLd, websiteJsonLd } from "@/lib/seo";
-import { HOME_FAQ } from "@/lib/site";
+import { HOME_DESCRIPTION, HOME_FAQ, homeTitle } from "@/lib/site";
 import type { WallpaperCardData } from "@/lib/types";
 import { formatNumber, imageUrl, stockedFirst } from "@/lib/utils";
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings();
   return buildMetadata({
-    title: `${settings.site_name} — Free HD for Duo & iPhone 18 Pro`,
+    title: homeTitle(settings.site_name),
     absoluteTitle: true,
-    description:
-      "Free full-resolution wallpapers for iPhone Duo's 5.4-inch outer and 7.6-inch inner displays, plus iPhone 18 Pro and Pro Max. Hand-picked, no sign-up.",
+    description: HOME_DESCRIPTION,
     path: "/",
   });
 }
@@ -224,6 +223,39 @@ export default async function HomePage() {
           </ul>
         </section>
       ) : null}
+
+      {/* ------------------------------------------------------------ About */}
+      {/* The page was almost all pictures, so Google had little text to tie it to "iphone duo wallpaper"
+          or to the other names people search the phone by. This says what the site is in plain words. */}
+      <section className="container-apple mt-24">
+        <div className="max-w-3xl">
+          <h2 className="headline-section">Wallpapers for both iPhone Duo screens.</h2>
+          <div className="mt-5 space-y-4 text-[17px] leading-7 text-fg-2">
+            <p>
+              iPhone Duo — also searched as iPhone 18 Duo or the iPhone Fold — has two displays with very different
+              shapes: a tall 5.4-inch outer screen at 1398 × 2034 and a wide 7.6-inch inner screen at 2670 × 1878
+              that opens like a small tablet. A wallpaper cut for a regular iPhone loses a band from the top and
+              bottom on the outer screen and much more on the inner one.
+            </p>
+            <p>
+              Every wallpaper here is free to download in 4K or HD at its original resolution, and each page shows how it
+              fits the{" "}
+              <Link href="/devices/iphone-duo-outer-display" className="link-apple">
+                outer display
+              </Link>{" "}
+              and the{" "}
+              <Link href="/devices/iphone-duo-inner-display" className="link-apple">
+                inner display
+              </Link>{" "}
+              before you save it. Not sure which size you need? Read{" "}
+              <Link href="/blog/iphone-duo-wallpaper-sizes-explained" className="link-apple">
+                iPhone Duo wallpaper sizes explained
+              </Link>
+              .
+            </p>
+          </div>
+        </div>
+      </section>
 
       {/* ------------------------------------------------------------ FAQ */}
       <section className="container-apple mt-24">

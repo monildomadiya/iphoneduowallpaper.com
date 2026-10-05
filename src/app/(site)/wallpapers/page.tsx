@@ -4,7 +4,7 @@ import { JsonLd, PageHeader } from "@/components/ui/primitives";
 import { WallpaperListing } from "@/components/wallpaper/wallpaper-listing";
 import { buildMetadata, collectionPageJsonLd } from "@/lib/seo";
 
-const TITLE = "All iPhone Duo Wallpapers — Free HD Downloads";
+const TITLE = "All iPhone Duo Wallpapers — Free 4K & HD Downloads";
 const DESCRIPTION =
   "Every wallpaper in the library, in full resolution for iPhone Duo's inner and outer displays, iPhone 18 Pro and Pro Max. Sort by newest or most downloaded.";
 
