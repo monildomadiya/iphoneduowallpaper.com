@@ -49,6 +49,17 @@ const nextConfig: NextConfig = {
       { source: "/contact-us", destination: "/contact", permanent: true },
       { source: "/about-us", destination: "/about", permanent: true },
       { source: "/wallpaper/:slug", destination: "/wallpapers/:slug", permanent: true },
+      // Slugs that were cut off mid-word by truncated upload filenames.
+      {
+        source: "/wallpapers/neon-purple-orb-abstract-duo-wallpa",
+        destination: "/wallpapers/neon-purple-orb-abstract-duo-wallpaper",
+        permanent: true,
+      },
+      {
+        source: "/wallpapers/minimal-white-sports-car-mountain-wallpape",
+        destination: "/wallpapers/minimal-white-sports-car-mountain-wallpaper",
+        permanent: true,
+      },
       { source: "/category/:slug", destination: "/categories/:slug", permanent: true },
       // Collections were retired; send old links and search results to the full library.
       { source: "/collections/:path*", destination: "/wallpapers", permanent: true },

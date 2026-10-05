@@ -31,7 +31,9 @@ export function titleFromFilename(name: string): string {
     .replace(/\b\d{3,5}\s*[x×]\s*\d{3,5}\b/gi, " ")
     .replace(/[_\-.]+/g, " ")
     .replace(/\s+/g, " ")
-    .trim();
+    .trim()
+    // Image tools cut long filenames mid-word ("…duo-wallpa.jpg"), which leaked into titles and slugs.
+    .replace(/\bwallp(?:a(?:p(?:e(?:r)?)?)?)?$/i, "Wallpaper");
   const title = (base || "Wallpaper").replace(/\b\p{L}/gu, (c) => c.toUpperCase());
   return title.length < 2 ? "Wallpaper" : title.slice(0, 120);
 }
