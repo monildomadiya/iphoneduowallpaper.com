@@ -59,11 +59,9 @@ const CONCURRENCY = 2;
 
 export function Uploader({
   categories,
-  collections,
   devices,
 }: {
   categories: TaxonomyOption[];
-  collections: TaxonomyOption[];
   devices: DeviceOption[];
 }) {
   const router = useRouter();
@@ -75,7 +73,6 @@ export function Uploader({
   const [status, setStatus] = useState<"draft" | "published">("published");
   const [categoryId, setCategoryId] = useState<string | null>(null);
   const [deviceIds, setDeviceIds] = useState<string[]>(devices.map((device) => device.id));
-  const [collectionIds, setCollectionIds] = useState<string[]>([]);
   const [tags, setTags] = useState<string[]>([]);
   const [sourceType, setSourceType] = useState<"original" | "ai" | "licensed" | "public_domain">("original");
   const [creditName, setCreditName] = useState("");
@@ -193,7 +190,6 @@ export function Uploader({
         seoDescription: item.seoDescription.trim(),
         categoryId,
         deviceIds,
-        collectionIds,
         tags,
         status,
         isFeatured,
@@ -496,9 +492,6 @@ export function Uploader({
             </Field>
             <Field label="Fits devices">
               <ChipMultiSelect options={devices} value={deviceIds} onChange={setDeviceIds} emptyLabel="Add devices first" />
-            </Field>
-            <Field label="Collections">
-              <ChipMultiSelect options={collections} value={collectionIds} onChange={setCollectionIds} emptyLabel="No collections yet" />
             </Field>
             <Field label="Tags" hint="Colors, moods, subjects — used for search.">
               <TagInput name="tags" onChange={setTags} />

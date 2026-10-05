@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { AdminHeader } from "@/components/admin/ui";
 import { WallpaperEditor } from "@/components/admin/wallpaper-editor";
 import { UUID_PATTERN } from "@/lib/data/downloads";
-import { getAdminWallpaper, listAllCategories, listAllCollections, listAllDevices } from "@/lib/admin/queries";
+import { getAdminWallpaper, listAllCategories, listAllDevices } from "@/lib/admin/queries";
 import { requireAdmin } from "@/lib/auth";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -18,10 +18,9 @@ export default async function EditWallpaperPage({ params }: PageProps<"/admin/wa
   if (!UUID_PATTERN.test(id)) notFound();
 
   const supabase = await createSupabaseServerClient();
-  const [wallpaper, categories, collections, devices] = await Promise.all([
+  const [wallpaper, categories, devices] = await Promise.all([
     getAdminWallpaper(supabase, id),
     listAllCategories(supabase),
-    listAllCollections(supabase),
     listAllDevices(supabase),
   ]);
   if (!wallpaper) notFound();
@@ -33,7 +32,6 @@ export default async function EditWallpaperPage({ params }: PageProps<"/admin/wa
         key={wallpaper.updated_at}
         wallpaper={wallpaper}
         categories={categories.map((item) => ({ id: item.id, name: item.name }))}
-        collections={collections.map((item) => ({ id: item.id, name: item.name }))}
         devices={devices.map((item) => ({ id: item.id, name: item.name, hint: `${item.width} × ${item.height}` }))}
       />
     </>

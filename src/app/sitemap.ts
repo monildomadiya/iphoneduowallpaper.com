@@ -1,15 +1,14 @@
 import type { MetadataRoute } from "next";
 import { getPostSitemapEntries } from "@/lib/data/posts";
-import { getCategories, getCollections, getDevices } from "@/lib/data/taxonomy";
+import { getCategories, getDevices } from "@/lib/data/taxonomy";
 import { getWallpaperSitemapEntries } from "@/lib/data/wallpapers";
 import { absoluteUrl, imageUrl } from "@/lib/utils";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [wallpapers, posts, categories, collections, devices] = await Promise.all([
+  const [wallpapers, posts, categories, devices] = await Promise.all([
     getWallpaperSitemapEntries(),
     getPostSitemapEntries(),
     getCategories(),
-    getCollections(),
     getDevices(),
   ]);
 
@@ -23,9 +22,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // A hub with nothing in it is noindex, so it stays out of the sitemap until it has something.
     ...(categories.length
       ? [{ url: absoluteUrl("/categories"), lastModified: libraryUpdated, changeFrequency: "weekly" as const, priority: 0.7 }]
-      : []),
-    ...(collections.length
-      ? [{ url: absoluteUrl("/collections"), lastModified: libraryUpdated, changeFrequency: "weekly" as const, priority: 0.7 }]
       : []),
     ...(devices.length
       ? [{ url: absoluteUrl("/devices"), lastModified: libraryUpdated, changeFrequency: "weekly" as const, priority: 0.7 }]
@@ -52,12 +48,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: item.updated_at,
       changeFrequency: "weekly" as const,
       priority: 0.7,
-    })),
-    ...collections.filter(hasWallpapers).map((item) => ({
-      url: absoluteUrl(`/collections/${item.slug}`),
-      lastModified: item.updated_at,
-      changeFrequency: "weekly" as const,
-      priority: 0.6,
     })),
     ...devices.filter(hasWallpapers).map((item) => ({
       url: absoluteUrl(`/devices/${item.slug}`),

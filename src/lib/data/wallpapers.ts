@@ -13,7 +13,7 @@ import { isValidSlug } from "@/lib/utils";
 const CARD_COLUMNS =
   "id,title,slug,thumb_key,preview_key,width,height,dominant_color,downloads,views,is_featured,published_at,category:categories(name,slug)";
 
-const DETAIL_COLUMNS = `${CARD_COLUMNS},description,tags,original_key,file_size,mime_type,source_type,credit_name,credit_url,seo_title,seo_description,category_id,created_at,updated_at,devices:wallpaper_devices(device:devices(id,name,slug,family,screen_label,width,height,sort_order)),collections:wallpaper_collections(collection:collections(id,name,slug,is_active))`;
+const DETAIL_COLUMNS = `${CARD_COLUMNS},description,tags,original_key,file_size,mime_type,source_type,credit_name,credit_url,seo_title,seo_description,category_id,created_at,updated_at,devices:wallpaper_devices(device:devices(id,name,slug,family,screen_label,width,height,sort_order))`;
 
 type Raw = Record<string, unknown>;
 
@@ -55,13 +55,6 @@ export function toDetail(row: Raw): WallpaperDetail {
       height,
     }));
 
-  const collections = ((row.collections as Raw[] | null) ?? [])
-    .map((link) => one<{ id: string; name: string; slug: string; is_active: boolean }>(link.collection))
-    .filter((collection): collection is { id: string; name: string; slug: string; is_active: boolean } =>
-      Boolean(collection?.is_active),
-    )
-    .map(({ id, name, slug }) => ({ id, name, slug }));
-
   return {
     ...toCard(row),
     description: (row.description as string | null) ?? null,
@@ -78,7 +71,6 @@ export function toDetail(row: Raw): WallpaperDetail {
     created_at: row.created_at as string,
     updated_at: row.updated_at as string,
     devices,
-    collections,
   };
 }
 
@@ -92,7 +84,6 @@ export interface WallpaperQuery {
   perPage?: number;
   categoryId?: string;
   deviceId?: string;
-  collectionId?: string;
   featured?: boolean;
   excludeId?: string;
 }
@@ -112,12 +103,10 @@ export async function listWallpapers(query: WallpaperQuery = {}): Promise<Pagina
 
   let columns = CARD_COLUMNS;
   if (query.deviceId) columns += ",wallpaper_devices!inner(device_id)";
-  if (query.collectionId) columns += ",wallpaper_collections!inner(collection_id)";
 
   let request = supabase.from("wallpapers").select(columns, { count: "exact" }).eq("status", "published");
   if (query.categoryId) request = request.eq("category_id", query.categoryId);
   if (query.deviceId) request = request.eq("wallpaper_devices.device_id", query.deviceId);
-  if (query.collectionId) request = request.eq("wallpaper_collections.collection_id", query.collectionId);
   if (query.featured) request = request.eq("is_featured", true);
   if (query.excludeId) request = request.neq("id", query.excludeId);
 

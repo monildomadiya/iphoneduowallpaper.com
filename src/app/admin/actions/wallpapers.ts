@@ -70,7 +70,8 @@ const fieldsSchema = z.object({
   description: optionalText(2000),
   categoryId: z.uuid().nullish(),
   deviceIds: z.array(z.uuid()).max(20).default([]),
-  collectionIds: z.array(z.uuid()).max(50).default([]),
+  // Only the Android app still sends collections; when absent, existing links are left alone.
+  collectionIds: z.array(z.uuid()).max(50).optional(),
   tags: z.array(z.string()).max(30).default([]),
   status: z.enum(["draft", "published"]),
   isFeatured: z.boolean().default(false),
@@ -108,13 +109,18 @@ async function verifyUploadedImage(image: z.infer<typeof imageSchema>) {
   return original.size;
 }
 
-async function syncRelations(supabase: SupabaseClient, wallpaperId: string, deviceIds: string[], collectionIds: string[]) {
+async function syncRelations(
+  supabase: SupabaseClient,
+  wallpaperId: string,
+  deviceIds: string[],
+  collectionIds: string[] | undefined,
+) {
   const [devices, collections] = await Promise.all([
     supabase.from("wallpaper_devices").delete().eq("wallpaper_id", wallpaperId),
-    supabase.from("wallpaper_collections").delete().eq("wallpaper_id", wallpaperId),
+    collectionIds ? supabase.from("wallpaper_collections").delete().eq("wallpaper_id", wallpaperId) : null,
   ]);
   if (devices.error) throw devices.error;
-  if (collections.error) throw collections.error;
+  if (collections?.error) throw collections.error;
 
   const inserts = [];
   if (deviceIds.length) {
@@ -124,7 +130,7 @@ async function syncRelations(supabase: SupabaseClient, wallpaperId: string, devi
         .insert([...new Set(deviceIds)].map((device_id) => ({ wallpaper_id: wallpaperId, device_id }))),
     );
   }
-  if (collectionIds.length) {
+  if (collectionIds?.length) {
     inserts.push(
       supabase
         .from("wallpaper_collections")

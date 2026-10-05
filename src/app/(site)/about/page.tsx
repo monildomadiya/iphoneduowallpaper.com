@@ -32,7 +32,7 @@ const PRINCIPLES = [
   {
     icon: Layers,
     title: "Organized with care",
-    body: "Categories, curated collections and device pages make it easy to find a wallpaper that matches your style and your screen.",
+    body: "Categories and device pages make it easy to find a wallpaper that matches your style and your screen.",
   },
 ];
 

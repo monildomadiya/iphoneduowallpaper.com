@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { AdminHeader } from "@/components/admin/ui";
 import { Uploader } from "@/components/admin/uploader";
-import { listAllCategories, listAllCollections, listAllDevices } from "@/lib/admin/queries";
+import { listAllCategories, listAllDevices } from "@/lib/admin/queries";
 import { requireAdmin } from "@/lib/auth";
 import { r2PublicUrl } from "@/lib/env";
 import { isR2Configured } from "@/lib/server-env";
@@ -15,9 +15,8 @@ export const metadata: Metadata = { title: "Upload wallpapers" };
 export default async function UploadPage() {
   await requireAdmin();
   const supabase = await createSupabaseServerClient();
-  const [categories, collections, devices] = await Promise.all([
+  const [categories, devices] = await Promise.all([
     listAllCategories(supabase),
-    listAllCollections(supabase),
     listAllDevices(supabase),
   ]);
 
@@ -36,7 +35,6 @@ export default async function UploadPage() {
       ) : null}
       <Uploader
         categories={categories.map((item) => ({ id: item.id, name: item.name }))}
-        collections={collections.map((item) => ({ id: item.id, name: item.name }))}
         devices={devices.map((item) => ({ id: item.id, name: item.name, width: item.width, height: item.height }))}
       />
     </>

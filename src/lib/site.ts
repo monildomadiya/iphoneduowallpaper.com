@@ -9,7 +9,6 @@ export const MOCKUP_DATE = "Friday, October 23";
 export const MAIN_NAV = [
   { href: "/wallpapers", label: "Wallpapers" },
   { href: "/categories", label: "Categories" },
-  { href: "/collections", label: "Collections" },
   { href: "/devices", label: "Devices" },
   { href: "/blog", label: "Guides" },
 ] as const;
@@ -21,7 +20,6 @@ export const FOOTER_NAV: { title: string; links: { href: string; label: string }
       { href: "/wallpapers", label: "All Wallpapers" },
       { href: "/wallpapers?sort=popular", label: "Most Downloaded" },
       { href: "/categories", label: "Categories" },
-      { href: "/collections", label: "Collections" },
       { href: "/search", label: "Search" },
     ],
   },

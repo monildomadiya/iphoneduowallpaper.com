@@ -242,7 +242,7 @@ export default async function WallpaperPage({ params }: PageProps<"/wallpapers/[
               </dl>
             </section>
 
-            {wallpaper.devices.length || wallpaper.collections.length || wallpaper.tags.length ? (
+            {wallpaper.devices.length || wallpaper.tags.length ? (
               <div className="mt-6 flex flex-wrap gap-2">
                 {wallpaper.devices.map((device) => (
                   <Link
@@ -251,15 +251,6 @@ export default async function WallpaperPage({ params }: PageProps<"/wallpapers/[
                     className="rounded-full bg-accent/10 px-3.5 py-1.5 text-[13px] font-medium text-link transition hover:bg-accent/15"
                   >
                     {device.name}
-                  </Link>
-                ))}
-                {wallpaper.collections.map((collection) => (
-                  <Link
-                    key={collection.id}
-                    href={`/collections/${collection.slug}`}
-                    className="rounded-full bg-surface px-3.5 py-1.5 text-[13px] font-medium transition hover:bg-surface-hover"
-                  >
-                    {collection.name}
                   </Link>
                 ))}
                 {wallpaper.tags.map((tag) => (

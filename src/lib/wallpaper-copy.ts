@@ -20,7 +20,6 @@ interface WallpaperLike {
   dominant_color: string;
   tags: string[];
   category: { name: string } | null;
-  collections: { name: string }[];
 }
 
 function parseHex(hex: string): [number, number, number] | null {
@@ -135,15 +134,9 @@ export function wallpaperOverview(wallpaper: WallpaperLike): string[] {
   }
   const paragraphs = [intro.join(" ")];
 
-  const themes: string[] = [];
   // "iphone duo wallpaper"-style tags describe the site, not the picture, and read as keyword stuffing.
   const subjects = wallpaper.tags.filter((tag) => !/\b(wallpapers?|iphone)\b/i.test(tag)).slice(0, 8);
-  if (subjects.length) themes.push(`Themes: ${list(subjects)}.`);
-  if (wallpaper.collections.length) {
-    const names = wallpaper.collections.map((collection) => collection.name);
-    themes.push(`It is part of the ${list(names)} ${names.length === 1 ? "collection" : "collections"}.`);
-  }
-  if (themes.length) paragraphs.push(themes.join(" "));
+  if (subjects.length) paragraphs.push(`Themes: ${list(subjects)}.`);
 
   return paragraphs;
 }

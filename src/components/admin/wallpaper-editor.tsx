@@ -31,12 +31,10 @@ import {
 export function WallpaperEditor({
   wallpaper,
   categories,
-  collections,
   devices,
 }: {
   wallpaper: WallpaperAdminRow;
   categories: TaxonomyOption[];
-  collections: TaxonomyOption[];
   devices: TaxonomyOption[];
 }) {
   const router = useRouter();
@@ -50,7 +48,6 @@ export function WallpaperEditor({
   const [description, setDescription] = useState(wallpaper.description ?? "");
   const [categoryId, setCategoryId] = useState<string | null>(wallpaper.category_id);
   const [deviceIds, setDeviceIds] = useState(wallpaper.devices.map((device) => device.id));
-  const [collectionIds, setCollectionIds] = useState(wallpaper.collections.map((collection) => collection.id));
   const [tags, setTags] = useState(wallpaper.tags);
   const [status, setStatus] = useState(wallpaper.status);
   const [isFeatured, setIsFeatured] = useState(wallpaper.is_featured);
@@ -75,7 +72,6 @@ export function WallpaperEditor({
         description,
         categoryId,
         deviceIds,
-        collectionIds,
         tags,
         status,
         isFeatured,
@@ -288,13 +284,10 @@ export function WallpaperEditor({
           </div>
         </Card>
 
-        <Card title="Devices & collections">
+        <Card title="Devices">
           <div className="space-y-5">
             <Field label="Fits devices">
               <ChipMultiSelect options={devices} value={deviceIds} onChange={setDeviceIds} />
-            </Field>
-            <Field label="Collections">
-              <ChipMultiSelect options={collections} value={collectionIds} onChange={setCollectionIds} emptyLabel="No collections yet" />
             </Field>
           </div>
         </Card>

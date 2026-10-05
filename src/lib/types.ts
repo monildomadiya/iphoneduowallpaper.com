@@ -61,7 +61,6 @@ export interface TaxonomyStats {
 }
 
 export type Category = CategoryRow & TaxonomyStats;
-export type Collection = CollectionRow & TaxonomyStats;
 export type Device = DeviceRow & TaxonomyStats;
 
 export type DeviceSummary = Pick<
@@ -100,10 +99,10 @@ export interface WallpaperDetail extends WallpaperCardData {
   created_at: string;
   updated_at: string;
   devices: DeviceSummary[];
-  collections: { id: string; name: string; slug: string }[];
 }
 
 export interface WallpaperAdminRow extends WallpaperDetail {
+  collections: { id: string; name: string; slug: string }[];
   status: PublishStatus;
   created_by: string | null;
 }

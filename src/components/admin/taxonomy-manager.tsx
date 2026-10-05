@@ -1,24 +1,23 @@
 "use client";
 
 /* eslint-disable @next/next/no-img-element -- cover thumbnails come from R2 */
-import { ChevronRight, ExternalLink, Pencil, Plus, Star, Trash2 } from "lucide-react";
+import { ChevronRight, ExternalLink, Pencil, Plus, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
-import { deleteTaxonomy, saveCategory, saveCollection, saveDevice } from "@/app/admin/actions/taxonomy";
-import type { CategoryRow, CollectionRow, DeviceRow } from "@/lib/types";
+import { deleteTaxonomy, saveCategory, saveDevice } from "@/app/admin/actions/taxonomy";
+import type { CategoryRow, DeviceRow } from "@/lib/types";
 import { cn, imageUrl, slugify } from "@/lib/utils";
 import { CoverPicker } from "./cover-picker";
 import { Modal, PendingButton, Switch, useConfirm } from "./client";
 import { BulkBar, SelectBox, useSelection } from "./selection";
 import { AdminEmpty, Badge, Field, buttonClass, iconButtonClass, inputClass } from "./ui";
 
-type Kind = "categories" | "collections" | "devices";
-type Row = (CategoryRow | CollectionRow | DeviceRow) & { wallpaper_count: number };
+type Kind = "categories" | "devices";
+type Row = (CategoryRow | DeviceRow) & { wallpaper_count: number };
 
 const LABELS: Record<Kind, { singular: string; path: string }> = {
   categories: { singular: "category", path: "/categories" },
-  collections: { singular: "collection", path: "/collections" },
   devices: { singular: "device", path: "/devices" },
 };
 
@@ -31,7 +30,6 @@ interface FormState {
   seoDescription: string;
   sortOrder: string;
   isActive: boolean;
-  isFeatured: boolean;
   coverKey: string | null;
   family: string;
   screenLabel: string;
@@ -43,7 +41,6 @@ interface FormState {
 
 function toForm(row: Row | null): FormState {
   const device = row as DeviceRow | null;
-  const collection = row as CollectionRow | null;
   return {
     id: row?.id ?? null,
     name: row?.name ?? "",
@@ -53,7 +50,6 @@ function toForm(row: Row | null): FormState {
     seoDescription: row?.seo_description ?? "",
     sortOrder: String(row?.sort_order ?? 0),
     isActive: row?.is_active ?? true,
-    isFeatured: collection?.is_featured ?? false,
     coverKey: (row as CategoryRow | null)?.cover_key ?? null,
     family: device?.family ?? "iPhone",
     screenLabel: device?.screen_label ?? "",
@@ -108,9 +104,7 @@ export function TaxonomyManager({ kind, rows }: { kind: Kind; rows: Row[] }) {
               diagonalIn: form.diagonalIn ? Number(form.diagonalIn) : null,
               ppi: form.ppi ? Number(form.ppi) : null,
             })
-          : kind === "collections"
-            ? await saveCollection({ ...common, isFeatured: form.isFeatured, coverKey: form.coverKey })
-            : await saveCategory({ ...common, coverKey: form.coverKey });
+          : await saveCategory({ ...common, coverKey: form.coverKey });
 
       if (result.ok) {
         toast.success(result.message ?? "Saved");
@@ -198,7 +192,6 @@ export function TaxonomyManager({ kind, rows }: { kind: Kind; rows: Row[] }) {
                     <span className="min-w-0 flex-1">
                       <span className="flex items-center gap-1.5 text-[15px] font-medium">
                         <span className="truncate">{row.name}</span>
-                        {(row as CollectionRow).is_featured ? <Star className="size-3.5 shrink-0 fill-warning text-warning" /> : null}
                       </span>
                       <span className="mt-0.5 block truncate text-[12px] text-fg-3">
                         {kind === "devices" ? `${device.width} × ${device.height} · ` : `/${row.slug} · `}
@@ -259,7 +252,6 @@ export function TaxonomyManager({ kind, rows }: { kind: Kind; rows: Row[] }) {
                           <div className="min-w-0">
                             <p className="flex items-center gap-1.5 font-medium">
                               {row.name}
-                              {(row as CollectionRow).is_featured ? <Star className="size-3.5 fill-warning text-warning" /> : null}
                             </p>
                             <p className="text-[12px] text-fg-3">/{row.slug}</p>
                           </div>
@@ -422,14 +414,6 @@ export function TaxonomyManager({ kind, rows }: { kind: Kind; rows: Row[] }) {
 
             <div className="space-y-4 rounded-xl bg-surface p-4">
               <Switch label="Visible on website" checked={form.isActive} onChange={(value) => update("isActive", value)} />
-              {kind === "collections" ? (
-                <Switch
-                  label="Featured collection"
-                  description="Shown in the Collections section on the home page"
-                  checked={form.isFeatured}
-                  onChange={(value) => update("isFeatured", value)}
-                />
-              ) : null}
             </div>
           </div>
         ) : null}

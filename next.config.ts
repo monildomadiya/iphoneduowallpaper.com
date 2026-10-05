@@ -50,6 +50,8 @@ const nextConfig: NextConfig = {
       { source: "/about-us", destination: "/about", permanent: true },
       { source: "/wallpaper/:slug", destination: "/wallpapers/:slug", permanent: true },
       { source: "/category/:slug", destination: "/categories/:slug", permanent: true },
+      // Collections were retired; send old links and search results to the full library.
+      { source: "/collections/:path*", destination: "/wallpapers", permanent: true },
     ];
   },
 };

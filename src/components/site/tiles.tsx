@@ -1,8 +1,7 @@
 /* eslint-disable @next/next/no-img-element -- covers are pre-optimized WebP files served from Cloudflare R2 */
-import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import { Artwork, DeviceFrame, bestVariantFor } from "@/components/wallpaper/device-frame";
-import type { Category, Collection, Device, PostCardData } from "@/lib/types";
+import type { Category, Device, PostCardData } from "@/lib/types";
 import { cn, formatDate, imageUrl } from "@/lib/utils";
 
 function countLabel(count: number) {
@@ -33,44 +32,6 @@ export function CategoryTiles({ categories, className }: { categories: Category[
             <div className="absolute inset-x-0 bottom-0 p-4 text-white">
               <h3 className="text-[19px] font-semibold tracking-tight">{category.name}</h3>
               <p className="mt-0.5 text-[13px] text-white/75">{countLabel(category.wallpaper_count)}</p>
-            </div>
-          </Link>
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-export function CollectionTiles({ collections, className }: { collections: Collection[]; className?: string }) {
-  return (
-    <ul className={cn("grid gap-5 sm:grid-cols-2 lg:grid-cols-3", className)}>
-      {collections.map((collection, index) => (
-        <li key={collection.id}>
-          <Link
-            href={`/collections/${collection.slug}`}
-            className="group relative flex aspect-[16/11] flex-col justify-end overflow-hidden rounded-[28px] bg-surface p-6 shadow-card ring-1 ring-line"
-          >
-            {collection.cover_thumb_key ? (
-              <img
-                src={imageUrl(collection.cover_thumb_key)}
-                alt=""
-                loading="lazy"
-                decoding="async"
-                className="absolute inset-0 size-full object-cover transition duration-700 ease-apple group-hover:scale-105"
-              />
-            ) : (
-              <Artwork index={index + 1} />
-            )}
-            <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/20 to-transparent" />
-            <span className="absolute right-5 top-5 grid size-9 place-items-center rounded-full bg-white/20 text-white backdrop-blur-md transition group-hover:bg-white/35">
-              <ArrowUpRight className="size-4" />
-            </span>
-            <div className="relative text-white">
-              <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-white/70">Collection</p>
-              <h3 className="mt-1 text-2xl font-semibold tracking-tight">{collection.name}</h3>
-              {collection.description ? (
-                <p className="mt-1.5 line-clamp-2 text-[14px] leading-5 text-white/80">{collection.description}</p>
-              ) : null}
             </div>
           </Link>
         </li>

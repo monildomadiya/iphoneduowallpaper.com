@@ -2,13 +2,13 @@ import { ChevronRight, Download, Layers, ShieldCheck, Sparkles } from "lucide-re
 import type { Metadata } from "next";
 import Link from "next/link";
 import { AdSlot } from "@/components/ads/ad-slot";
-import { CategoryTiles, CollectionTiles, DeviceTiles, FaqList, PostCard } from "@/components/site/tiles";
+import { CategoryTiles, DeviceTiles, FaqList, PostCard } from "@/components/site/tiles";
 import { JsonLd, SectionHeading } from "@/components/ui/primitives";
 import { DeviceFrame } from "@/components/wallpaper/device-frame";
 import { WallpaperCard, WallpaperGrid } from "@/components/wallpaper/wallpaper-card";
 import { listPosts } from "@/lib/data/posts";
 import { getSiteSettings } from "@/lib/data/settings";
-import { getCategories, getCollections, getDevices } from "@/lib/data/taxonomy";
+import { getCategories, getDevices } from "@/lib/data/taxonomy";
 import { listWallpapers } from "@/lib/data/wallpapers";
 import { buildMetadata, faqJsonLd, organizationJsonLd, websiteJsonLd } from "@/lib/seo";
 import { HOME_FAQ } from "@/lib/site";
@@ -36,20 +36,18 @@ function pickHeroWallpapers(items: WallpaperCardData[]) {
 }
 
 export default async function HomePage() {
-  const [settings, featured, latest, popular, categories, collections, devices, posts] = await Promise.all([
+  const [settings, featured, latest, popular, categories, devices, posts] = await Promise.all([
     getSiteSettings(),
     listWallpapers({ featured: true, perPage: 12 }),
     listWallpapers({ perPage: 15 }),
     listWallpapers({ sort: "popular", perPage: 10 }),
     getCategories(),
-    getCollections(),
     getDevices(),
     listPosts(1, 3),
   ]);
 
   const showcase = featured.items.length ? featured.items : latest.items;
   const hero = pickHeroWallpapers(showcase);
-  const featuredCollections = stockedFirst(collections.filter((collection) => collection.is_featured)).slice(0, 6);
   const hasWallpapers = latest.total > 0;
 
   return (
@@ -85,8 +83,8 @@ export default async function HomePage() {
             <Link href="/wallpapers" className="btn-primary">
               Browse wallpapers
             </Link>
-            <Link href="/collections" className="link-apple inline-flex items-center gap-0.5 text-[17px]">
-              Explore collections
+            <Link href="/categories" className="link-apple inline-flex items-center gap-0.5 text-[17px]">
+              Explore categories
               <ChevronRight className="size-4" />
             </Link>
           </div>
@@ -210,14 +208,6 @@ export default async function HomePage() {
         <section className="container-apple mt-24">
           <SectionHeading title="Popular." subtitle="The most downloaded right now." href="/wallpapers?sort=popular" />
           <WallpaperGrid wallpapers={popular.items} />
-        </section>
-      ) : null}
-
-      {/* ------------------------------------------------------------ Collections */}
-      {featuredCollections.length ? (
-        <section className="container-apple mt-24">
-          <SectionHeading title="Collections." subtitle="Curated sets that belong together." href="/collections" />
-          <CollectionTiles collections={featuredCollections} />
         </section>
       ) : null}
 

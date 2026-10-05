@@ -1,12 +1,11 @@
 import "server-only";
 import { cacheLife, cacheTag } from "next/cache";
 import { getPublicSupabase } from "@/lib/supabase/public";
-import type { Category, Collection, Device } from "@/lib/types";
+import type { Category, Device } from "@/lib/types";
 import { isValidSlug } from "@/lib/utils";
 
 const BASE_COLUMNS =
   "id,name,slug,description,cover_key,seo_title,seo_description,sort_order,is_active,created_at,updated_at";
-const COLLECTION_COLUMNS = `${BASE_COLUMNS},is_featured`;
 const DEVICE_COLUMNS =
   "id,name,slug,family,screen_label,width,height,diagonal_in,ppi,description,seo_title,seo_description,sort_order,is_active,created_at,updated_at";
 
@@ -16,7 +15,7 @@ interface StatsRow {
 }
 
 async function loadTaxonomy<T extends { id: string; cover_key?: string | null }>(
-  table: "categories" | "collections" | "devices",
+  table: "categories" | "devices",
   columns: string,
   statsView: string,
   statsId: string,
@@ -60,20 +59,6 @@ export async function getCategories(): Promise<Category[]> {
   return items;
 }
 
-export async function getCollections(): Promise<Collection[]> {
-  "use cache";
-  cacheTag("collections", "wallpapers");
-  const { items, failed } = await loadTaxonomy<Collection>(
-    "collections",
-    COLLECTION_COLUMNS,
-    "collection_stats",
-    "collection_id",
-  );
-  if (failed) cacheLife("minutes");
-  else cacheLife("hours");
-  return items;
-}
-
 export async function getDevices(): Promise<Device[]> {
   "use cache";
   cacheTag("devices", "wallpapers");
@@ -86,11 +71,6 @@ export async function getDevices(): Promise<Device[]> {
 export async function getCategoryBySlug(slug: string): Promise<Category | null> {
   if (!isValidSlug(slug)) return null;
   return (await getCategories()).find((item) => item.slug === slug) ?? null;
-}
-
-export async function getCollectionBySlug(slug: string): Promise<Collection | null> {
-  if (!isValidSlug(slug)) return null;
-  return (await getCollections()).find((item) => item.slug === slug) ?? null;
 }
 
 export async function getDeviceBySlug(slug: string): Promise<Device | null> {
