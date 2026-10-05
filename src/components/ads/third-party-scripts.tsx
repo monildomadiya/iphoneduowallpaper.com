@@ -1,10 +1,10 @@
 import Script from "next/script";
 
+/** A plain async script, which React hoists into <head> in the server HTML, where AdSense expects its snippet. */
 export function AdsenseScript({ clientId }: { clientId: string }) {
   return (
-    <Script
-      id="adsbygoogle-init"
-      strategy="afterInteractive"
+    <script
+      async
       crossOrigin="anonymous"
       src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${encodeURIComponent(clientId)}`}
     />
