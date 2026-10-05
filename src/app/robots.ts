@@ -14,7 +14,7 @@ export default function robots(): MetadataRoute.Robots {
       // Let the AdSense crawler see every public page so ads match content.
       { userAgent: "Mediapartners-Google", allow: "/" },
     ],
+    // No `host`: Google ignores the Host directive and flags it as an unrecognized rule in Search Console.
     sitemap: `${siteUrl}/sitemap.xml`,
-    host: siteUrl,
   };
 }
