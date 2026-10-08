@@ -1,6 +1,7 @@
 import { siteUrl } from "@/lib/env";
 import { ES } from "@/lib/i18n/es";
 import { TR } from "@/lib/i18n/tr";
+import { isTranslatedEverywhere } from "@/lib/i18n/wallpapers";
 import type { ForeignLocale, LocalGuide, LocaleContent } from "@/lib/i18n/types";
 import type { PostCardData } from "@/lib/types";
 
@@ -28,7 +29,8 @@ export function localizedPath(locale: ForeignLocale, englishPath: string): strin
  * itself included, plus x-default pointing at English — Google ignores one-sided annotations.
  */
 export function languageAlternates(englishPath: string): Record<string, string> | undefined {
-  if (!TRANSLATED.has(englishPath)) return undefined;
+  const wallpaper = /^\/wallpapers\/([a-z0-9-]+)$/.exec(englishPath)?.[1];
+  if (!TRANSLATED.has(englishPath) && !(wallpaper && isTranslatedEverywhere(wallpaper))) return undefined;
   const url = (path: string) => (path === "/" ? siteUrl : `${siteUrl}${path}`);
   return {
     en: url(englishPath),

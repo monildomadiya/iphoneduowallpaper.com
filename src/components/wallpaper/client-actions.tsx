@@ -4,7 +4,15 @@ import { Share } from "lucide-react";
 import { useEffect } from "react";
 import { toast } from "sonner";
 
-export function ShareButton({ title, path }: { title: string; path: string }) {
+export function ShareButton({
+  title,
+  path,
+  labels = { share: "Share", copied: "Link copied to clipboard", copyFailed: "Could not copy the link", aria: "Share this wallpaper" },
+}: {
+  title: string;
+  path: string;
+  labels?: { share: string; copied: string; copyFailed: string; aria: string };
+}) {
   async function share() {
     const url = new URL(path, window.location.origin).toString();
     if (typeof navigator.share === "function") {
@@ -17,16 +25,16 @@ export function ShareButton({ title, path }: { title: string; path: string }) {
     }
     try {
       await navigator.clipboard.writeText(url);
-      toast.success("Link copied to clipboard");
+      toast.success(labels.copied);
     } catch {
-      toast.error("Could not copy the link");
+      toast.error(labels.copyFailed);
     }
   }
 
   return (
-    <button type="button" onClick={share} className="btn-secondary h-12 px-4" aria-label="Share this wallpaper">
+    <button type="button" onClick={share} className="btn-secondary h-12 px-4" aria-label={labels.aria}>
       <Share className="size-[18px]" />
-      <span className="sm:hidden">Share</span>
+      <span className="sm:hidden">{labels.share}</span>
     </button>
   );
 }

@@ -12,6 +12,7 @@ import { getCategories, getDarkCategory } from "@/lib/data/taxonomy";
 import { listWallpapers } from "@/lib/data/wallpapers";
 import { guideCard, isForeignLocale, languageAlternates, localeContent, localizedPath } from "@/lib/i18n";
 import { fill } from "@/lib/i18n/en";
+import { wallpaperHref } from "@/lib/i18n/wallpapers";
 import { buildMetadata, faqJsonLd, localizedPageJsonLd } from "@/lib/seo";
 import { formatNumber, imageUrl, stockedFirst } from "@/lib/utils";
 
@@ -97,7 +98,7 @@ export default async function LocalizedHomePage({ params }: PageProps<"/[lang]">
         <div className="container-apple relative mt-14 md:mt-20">
           <div className="mx-auto flex max-w-5xl items-end justify-center gap-4 sm:gap-8">
             <Link
-              href={outer ? `/wallpapers/${outer.slug}` : "/wallpapers"}
+              href={outer ? wallpaperHref(outer.slug, lang) : "/wallpapers"}
               aria-label={outer?.title ?? home.browse}
               className="block w-[31%] max-w-[250px] animate-float"
             >
@@ -110,7 +111,7 @@ export default async function LocalizedHomePage({ params }: PageProps<"/[lang]">
               />
             </Link>
             <Link
-              href={inner ? `/wallpapers/${inner.slug}` : "/wallpapers"}
+              href={inner ? wallpaperHref(inner.slug, lang) : "/wallpapers"}
               aria-label={inner?.title ?? home.browse}
               className="block w-[64%] max-w-[640px] animate-float-delayed"
             >
@@ -154,7 +155,7 @@ export default async function LocalizedHomePage({ params }: PageProps<"/[lang]">
           <ul className="no-scrollbar container-apple flex snap-x snap-mandatory gap-5 overflow-x-auto pb-4">
             {featured.items.map((wallpaper, index) => (
               <li key={wallpaper.id} className="w-[46%] shrink-0 snap-start sm:w-[30%] lg:w-[19%]">
-                <WallpaperCard wallpaper={wallpaper} sizes="large" priority={index < 2} />
+                <WallpaperCard wallpaper={wallpaper} sizes="large" priority={index < 2} locale={lang} />
               </li>
             ))}
           </ul>
@@ -164,7 +165,7 @@ export default async function LocalizedHomePage({ params }: PageProps<"/[lang]">
       {latest.items.length ? (
         <section className="container-apple mt-24">
           <SectionHeading title={home.latest[0]} subtitle={home.latest[1]} href="/wallpapers" linkLabel={home.viewAll} />
-          <WallpaperGrid wallpapers={latest.items} />
+          <WallpaperGrid wallpapers={latest.items} locale={lang} />
         </section>
       ) : null}
 

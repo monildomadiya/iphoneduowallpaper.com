@@ -1,3 +1,4 @@
+import { TR_WALLPAPER } from "@/lib/i18n/tr-wallpaper";
 import type { LocaleContent } from "@/lib/i18n/types";
 
 /**
@@ -359,11 +360,11 @@ Resmî görsellerden birini iPhone 18 Pro'da ya da daha eski bir iPhone'da kulla
 
 Resmî duvar kağıdındaki gün batımında çölün sakinliğini seviyor ama kimsede olmayan bir şey istiyorsanız, kütüphanemizdeki şu özgün çalışmalar aynı türden sakin bir manzara sunuyor:
 
-- [Midnight Blue Desert Dunes](/wallpapers/midnight-blue-desert-dunes-dual-iphone-wallpaper): sade bir gece gökyüzü altında yumuşak kum kıvrımları; koyu sürüme en yakın olanı.
-- [Monochrome Desert River](/wallpapers/monochrome-desert-river-minimalist-wallpaper): aralarından parlak bir nehrin kıvrılarak aktığı siyah kumullar.
-- [Midnight Peak](/wallpapers/midnight-peak-amoled-duo-wallpaper): AMOLED sevenler için saf siyah üzerinde tek bir karlı zirve.
-- [Snow Mountain and Moon](/wallpapers/minimal-snow-mountain-moon-landscape-duo-wallpaper): yumuşak mavi bir gökyüzü altında buzlu zirveler.
-- [Misty Mountain Pine](/wallpapers/misty-mountain-pine-tree-duo-wallpaper): bulutların içinde kaybolan kayalık zirveler.
+- [Midnight Blue Desert Dunes](/tr/wallpapers/midnight-blue-desert-dunes-dual-iphone-wallpaper): sade bir gece gökyüzü altında yumuşak kum kıvrımları; koyu sürüme en yakın olanı.
+- [Monochrome Desert River](/tr/wallpapers/monochrome-desert-river-minimalist-wallpaper): aralarından parlak bir nehrin kıvrılarak aktığı siyah kumullar.
+- [Midnight Peak](/tr/wallpapers/midnight-peak-amoled-duo-wallpaper): AMOLED sevenler için saf siyah üzerinde tek bir karlı zirve.
+- [Snow Mountain and Moon](/tr/wallpapers/minimal-snow-mountain-moon-landscape-duo-wallpaper): yumuşak mavi bir gökyüzü altında buzlu zirveler.
+- [Misty Mountain Pine](/tr/wallpapers/misty-mountain-pine-tree-duo-wallpaper): bulutların içinde kaybolan kayalık zirveler.
 
 Her duvar kağıdı sayfası, indirmeden önce tam çözünürlüğü ve görselin iPhone Duo'nun dış ve iç ekranına ve iPhone 18 Pro'ya nasıl oturduğunu gösterir. Bu tarzda daha fazlası için [Manzara](/categories/landscape) kategorisine, koyu sürüm gibi gece sahneleri için [Koyu ve AMOLED](/categories/dark) sayfasına göz atın. Kendi fotoğrafınızı mı kullanmak istiyorsunuz? [iPhone Duo duvar kağıdı oluşturucu](/tr/maker) onu iki ekran için kırpar.`,
     },
@@ -420,4 +421,5 @@ JPEG ve PNG her yerde çalışır. PNG düz renkleri ve degradeleri bantlanmadan
 [iPhone Duo iç ekran duvar kağıtlarımıza](/devices/iphone-duo-inner-display) ve [dış ekran duvar kağıtlarımıza](/devices/iphone-duo-outer-display) göz atın; hepsi yayınlanmadan önce boyut açısından kontrol edilir. Apple'ın duvar kağıdını mı arıyorsunuz? [Resmî iPhone Duo duvar kağıdı](/tr/blog/official-iphone-duo-wallpaper) rehberini okuyun.`,
     },
   ],
+  wallpaper: TR_WALLPAPER,
 };

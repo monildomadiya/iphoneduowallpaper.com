@@ -1,3 +1,4 @@
+import { ES_WALLPAPER } from "@/lib/i18n/es-wallpaper";
 import type { LocaleContent } from "@/lib/i18n/types";
 
 /**
@@ -360,11 +361,11 @@ Si guardaste una de las imágenes oficiales para usarla en un iPhone 18 Pro o en
 
 Si te gusta la calma del desierto al atardecer del fondo oficial pero quieres algo que no tenga nadie más, estos originales de nuestra biblioteca tienen el mismo tipo de paisaje tranquilo:
 
-- [Midnight Blue Desert Dunes](/wallpapers/midnight-blue-desert-dunes-dual-iphone-wallpaper): suaves curvas de arena bajo un cielo nocturno minimalista, lo más parecido a la versión oscura.
-- [Monochrome Desert River](/wallpapers/monochrome-desert-river-minimalist-wallpaper): dunas negras con un río brillante serpenteando entre ellas.
-- [Midnight Peak](/wallpapers/midnight-peak-amoled-duo-wallpaper): una única cumbre nevada sobre negro puro, para los fans del AMOLED.
-- [Snow Mountain and Moon](/wallpapers/minimal-snow-mountain-moon-landscape-duo-wallpaper): picos helados bajo un cielo azul suave.
-- [Misty Mountain Pine](/wallpapers/misty-mountain-pine-tree-duo-wallpaper): picos rocosos que se pierden entre las nubes.
+- [Midnight Blue Desert Dunes](/es/wallpapers/midnight-blue-desert-dunes-dual-iphone-wallpaper): suaves curvas de arena bajo un cielo nocturno minimalista, lo más parecido a la versión oscura.
+- [Monochrome Desert River](/es/wallpapers/monochrome-desert-river-minimalist-wallpaper): dunas negras con un río brillante serpenteando entre ellas.
+- [Midnight Peak](/es/wallpapers/midnight-peak-amoled-duo-wallpaper): una única cumbre nevada sobre negro puro, para los fans del AMOLED.
+- [Snow Mountain and Moon](/es/wallpapers/minimal-snow-mountain-moon-landscape-duo-wallpaper): picos helados bajo un cielo azul suave.
+- [Misty Mountain Pine](/es/wallpapers/misty-mountain-pine-tree-duo-wallpaper): picos rocosos que se pierden entre las nubes.
 
 Cada página de fondo muestra la resolución exacta y cómo encaja la imagen en la pantalla exterior e interior del iPhone Duo y en el iPhone 18 Pro antes de descargarla. Para ver más de este estilo, entra en la categoría [Paisajes](/categories/landscape) o en [Oscuros y AMOLED](/categories/dark) para escenas nocturnas como la versión oscura. ¿Prefieres usar tu propia foto? El [creador de fondos para iPhone Duo](/es/maker) la recorta para las dos pantallas.`,
     },
@@ -421,4 +422,5 @@ JPEG y PNG funcionan en todas partes. PNG mantiene los colores planos y los degr
 Explora nuestros fondos para la [pantalla interior del iPhone Duo](/devices/iphone-duo-inner-display) y para la [pantalla exterior](/devices/iphone-duo-outer-display): todos se comprueban antes de publicarse. ¿Buscas el fondo de Apple? Lee sobre [el fondo de pantalla oficial del iPhone Duo](/es/blog/official-iphone-duo-wallpaper).`,
     },
   ],
+  wallpaper: ES_WALLPAPER,
 };

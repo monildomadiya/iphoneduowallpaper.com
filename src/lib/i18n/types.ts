@@ -103,6 +103,62 @@ export interface MakerStrings {
   exportFailed: string;
 }
 
+/** Everything a wallpaper page says around the picture. Placeholders: `{n}`, `{p}`, `{x}`, `{title}`, `{color}`, `{category}`, `{name}`. */
+export interface WallpaperStrings {
+  /** Appended to the title in the <title> tag when it fits; `shortSuffix` when only that fits. */
+  suffix: string;
+  shortSuffix: string;
+  kicker: string;
+  breadcrumb: string;
+  download: string;
+  viewFull: string;
+  share: string;
+  copied: string;
+  copyFailed: string;
+  downloadsOne: string;
+  downloadsMany: string;
+  saveTip: string;
+  saveTipLink: string;
+  maker: string;
+  about: string;
+  fit: string;
+  details: string;
+  labels: { resolution: string; orientation: string; file: string; published: string; downloads: string; source: string; credit: string };
+  orientation: { portrait: string; landscape: string; square: string };
+  source: { original: string; ai: string; licensed: string; public_domain: string };
+  levels: { sharp: string; good: string; low: string; crop: string };
+  fitNothing: string;
+  fitTrimmed: string;
+  fitSides: string;
+  fitTopBottom: string;
+  fitEnlarged: string;
+  percent: string;
+  lessThanOne: string;
+  intro: string;
+  introCategory: string;
+  dark: string;
+  light: string;
+  colors: Record<string, string>;
+  deep: string;
+  pale: string;
+  /** "{color}" plus "deep"/"pale" in the language's word order. */
+  shade: string;
+  howTo: string;
+  steps: string[];
+  guide: string;
+  free: string;
+  terms: string;
+  report: string;
+  more: string;
+  moreCategory: string;
+  moreOther: string;
+  featured: string;
+  fallbackCategory: string;
+  preview: { device: string; screen: string; lock: string; home: string; clean: string; outer: string; inner: string };
+  categories: Record<string, string>;
+  devices: Record<string, string>;
+}
+
 export interface LocalGuide {
   /** The English guide's slug; the translation lives at /{locale}/blog/{slug}. */
   slug: string;
@@ -179,4 +235,5 @@ export interface LocaleContent {
     wallpapers: [string, string];
   };
   guides: LocalGuide[];
+  wallpaper: WallpaperStrings;
 }

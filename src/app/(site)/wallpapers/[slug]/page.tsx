@@ -10,6 +10,7 @@ import { WallpaperPreview } from "@/components/wallpaper/wallpaper-preview";
 import { getSiteSettings } from "@/lib/data/settings";
 import { getDevices } from "@/lib/data/taxonomy";
 import { getPrerenderWallpaperSlugs, getRelatedWallpapers, getWallpaperBySlug } from "@/lib/data/wallpapers";
+import { languageAlternates } from "@/lib/i18n";
 import { buildMetadata, wallpaperJsonLd } from "@/lib/seo";
 import { wallpaperGuide } from "@/lib/site";
 import { SOURCE_TYPE_LABELS } from "@/lib/types";
@@ -58,6 +59,7 @@ export async function generateMetadata({ params }: PageProps<"/wallpapers/[slug]
     title,
     description,
     path: `/wallpapers/${wallpaper.slug}`,
+    languages: languageAlternates(`/wallpapers/${wallpaper.slug}`),
     image: {
       url: imageUrl(wallpaper.preview_key),
       width: 1080,

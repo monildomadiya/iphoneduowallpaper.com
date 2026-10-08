@@ -1,6 +1,9 @@
 /* eslint-disable @next/next/no-img-element -- thumbnails are pre-optimized WebP files served from Cloudflare R2 */
 import { Download } from "lucide-react";
 import Link from "next/link";
+import { localeContent } from "@/lib/i18n";
+import type { ForeignLocale } from "@/lib/i18n/types";
+import { wallpaperHref, wallpaperTranslation } from "@/lib/i18n/wallpapers";
 import type { WallpaperCardData } from "@/lib/types";
 import { cn, formatCompact, imageUrl, qualityLabel, wallpaperAlt } from "@/lib/utils";
 
@@ -9,11 +12,18 @@ interface WallpaperCardProps {
   priority?: boolean;
   className?: string;
   sizes?: "grid" | "large";
+  /** On a translated page: link to the translation and show its title and category name. */
+  locale?: ForeignLocale;
 }
 
-export function WallpaperCard({ wallpaper, priority = false, className, sizes = "grid" }: WallpaperCardProps) {
+export function WallpaperCard({ wallpaper, priority = false, className, sizes = "grid", locale }: WallpaperCardProps) {
+  const t = locale ? localeContent(locale).wallpaper : null;
+  const title = (locale && wallpaperTranslation(locale, wallpaper.slug)?.title) || wallpaper.title;
+  const category = wallpaper.category
+    ? (t?.categories[wallpaper.category.slug] ?? wallpaper.category.name)
+    : (t?.fallbackCategory ?? "Wallpaper");
   return (
-    <Link href={`/wallpapers/${wallpaper.slug}`} className={cn("group block outline-none", className)}>
+    <Link href={wallpaperHref(wallpaper.slug, locale)} className={cn("group block outline-none", className)}>
       <div
         className={cn(
           "relative aspect-[9/16] overflow-hidden rounded-[22px] shadow-card ring-1 ring-line transition duration-500 ease-apple group-hover:-translate-y-1 group-hover:shadow-float group-focus-visible:ring-2 group-focus-visible:ring-accent",
@@ -23,7 +33,11 @@ export function WallpaperCard({ wallpaper, priority = false, className, sizes = 
       >
         <img
           src={imageUrl(wallpaper.thumb_key)}
-          alt={wallpaperAlt(wallpaper.title, wallpaper.width, wallpaper.height, wallpaper.category?.name)}
+          alt={
+            t
+              ? `${title} — ${t.kicker}, ${wallpaper.width}×${wallpaper.height}`
+              : wallpaperAlt(wallpaper.title, wallpaper.width, wallpaper.height, wallpaper.category?.name)
+          }
           width={480}
           height={Math.round((480 * wallpaper.height) / wallpaper.width)}
           loading={priority ? "eager" : "lazy"}
@@ -37,7 +51,7 @@ export function WallpaperCard({ wallpaper, priority = false, className, sizes = 
         </span>
         {wallpaper.is_featured ? (
           <span className="absolute left-2.5 top-2.5 rounded-full bg-white/85 px-2 py-0.5 text-[10px] font-semibold text-[#1d1d1f] backdrop-blur-md">
-            Featured
+            {t?.featured ?? "Featured"}
           </span>
         ) : null}
         <span className="absolute bottom-3 left-3 flex translate-y-2 items-center gap-1 text-[12px] font-medium text-white opacity-0 transition duration-500 group-hover:translate-y-0 group-hover:opacity-100">
@@ -46,9 +60,9 @@ export function WallpaperCard({ wallpaper, priority = false, className, sizes = 
         </span>
       </div>
       <div className="mt-3 px-1">
-        <h3 className="truncate text-[15px] font-semibold tracking-tight text-fg">{wallpaper.title}</h3>
+        <h3 className="truncate text-[15px] font-semibold tracking-tight text-fg">{title}</h3>
         <p className="mt-0.5 truncate text-[13px] text-fg-2">
-          {wallpaper.category?.name ?? "Wallpaper"} · {wallpaper.width} × {wallpaper.height}
+          {category} · {wallpaper.width} × {wallpaper.height}
         </p>
       </div>
     </Link>
@@ -59,10 +73,12 @@ export function WallpaperGrid({
   wallpapers,
   priorityCount = 0,
   className,
+  locale,
 }: {
   wallpapers: WallpaperCardData[];
   priorityCount?: number;
   className?: string;
+  locale?: ForeignLocale;
 }) {
   return (
     <ul
@@ -73,7 +89,7 @@ export function WallpaperGrid({
     >
       {wallpapers.map((wallpaper, index) => (
         <li key={wallpaper.id}>
-          <WallpaperCard wallpaper={wallpaper} priority={index < priorityCount} />
+          <WallpaperCard wallpaper={wallpaper} priority={index < priorityCount} locale={locale} />
         </li>
       ))}
     </ul>

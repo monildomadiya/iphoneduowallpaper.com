@@ -3,6 +3,7 @@ import { getPostSitemapEntries } from "@/lib/data/posts";
 import { getCategories, getDarkCategory, getDevices } from "@/lib/data/taxonomy";
 import { getWallpaperSitemapEntries } from "@/lib/data/wallpapers";
 import { FOREIGN_LOCALES, languageAlternates, localizedPath, translatedEnglishPaths } from "@/lib/i18n";
+import { wallpaperTranslation } from "@/lib/i18n/wallpapers";
 import { absoluteUrl, imageUrl } from "@/lib/utils";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -86,7 +87,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: 0.6,
       }),
     ),
+    // Translated wallpaper pages: only those with a translation exist, so only those are listed.
+    ...FOREIGN_LOCALES.flatMap((locale) =>
+      wallpapers
+        .filter((item) => wallpaperTranslation(locale, item.slug))
+        .map((item) => ({
+          url: absoluteUrl(`/${locale}/wallpapers/${item.slug}`),
+          lastModified: item.updated_at,
+          changeFrequency: "monthly" as const,
+          priority: 0.6,
+          images: [imageUrl(item.preview_key)].filter(Boolean),
+          ...(languageAlternates(`/wallpapers/${item.slug}`)
+            ? { alternates: { languages: languageAlternates(`/wallpapers/${item.slug}`) } }
+            : {}),
+        })),
+    ),
     ...wallpapers.map((item) => ({
+      ...(languageAlternates(`/wallpapers/${item.slug}`)
+        ? { alternates: { languages: languageAlternates(`/wallpapers/${item.slug}`) } }
+        : {}),
       url: absoluteUrl(`/wallpapers/${item.slug}`),
       lastModified: item.updated_at,
       changeFrequency: "monthly" as const,

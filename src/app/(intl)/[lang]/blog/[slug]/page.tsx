@@ -142,7 +142,7 @@ export default async function LocalizedGuidePage({ params }: PageProps<"/[lang]/
             subtitle={blog.wallpapers[1]}
             href={guide.slug === "official-iphone-duo-wallpaper" && landscape ? "/categories/landscape" : "/wallpapers"}
           />
-          <WallpaperGrid wallpapers={wallpapers.items} />
+          <WallpaperGrid wallpapers={wallpapers.items} locale={found.lang} />
         </section>
       ) : null}
 

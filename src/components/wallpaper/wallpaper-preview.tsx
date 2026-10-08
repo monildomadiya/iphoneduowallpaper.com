@@ -40,11 +40,26 @@ function Segmented<T extends string>({
 }
 
 const VARIANTS: DeviceVariant[] = ["duo-outer", "duo-inner", "pro"];
-const MODES: { value: ScreenMode; label: string }[] = [
-  { value: "lock", label: "Lock Screen" },
-  { value: "home", label: "Home Screen" },
-  { value: "clean", label: "Wallpaper" },
-];
+
+export interface PreviewLabels {
+  device: string;
+  screen: string;
+  lock: string;
+  home: string;
+  clean: string;
+  outer: string;
+  inner: string;
+}
+
+const EN_LABELS: PreviewLabels = {
+  device: "Preview device",
+  screen: "Preview screen",
+  lock: "Lock Screen",
+  home: "Home Screen",
+  clean: "Wallpaper",
+  outer: DEVICE_SPECS["duo-outer"].short,
+  inner: DEVICE_SPECS["duo-inner"].short,
+};
 
 export function WallpaperPreview({
   src,
@@ -52,13 +67,22 @@ export function WallpaperPreview({
   color,
   width,
   height,
+  labels: t = EN_LABELS,
 }: {
   src: string;
   alt: string;
   color: string;
   width: number;
   height: number;
+  labels?: PreviewLabels;
 }) {
+  const modes: { value: ScreenMode; label: string }[] = [
+    { value: "lock", label: t.lock },
+    { value: "home", label: t.home },
+    { value: "clean", label: t.clean },
+  ];
+  const variantLabel = (item: DeviceVariant) =>
+    item === "duo-outer" ? t.outer : item === "duo-inner" ? t.inner : DEVICE_SPECS[item].short;
   const [variant, setVariant] = useState<DeviceVariant>(() => bestVariantFor(width, height));
   const [mode, setMode] = useState<ScreenMode>("lock");
 
@@ -86,12 +110,12 @@ export function WallpaperPreview({
       </div>
       <div className="mt-5 flex flex-col items-center gap-3">
         <Segmented
-          label="Preview device"
+          label={t.device}
           value={variant}
           onChange={setVariant}
-          options={VARIANTS.map((item) => ({ value: item, label: DEVICE_SPECS[item].short }))}
+          options={VARIANTS.map((item) => ({ value: item, label: variantLabel(item) }))}
         />
-        <Segmented label="Preview screen" value={mode} onChange={setMode} options={MODES} />
+        <Segmented label={t.screen} value={mode} onChange={setMode} options={modes} />
       </div>
     </div>
   );
