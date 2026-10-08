@@ -35,6 +35,8 @@ export interface Chrome {
   homeHref: string;
   /** First breadcrumb. */
   homeLabel: string;
+  /** Where the header's search box sends a query. */
+  searchPath: string;
   nav: NavItem[];
   header: HeaderStrings;
   quickLinks: LinkItem[];
@@ -229,6 +231,22 @@ export interface TaxonomyStrings {
   };
 }
 
+export interface SearchStrings {
+  title: string;
+  description: string;
+  h1: string;
+  placeholder: string;
+  label: string;
+  popular: string;
+  resultsOne: string;
+  resultsMany: string;
+  emptyTitle: string;
+  emptyDescription: string;
+  browse: string;
+  /** Words too common to narrow a search ("fondo", "duvar kağıdı"), dropped before matching. */
+  stopWords: string[];
+}
+
 export interface LocalGuide {
   /** The English guide's slug; the translation lives at /{locale}/blog/{slug}. */
   slug: string;
@@ -308,4 +326,5 @@ export interface LocaleContent {
   wallpaper: WallpaperStrings;
   listing: ListingStrings;
   taxonomy: TaxonomyStrings;
+  search: SearchStrings;
 }

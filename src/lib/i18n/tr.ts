@@ -1,4 +1,5 @@
 import { TR_LISTING, TR_TAXONOMY } from "@/lib/i18n/tr-taxonomy";
+import { TR_SEARCH } from "@/lib/i18n/search-strings";
 import { TR_WALLPAPER } from "@/lib/i18n/tr-wallpaper";
 import type { LocaleContent } from "@/lib/i18n/types";
 
@@ -15,6 +16,7 @@ export const TR: LocaleContent = {
     locale: "tr",
     homeHref: "/tr",
     homeLabel: "Ana sayfa",
+    searchPath: "/tr/search",
     nav: [
       { href: "/tr/wallpapers", label: "Duvar kağıtları", icon: "wallpapers" },
       { href: "/tr/categories", label: "Kategoriler", icon: "categories" },
@@ -425,4 +427,5 @@ JPEG ve PNG her yerde çalışır. PNG düz renkleri ve degradeleri bantlanmadan
   wallpaper: TR_WALLPAPER,
   listing: TR_LISTING,
   taxonomy: TR_TAXONOMY,
+  search: TR_SEARCH,
 };

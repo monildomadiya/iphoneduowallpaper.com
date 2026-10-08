@@ -102,10 +102,12 @@ export function HeaderControls({
   quickLinks,
   nav = MAIN_NAV,
   strings: t = EN_HEADER,
+  searchPath = "/search",
 }: {
   quickLinks: LinkItem[];
   nav?: NavItem[];
   strings?: HeaderStrings;
+  searchPath?: string;
 }) {
   const router = useRouter();
   const shortcut = useShortcutLabel();
@@ -146,7 +148,7 @@ export function HeaderControls({
     const value = new FormData(event.currentTarget).get("q")?.toString().trim();
     if (!value) return;
     close();
-    router.push(`/search?q=${encodeURIComponent(value)}`);
+    router.push(`${searchPath}?q=${encodeURIComponent(value)}`);
   }
 
   const iconButton =

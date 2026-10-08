@@ -311,3 +311,29 @@ export async function getDarkWallpapers(): Promise<{ ids: string[]; cover_thumb_
   const cover = [...dark].sort((a, b) => Number(b.downloads ?? 0) - Number(a.downloads ?? 0))[0];
   return { ids: dark.map((row) => row.id as string), cover_thumb_key: (cover?.thumb_key as string | undefined) ?? null };
 }
+
+/** id, slug and category of every published wallpaper — what translated search matches against. */
+export async function getSearchRows(): Promise<{ id: string; slug: string; category: string | null }[]> {
+  "use cache";
+  cacheTag("wallpapers");
+  const supabase = getPublicSupabase();
+  if (!supabase) {
+    cacheLife("minutes");
+    return [];
+  }
+  const { data, error } = await supabase
+    .from("wallpapers")
+    .select("id,slug,category:categories(slug)")
+    .eq("status", "published");
+  if (error) {
+    console.error("[data:search-rows]", error.message);
+    cacheLife("minutes");
+    return [];
+  }
+  cacheLife("hours");
+  return (data ?? []).map((row) => ({
+    id: row.id as string,
+    slug: row.slug as string,
+    category: ((row.category as { slug?: string } | null)?.slug as string | undefined) ?? null,
+  }));
+}

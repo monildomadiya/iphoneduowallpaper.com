@@ -54,7 +54,7 @@ export async function SiteHeader({
           <Suspense fallback={<NavLinks pathname={null} items={chrome?.nav} />}>
             <DesktopNav items={chrome?.nav} />
           </Suspense>
-          <HeaderControls quickLinks={quickLinks} nav={chrome?.nav} strings={strings} />
+          <HeaderControls quickLinks={quickLinks} nav={chrome?.nav} strings={strings} searchPath={chrome?.searchPath} />
         </HeaderBar>
       </header>
     </>

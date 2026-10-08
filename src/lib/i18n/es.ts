@@ -1,4 +1,5 @@
 import { ES_LISTING, ES_TAXONOMY } from "@/lib/i18n/es-taxonomy";
+import { ES_SEARCH } from "@/lib/i18n/search-strings";
 import { ES_WALLPAPER } from "@/lib/i18n/es-wallpaper";
 import type { LocaleContent } from "@/lib/i18n/types";
 
@@ -15,6 +16,7 @@ export const ES: LocaleContent = {
     locale: "es",
     homeHref: "/es",
     homeLabel: "Inicio",
+    searchPath: "/es/search",
     nav: [
       { href: "/es/wallpapers", label: "Fondos", icon: "wallpapers" },
       { href: "/es/categories", label: "Categorías", icon: "categories" },
@@ -426,4 +428,5 @@ Explora nuestros fondos para la [pantalla interior del iPhone Duo](/es/devices/i
   wallpaper: ES_WALLPAPER,
   listing: ES_LISTING,
   taxonomy: ES_TAXONOMY,
+  search: ES_SEARCH,
 };
