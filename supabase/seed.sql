@@ -1206,7 +1206,7 @@ On iPhone Duo, set up each screen while the phone is in that position — folded
 
 ## Using a downloaded copy on another iPhone
 
-If you saved one of the official images to use on iPhone 18 Pro or an older iPhone, pick the tall outer-display version. It is close to the shape of a normal iPhone screen, so it fills the display with little cropping. The wide inner-display version will be cut to a narrow vertical slice. Then follow [how to set a wallpaper on iPhone](/blog/how-to-set-wallpaper-on-iphone).
+If you saved one of the official images to use on iPhone 18 Pro or an older iPhone, pick the tall outer-display version. It is the closer shape, but the outer display is wider for its height than a normal iPhone, so about a third of the image's width is trimmed from the sides. The wide inner-display version is cut to a narrow vertical slice. [iPhone Duo wallpapers on iPhone 17 and Android](/blog/iphone-duo-wallpaper-on-iphone-17-android) shows the crop screen by screen, and [iPhone Duo wallpapers on Mac, iPad and PC](/blog/iphone-duo-wallpaper-for-mac-ipad-pc) covers bigger screens. Then follow [how to set a wallpaper on iPhone](/blog/how-to-set-wallpaper-on-iphone).
 
 ## Original wallpapers with the same mood
 
@@ -1224,5 +1224,225 @@ $md$,
   'published',
   'Official iPhone Duo Wallpaper: Light & Dark, Sizes, Download',
   'The official iPhone Duo wallpaper is desert dunes in light and dark. Exact sizes for the outer and inner displays, whether it is 4K, and how to set it.'
+)
+on conflict (slug) do nothing;
+
+-- ---------------------------------------------------------------------
+-- Guides for the next searches people make (October 2026). Google's
+-- suggestions show "iphone duo wallpaper for iphone 17 / 17 pro max /
+-- android", "... for mac / ipad / pc", and Search Console shows "how to
+-- check ppi of image iphone". Every crop and scale figure below is worked
+-- out from the screen sizes the same way the site's fit check does it.
+-- ---------------------------------------------------------------------
+insert into public.posts (title, slug, excerpt, content, tags, status, seo_title, seo_description)
+values
+(
+  'How to Use iPhone Duo Wallpapers on iPhone 17, Older iPhones and Android',
+  'iphone-duo-wallpaper-on-iphone-17-android',
+  'iPhone Duo wallpapers are made for a squarer outer screen and a wide inner one. Here is which file to use on iPhone 17, 17 Pro Max, older iPhones and Android phones, and how much of it gets cropped.',
+  $md$
+iPhone Duo wallpapers are made for two unusual screens: a 5.4-inch outer display at 1398 × 2034 and a 7.6-inch inner display at 2670 × 1878. Neither is the shape of a regular phone. You can still use them on iPhone 17, an older iPhone or an Android phone — you just need to pick the right file and know what will be cropped.
+
+## The short answer
+
+- **Use the outer-display (tall) version.** It is portrait, like your phone, so it keeps the most of the picture.
+- **Expect the sides to be trimmed.** The outer display is wider for its height than a normal iPhone, so about a third of the image's width falls off the edges.
+- **Skip the inner-display (wide) version.** On a normal phone only a narrow vertical slice of it fits.
+
+## Why the shapes don't match
+
+| Screen | Resolution | Height ÷ width |
+| --- | --- | --- |
+| iPhone Duo outer display | 1398 × 2034 | 1.45 |
+| iPhone Duo inner display | 2670 × 1878 | 0.70 |
+| iPhone 17, iPhone 17 Pro, iPhone 18 Pro | 1206 × 2622 | 2.17 |
+| iPhone 17 Pro Max, iPhone 18 Pro Max | 1320 × 2868 | 2.17 |
+| iPhone Air | 1260 × 2736 | 2.17 |
+| iPhone 16, iPhone 15 | 1179 × 2556 | 2.17 |
+
+Every recent iPhone is about 2.17 times taller than it is wide. iOS always fills the whole screen, so when an image has a different shape it is enlarged until it covers the screen, and whatever hangs over the edges is cut off.
+
+## What happens on iPhone 17 Pro and 17 Pro Max
+
+**The outer-display file (1398 × 2034):**
+
+- On **iPhone 17 and iPhone 17 Pro** (1206 × 2622), iOS enlarges it by about 29% to fill the height. The middle 936 pixels of its width stay on screen and roughly 230 pixels are trimmed from each side.
+- On **iPhone 17 Pro Max** (1320 × 2868), it is enlarged by about 41%, with the same third of the width trimmed. At that enlargement, fine detail can look a little soft.
+
+**The inner-display file (2670 × 1878):**
+
+- On iPhone 17 Pro it is enlarged by about 40%, and only the middle 864 pixels of its 2,670-pixel width stay on screen — about a third of the picture.
+
+So the outer-display file is the one to use. If the subject sits in the middle of the wallpaper, it survives the crop. If it sits near the left or right edge, it won't.
+
+## How to set it on your iPhone
+
+1. Save the image to Photos — see [how to save wallpapers to iPhone Photos](/blog/how-to-save-wallpapers-to-iphone-photos).
+2. Touch and hold the Lock Screen, tap **+**, then choose **Photos** and pick the image.
+3. Drag the picture sideways to choose which part of the width stays on screen, and pinch only if you need to.
+4. Tap **Add**, then **Set as Wallpaper Pair**.
+
+Zooming in while framing enlarges the image even more, so keep it to a minimum. If the result looks soft, our [blurry wallpaper guide](/blog/why-is-my-iphone-wallpaper-blurry) covers the usual causes.
+
+## On Android phones
+
+Most Android phones are 19.5:9 or 20:9 — about 2.2 times taller than wide, the same shape as an iPhone — so the same advice applies: use the tall outer-display file and expect the sides to be trimmed. To set it, touch and hold an empty spot on the Home Screen, choose **Wallpaper** (Samsung) or **Wallpaper & style** (Pixel), and pick the image from your gallery.
+
+Book-style foldables such as the Galaxy Z Fold and Pixel Fold are the exception. Their large inner screens are close to square, so there the wide inner-display file is the better choice, with its left and right edges trimmed.
+
+## Be wary of "made for iPhone 17" re-uploads
+
+You will find iPhone Duo wallpapers re-cut to 1206 × 2622 or 1320 × 2868. If they were cropped from the 1398 × 2034 original and enlarged, they hold no more detail than the original — only a bigger file. Downloading the original and letting iOS crop it gives the same result and lets you choose the framing yourself.
+
+## When to pick a wallpaper made for your phone instead
+
+For a pixel-perfect result, choose a wallpaper that is at least as large as your screen and the same tall shape. iPhone 18 Pro and 18 Pro Max have the same screens as iPhone 17 Pro and 17 Pro Max, so the screen-fit check on each of our wallpaper pages applies to your phone too. Browse the wallpapers listed for [iPhone 18 Pro](/devices/iphone-18-pro) and [iPhone 18 Pro Max](/devices/iphone-18-pro-max) and check the fit before you download.
+
+Looking for Apple's own dunes wallpaper? See [the official iPhone Duo wallpaper](/blog/official-iphone-duo-wallpaper). For the numbers behind both iPhone Duo screens, read [iPhone Duo wallpaper sizes explained](/blog/iphone-duo-wallpaper-sizes-explained).
+$md$,
+  array['iPhone 17', 'compatibility', 'guides'],
+  'published',
+  'iPhone Duo Wallpaper for iPhone 17, 17 Pro Max & Android',
+  'Use iPhone Duo wallpapers on iPhone 17, 17 Pro Max, older iPhones and Android: which file to pick, how much is cropped, and how to set it.'
+)
+on conflict (slug) do nothing;
+
+insert into public.posts (title, slug, excerpt, content, tags, status, seo_title, seo_description)
+values
+(
+  'iPhone Duo Wallpapers on Mac, iPad and PC: Which File Fits',
+  'iphone-duo-wallpaper-for-mac-ipad-pc',
+  'The wide iPhone Duo inner-display wallpaper is close to the shape of a MacBook and an iPad in landscape. Here is how well it fits each screen, and how to set it on Mac, iPad and Windows.',
+  $md$
+iPhone Duo's inner display is wide — 2670 × 1878 — which makes its wallpapers unusually good candidates for a laptop, a tablet or a desktop monitor. Here is which file to use on each screen, how much gets cropped, and when the image will look soft.
+
+## Which file to use
+
+- **Mac, Windows PC and iPad in landscape:** the **inner-display** (wide) file, 2670 × 1878.
+- **iPad held upright:** the **outer-display** (tall) file, 1398 × 2034.
+
+The inner display is 1.42 times wider than it is tall. A MacBook is about 1.54, an iPad in landscape about 1.33 to 1.44, and a typical monitor 1.78. Those are close enough that only a thin band is cropped on a Mac or an iPad.
+
+## How it fits on a Mac
+
+| Screen | Resolution | Scaled | Cropped |
+| --- | --- | --- | --- |
+| MacBook Air 13-inch | 2560 × 1664 | Down 4% — sharp | ~8% of the height |
+| MacBook Air 15-inch | 2880 × 1864 | Up 8% | ~8% of the height |
+| MacBook Pro 14-inch | 3024 × 1964 | Up 13% | ~8% of the height |
+| MacBook Pro 16-inch | 3456 × 2234 | Up 29% — a little soft | ~8% of the height |
+| iMac 24-inch | 4480 × 2520 | Up 68% — soft | ~20% of the height |
+
+On a MacBook the crop is small: macOS fills the screen and trims a thin strip from the top and bottom. The 13-inch MacBook Air is the best match — the file is slightly larger than the screen, so it stays pixel-sharp. Bigger screens enlarge it, and the iMac's 4.5K display enlarges it enough that soft edges become visible.
+
+## How it fits on a Windows PC or monitor
+
+| Monitor | Resolution | Scaled | Cropped |
+| --- | --- | --- | --- |
+| Full HD | 1920 × 1080 | Down 28% — sharp | ~20% of the height |
+| QHD / 1440p | 2560 × 1440 | Down 4% — sharp | ~20% of the height |
+| 4K UHD | 3840 × 2160 | Up 44% — soft | ~20% of the height |
+
+Monitors are wider than the iPhone Duo inner display, so about a fifth of the image's height is cut. If the subject sits in the middle of the picture, nothing important is lost. On a 4K monitor the file has to be enlarged by 44%, so it will not look as crisp as a true 4K wallpaper.
+
+## How it fits on iPad
+
+An iPad wallpaper rotates with the iPad, so iPadOS crops the image differently in portrait and in landscape.
+
+- **11-inch iPad Air and iPad (2360 × 1640 in landscape):** the inner-display file is almost exactly the same shape — about 1% is cropped, and the file is larger than the screen, so it is pixel-sharp.
+- **13-inch iPad Pro (2752 × 2064 in landscape):** enlarged by about 10%, with roughly 6% trimmed from the sides.
+- **Held upright:** the outer-display file is the better match. On an 11-inch iPad Air in portrait (1640 × 2360) it is almost the same shape too, enlarged by about 17%.
+
+If you turn your iPad often, a wide image will be cut to a narrow strip whenever it is upright. For one wallpaper that works both ways, choose an image that is square, or close to it, with the subject in the center.
+
+## How to set it
+
+**Mac:** open **System Settings → Wallpaper → Add Photo**, or Control-click the image in Finder and choose **Set Desktop Picture**. Pick **Fill Screen** so it covers the display without black bars.
+
+**Windows:** right-click the image and choose **Set as desktop background**, or go to **Settings → Personalization → Background** and set **Choose a fit** to **Fill**.
+
+**iPad:** save the image to Photos, open **Settings → Wallpaper → Add New Wallpaper**, choose **Photos** and pick the image.
+
+## Check the resolution first
+
+A file smaller than your screen gets enlarged and looks soft — the bigger the screen, the more it shows. Every wallpaper page on this site lists the exact pixel size before you download. For a MacBook, look for a file at least 2560 pixels wide; for a 4K monitor, 3840. Our guide to [wallpaper resolution, 4K and PPI](/blog/iphone-wallpaper-resolution-4k-retina-ppi) explains how to judge it.
+
+Want Apple's own iPhone Duo dunes on your Mac? Read about [the official iPhone Duo wallpaper](/blog/official-iphone-duo-wallpaper). Using a tall iPhone Duo wallpaper on a phone instead? See [iPhone Duo wallpapers on iPhone 17 and Android](/blog/iphone-duo-wallpaper-on-iphone-17-android).
+$md$,
+  array['Mac', 'iPad', 'guides'],
+  'published',
+  'iPhone Duo Wallpaper for Mac, iPad & PC: Sizes and Fit',
+  'Use iPhone Duo wallpapers on a MacBook, iMac, iPad or Windows PC: which file fits each screen, how much is cropped, and how to set it.'
+)
+on conflict (slug) do nothing;
+
+insert into public.posts (title, slug, excerpt, content, tags, status, seo_title, seo_description)
+values
+(
+  'How to Check a Photo''s Resolution and PPI on iPhone',
+  'how-to-check-image-resolution-ppi-iphone',
+  'Your iPhone can show the exact pixel size of any image in a couple of taps. Here is where to find it in Photos and Files, what PPI really means for a picture, and how to tell whether a wallpaper will look sharp.',
+  $md$
+Before you set a wallpaper — or after one looks soft — it helps to know the image's real size. Your iPhone can tell you in a couple of taps, with no extra app. This guide shows where to look, and why the number that matters is the pixel size, not the PPI.
+
+## In the Photos app
+
+1. Open the image in **Photos**.
+2. Swipe up on it, or tap the **ⓘ** button.
+3. Read the line under the date and camera details. It shows the megapixels, the pixel size and the file size — for example **5 MP • 2670 × 1878 • 1.9 MB**.
+
+The first number of the pixel size is the width, the second the height. A downloaded image has no camera details, but the pixel size and file size are still shown.
+
+## In the Files app
+
+Downloads from Safari land in **Files → Downloads** first.
+
+1. Open the **Files** app and find the image.
+2. Touch and hold it, then tap **Get Info**.
+3. Look for **Dimensions**. You will also see the file size and the file type, such as JPEG, PNG or HEIC.
+
+## With a shortcut, for many images at once
+
+The **Shortcuts** app can read the size of any image you share with it:
+
+1. Create a new shortcut and turn on **Show in Share Sheet** in its details.
+2. Add the action **Get Details of Images** and set it to **Width**.
+3. Add a second **Get Details of Images** action set to **Height**.
+4. Add **Show Result** and put the two values in it.
+
+Now choose the shortcut from the Share sheet in Photos or Files, and it shows the width and height without opening the info panel.
+
+## What about PPI?
+
+**PPI (pixels per inch)** is a property of a screen or a print, not of a picture on its own. An image file may carry a "72 dpi" or "300 dpi" tag, but on a phone that tag is ignored: the iPhone draws each pixel of the image on its own screen pixels. Two files with the same pixel size look identical, whatever their DPI tag says.
+
+PPI matters in two cases:
+
+- **Printing.** Divide the pixel width by the print width in inches. A 3000-pixel-wide photo printed 10 inches wide is printed at 300 PPI, the usual target for a sharp print.
+- **Your screen.** Divide the screen's diagonal in pixels by its diagonal in inches. The iPhone Duo outer display — 1398 × 2034 at 5.4 inches — works out to about 457 PPI, and the inner display — 2670 × 1878 at 7.6 inches — to about 430 PPI.
+
+## Is the image big enough for a wallpaper?
+
+Compare the image's pixel size with your screen's:
+
+| Screen | Resolution |
+| --- | --- |
+| iPhone Duo outer display | 1398 × 2034 |
+| iPhone Duo inner display | 2670 × 1878 |
+| iPhone 17 Pro, iPhone 18 Pro | 1206 × 2622 |
+| iPhone 17 Pro Max, iPhone 18 Pro Max | 1320 × 2868 |
+
+- **Both numbers at least as big as the screen, same orientation:** sharp.
+- **Up to about 30% smaller:** acceptable, slightly soft up close.
+- **Much smaller, or the wrong orientation:** iOS has to enlarge it a lot, and it will look soft or be heavily cropped.
+
+If the pixel size is fine and the wallpaper still looks soft, you may have saved a preview or a screenshot instead of the original, or iCloud Photos may be showing an optimized copy. Our [blurry wallpaper guide](/blog/why-is-my-iphone-wallpaper-blurry) walks through every cause.
+
+For more on what "4K" and "Retina" mean for a phone wallpaper, read [iPhone wallpaper resolution, 4K and PPI explained](/blog/iphone-wallpaper-resolution-4k-retina-ppi). Every wallpaper page on this site shows the exact pixel size and how it fits each screen before you download, so you can skip this check entirely.
+$md$,
+  array['resolution', 'how-to', 'guides'],
+  'published',
+  'How to Check an Image''s Resolution & PPI on iPhone',
+  'See any image''s exact pixel size on iPhone in Photos or Files, what PPI really means for a picture, and whether it is big enough for a sharp wallpaper.'
 )
 on conflict (slug) do nothing;
