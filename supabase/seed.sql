@@ -359,7 +359,7 @@ Not every dark wallpaper is an AMOLED wallpaper. When a design is labeled AMOLED
 - **A small, bright subject.** It pops against the black and leaves room for the clock and widgets.
 - **No grey haze.** Heavy compression can turn black into a blotchy dark grey, so download the original file rather than a preview.
 
-Examples in our library include [Lunar Eclipse Glow](/wallpapers/lunar-eclipse-glow-dark-amoled-iphone-duo-wallpaper), [Neon Cosmic Arcs](/wallpapers/neon-cosmic-arcs-amoled-iphone-duo-wallpaper) and [Monochrome Smoke Flow](/wallpapers/monochrome-smoke-flow-duo-wallpaper). Many of the designs in our [iOS Inspired](/categories/ios-inspired-wallpapers) and [Anime 4K](/categories/anime-4k) categories are built on true black, too — see [what makes a wallpaper feel like iOS](/blog/ios-style-wallpapers-glass-gradients) and [how to pick anime art for a Lock Screen](/blog/anime-wallpapers-iphone-lock-screen).
+Examples in our library include [Lunar Eclipse Glow](/wallpapers/lunar-eclipse-glow-dark-amoled-iphone-duo-wallpaper), [Neon Cosmic Arcs](/wallpapers/neon-cosmic-arcs-amoled-iphone-duo-wallpaper) and [Monochrome Smoke Flow](/wallpapers/monochrome-smoke-flow-duo-wallpaper). Every dark design in the library, from anime to cars, is gathered on one page: [Dark & AMOLED wallpapers](/categories/dark). Many of the designs in our [iOS Inspired](/categories/ios-inspired-wallpapers) and [Anime 4K](/categories/anime-4k) categories are built on true black, too — see [what makes a wallpaper feel like iOS](/blog/ios-style-wallpapers-glass-gradients) and [how to pick anime art for a Lock Screen](/blog/anime-wallpapers-iphone-lock-screen).
 
 ## Black wallpapers and burn-in
 
@@ -433,7 +433,7 @@ Think of the Lock Screen as three layers: background, clock and subject. A wallp
 - **Contrast between subject and background.** A dark silhouette against a bright sky, or a lit subject against black, is easy for iOS to separate.
 - **Portrait orientation.** On a tall screen, a portrait image puts the subject where the clock is. Landscape images get cropped, and the subject can end up too low or too high.
 
-Minimal landscapes are often ideal. Designs like [Lone Tree Reflection Under a Pastel Moon](/wallpapers/lone-tree-reflection-under-pastel-moon-iphone-duo-wallpaper) and [Minimal Snow Mountain and Moon](/wallpapers/minimal-snow-mountain-moon-landscape-duo-wallpaper) have exactly the open sky and clean silhouettes the effect needs. Browse the [Minimal category](/categories/minimal) for more, or read why [minimal wallpapers work so well on iPhone](/blog/minimal-iphone-wallpapers-guide).
+Minimal landscapes are often ideal. Designs like [Lone Tree Reflection Under a Pastel Moon](/wallpapers/lone-tree-reflection-under-pastel-moon-iphone-duo-wallpaper) and [Minimal Snow Mountain and Moon](/wallpapers/minimal-snow-mountain-moon-landscape-duo-wallpaper) have exactly the open sky and clean silhouettes the effect needs. Browse the [Landscape category](/categories/landscape) for more, or read why [minimal wallpapers work so well on iPhone](/blog/minimal-iphone-wallpapers-guide).
 
 ## Depth effect on iPhone Duo
 
@@ -1219,7 +1219,7 @@ If you like the calm, desert-at-dusk feel of the official wallpaper but want som
 - [Snow Mountain and Moon](/wallpapers/minimal-snow-mountain-moon-landscape-duo-wallpaper) — icy peaks under a soft blue sky.
 - [Misty Mountain Pine](/wallpapers/misty-mountain-pine-tree-duo-wallpaper) — rocky peaks fading into cloud.
 
-Each wallpaper page shows the exact resolution and how the image fits the iPhone Duo outer display, the inner display and iPhone 18 Pro before you download. For more in this style, browse the [Minimal](/categories/minimal) and [iOS Inspired](/categories/ios-inspired-wallpapers) categories.
+Each wallpaper page shows the exact resolution and how the image fits the iPhone Duo outer display, the inner display and iPhone 18 Pro before you download. For more in this style, browse the [Landscape](/categories/landscape) category, or [Dark & AMOLED](/categories/dark) for night scenes like the dark version.
 $md$,
   array['iPhone Duo', 'official wallpapers', 'guides'],
   'published',
