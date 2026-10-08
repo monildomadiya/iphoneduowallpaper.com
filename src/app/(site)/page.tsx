@@ -8,7 +8,7 @@ import { DeviceFrame } from "@/components/wallpaper/device-frame";
 import { WallpaperCard, WallpaperGrid } from "@/components/wallpaper/wallpaper-card";
 import { listPosts } from "@/lib/data/posts";
 import { getSiteSettings } from "@/lib/data/settings";
-import { getCategories, getDevices } from "@/lib/data/taxonomy";
+import { getCategories, getDarkCategory, getDevices } from "@/lib/data/taxonomy";
 import { listWallpapers } from "@/lib/data/wallpapers";
 import { buildMetadata, faqJsonLd, organizationJsonLd, websiteJsonLd } from "@/lib/seo";
 import { HOME_DESCRIPTION, HOME_FAQ, homeTitle } from "@/lib/site";
@@ -35,12 +35,13 @@ function pickHeroWallpapers(items: WallpaperCardData[]) {
 }
 
 export default async function HomePage() {
-  const [settings, featured, latest, popular, categories, devices, posts] = await Promise.all([
+  const [settings, featured, latest, popular, categories, dark, devices, posts] = await Promise.all([
     getSiteSettings(),
     listWallpapers({ featured: true, perPage: 12 }),
     listWallpapers({ perPage: 15 }),
     listWallpapers({ sort: "popular", perPage: 10 }),
     getCategories(),
+    getDarkCategory(),
     getDevices(),
     listPosts(1, 3),
   ]);
@@ -198,7 +199,7 @@ export default async function HomePage() {
       {categories.length ? (
         <section className="container-apple mt-24">
           <SectionHeading title="Categories." subtitle="Find your vibe." href="/categories" />
-          <CategoryTiles categories={stockedFirst(categories).slice(0, 10)} />
+          <CategoryTiles categories={stockedFirst([dark, ...categories]).slice(0, 10)} />
         </section>
       ) : null}
 

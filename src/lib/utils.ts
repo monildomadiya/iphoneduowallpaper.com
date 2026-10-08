@@ -189,3 +189,27 @@ export function clampPage(value: unknown): number {
 export function stockedFirst<T extends { wallpaper_count: number }>(items: T[]): T[] {
   return [...items].sort((a, b) => Number(b.wallpaper_count > 0) - Number(a.wallpaper_count > 0));
 }
+
+/** Relative luminance (0 = black, 1 = white) of a #rrggbb color. */
+export function luminance(hex: string): number {
+  const match = /^#?([0-9a-f]{6})$/i.exec(hex.trim());
+  if (!match) return 1;
+  const value = Number.parseInt(match[1], 16);
+  const [r, g, b] = [value >> 16, (value >> 8) & 255, value & 255].map((channel) => {
+    const c = channel / 255;
+    return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+  });
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
+const DARK_TAG = /\b(a?moled|oled|dark|black)\b/i;
+
+/**
+ * Dark wallpapers sit in every category (anime, cars, abstract), so the Dark page is drawn from the
+ * picture itself: a near-black dominant color, or a dark one when the tags agree. Tags alone let in
+ * grey designs labelled "black and white"; color alone missed deep reds and navies tagged AMOLED.
+ */
+export function isDarkWallpaper(dominantColor: string, words: string[]): boolean {
+  const lum = luminance(dominantColor);
+  return lum < 0.045 || (lum < 0.08 && words.some((word) => DARK_TAG.test(word)));
+}

@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { AdSlot } from "@/components/ads/ad-slot";
 import { Breadcrumbs, PageHeader } from "@/components/ui/primitives";
 import { WallpaperListing } from "@/components/wallpaper/wallpaper-listing";
-import { getCategories, getCategoryBySlug } from "@/lib/data/taxonomy";
+import { getCategories, getCategoryBySlug, getDarkCategory } from "@/lib/data/taxonomy";
 import { buildMetadata } from "@/lib/seo";
 import { categoryGuide } from "@/lib/site";
 import { imageUrl, stockedFirst } from "@/lib/utils";
@@ -38,11 +38,11 @@ export async function generateMetadata({ params }: PageProps<"/categories/[slug]
 
 export default async function CategoryPage({ params, searchParams }: PageProps<"/categories/[slug]">) {
   const { slug } = await params;
-  const [category, categories] = await Promise.all([getCategoryBySlug(slug), getCategories()]);
+  const [category, categories, dark] = await Promise.all([getCategoryBySlug(slug), getCategories(), getDarkCategory()]);
   if (!category) notFound();
 
   // Lateral links are only worth following when there is something on the other end.
-  const others = stockedFirst(categories.filter((item) => item.id !== category.id)).slice(0, 8);
+  const others = stockedFirst([dark, ...categories.filter((item) => item.id !== category.id)]).slice(0, 8);
   const guide = categoryGuide(category.slug);
 
   return (

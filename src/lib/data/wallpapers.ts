@@ -8,7 +8,7 @@ import type {
   WallpaperDetail,
   WallpaperSort,
 } from "@/lib/types";
-import { isValidSlug } from "@/lib/utils";
+import { isDarkWallpaper, isValidSlug } from "@/lib/utils";
 
 const CARD_COLUMNS =
   "id,title,slug,thumb_key,preview_key,width,height,dominant_color,downloads,views,is_featured,published_at,category:categories(name,slug)";
@@ -86,6 +86,8 @@ export interface WallpaperQuery {
   deviceId?: string;
   featured?: boolean;
   excludeId?: string;
+  /** Limits the listing to these wallpapers — for pages drawn from more than one category. */
+  ids?: string[];
 }
 
 export async function listWallpapers(query: WallpaperQuery = {}): Promise<Paginated<WallpaperCardData>> {
@@ -109,6 +111,8 @@ export async function listWallpapers(query: WallpaperQuery = {}): Promise<Pagina
   if (query.deviceId) request = request.eq("wallpaper_devices.device_id", query.deviceId);
   if (query.featured) request = request.eq("is_featured", true);
   if (query.excludeId) request = request.neq("id", query.excludeId);
+  // An empty list would match nothing anyway; PostgREST rejects `in.()`, so ask for an id that can't exist.
+  if (query.ids) request = request.in("id", query.ids.length ? query.ids : ["00000000-0000-0000-0000-000000000000"]);
 
   request =
     sort === "popular"
@@ -278,4 +282,32 @@ export async function getWallpaperSitemapEntries(): Promise<WallpaperSitemapEntr
     return [];
   }
   return (data ?? []) as WallpaperSitemapEntry[];
+}
+
+/** Every published dark wallpaper, whatever its category, newest first — the Dark page's listing. */
+export async function getDarkWallpapers(): Promise<{ ids: string[]; cover_thumb_key: string | null }> {
+  "use cache";
+  cacheTag("wallpapers");
+  const supabase = getPublicSupabase();
+  if (!supabase) {
+    cacheLife("minutes");
+    return { ids: [], cover_thumb_key: null };
+  }
+  const { data, error } = await supabase
+    .from("wallpapers")
+    .select("id,title,tags,dominant_color,thumb_key,downloads")
+    .eq("status", "published")
+    .order("published_at", { ascending: false, nullsFirst: false });
+  if (error) {
+    console.error("[data:dark]", error.message);
+    cacheLife("minutes");
+    return { ids: [], cover_thumb_key: null };
+  }
+  cacheLife("hours");
+  const dark = (data ?? []).filter((row) =>
+    isDarkWallpaper(row.dominant_color as string, [...((row.tags as string[] | null) ?? []), row.title as string]),
+  );
+  // The newest dark wallpaper is often a seasonal one; the most downloaded is a fairer cover.
+  const cover = [...dark].sort((a, b) => Number(b.downloads ?? 0) - Number(a.downloads ?? 0))[0];
+  return { ids: dark.map((row) => row.id as string), cover_thumb_key: (cover?.thumb_key as string | undefined) ?? null };
 }

@@ -1,7 +1,9 @@
 import "server-only";
 import { cacheLife, cacheTag } from "next/cache";
+import { getDarkWallpapers } from "@/lib/data/wallpapers";
 import { getPublicSupabase } from "@/lib/supabase/public";
 import type { Category, Device } from "@/lib/types";
+import { DARK_CATEGORY } from "@/lib/site";
 import { isValidSlug } from "@/lib/utils";
 
 const BASE_COLUMNS =
@@ -76,4 +78,24 @@ export async function getCategoryBySlug(slug: string): Promise<Category | null> 
 export async function getDeviceBySlug(slug: string): Promise<Device | null> {
   if (!isValidSlug(slug)) return null;
   return (await getDevices()).find((item) => item.slug === slug) ?? null;
+}
+
+/** The Dark page shaped like a category, so it can sit among the category tiles and links. */
+export async function getDarkCategory(): Promise<Category> {
+  const { ids, cover_thumb_key } = await getDarkWallpapers();
+  return {
+    id: `virtual:${DARK_CATEGORY.slug}`,
+    name: DARK_CATEGORY.name,
+    slug: DARK_CATEGORY.slug,
+    description: DARK_CATEGORY.description,
+    cover_key: null,
+    seo_title: DARK_CATEGORY.title,
+    seo_description: DARK_CATEGORY.description,
+    sort_order: 0,
+    is_active: true,
+    created_at: "",
+    updated_at: "",
+    wallpaper_count: ids.length,
+    cover_thumb_key,
+  };
 }

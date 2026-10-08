@@ -12,6 +12,7 @@ interface ListingProps {
   searchParams: SearchParams;
   categoryId?: string;
   deviceId?: string;
+  ids?: string[];
   emptyTitle?: string;
   emptyDescription?: string;
 }
@@ -25,13 +26,14 @@ async function ListingContent({
   searchParams,
   categoryId,
   deviceId,
+  ids,
   emptyTitle = "No wallpapers yet",
   emptyDescription = "New wallpapers are added regularly. Check back soon or explore other categories.",
 }: ListingProps) {
   const params = await searchParams;
   const sort = first(params.sort) === "popular" ? "popular" : "latest";
   const page = clampPage(first(params.page));
-  const result = await listWallpapers({ categoryId, deviceId, sort, page, perPage: 30 });
+  const result = await listWallpapers({ categoryId, deviceId, ids, sort, page, perPage: 30 });
 
   return (
     <>

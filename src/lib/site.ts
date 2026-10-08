@@ -78,12 +78,31 @@ const CATEGORY_GUIDES: Record<string, GuideLink> = {
     href: "/blog/ios-style-wallpapers-glass-gradients",
     label: "Glass, gradients and orbs: what makes a wallpaper feel like iOS",
   },
+  landscape: {
+    href: "/blog/official-iphone-duo-wallpaper",
+    label: "Apple's own iPhone Duo wallpaper is a landscape too: desert dunes in light and dark",
+  },
 };
 
 const AMOLED_GUIDE: GuideLink = {
   href: "/blog/amoled-wallpapers-iphone-battery",
   label: "Do true-black AMOLED wallpapers save battery?",
 };
+
+/**
+ * A wallpaper has one category, and dark designs are spread over all of them — anime, cars, abstract.
+ * Moving them into a "Dark" category would empty the others, so Dark is a page of its own at a
+ * category address, listing every dark wallpaper wherever it is filed. Searched as "iphone duo dark
+ * wallpaper", which duowallpaper.org ranks a page for.
+ */
+export const DARK_CATEGORY = {
+  slug: "dark",
+  name: "Dark & AMOLED",
+  title: "Dark & AMOLED iPhone Duo Wallpapers — Free HD",
+  description:
+    "Dark and true-black AMOLED wallpapers for iPhone Duo — anime, cars, abstract and night landscapes that let the clock glow and look their best on OLED.",
+  guide: AMOLED_GUIDE,
+} as const;
 
 export function categoryGuide(categorySlug: string | null | undefined): GuideLink | null {
   return (categorySlug && CATEGORY_GUIDES[categorySlug]) || null;

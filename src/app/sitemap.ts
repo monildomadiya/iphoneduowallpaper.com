@@ -1,16 +1,18 @@
 import type { MetadataRoute } from "next";
 import { getPostSitemapEntries } from "@/lib/data/posts";
-import { getCategories, getDevices } from "@/lib/data/taxonomy";
+import { getCategories, getDarkCategory, getDevices } from "@/lib/data/taxonomy";
 import { getWallpaperSitemapEntries } from "@/lib/data/wallpapers";
 import { absoluteUrl, imageUrl } from "@/lib/utils";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [wallpapers, posts, categories, devices] = await Promise.all([
+  const [wallpapers, posts, stored, dark, devices] = await Promise.all([
     getWallpaperSitemapEntries(),
     getPostSitemapEntries(),
     getCategories(),
+    getDarkCategory(),
     getDevices(),
   ]);
+  const categories = [...stored, dark];
 
   // The newest wallpaper dates the hub pages that list it, so crawlers see them change.
   const libraryUpdated =
@@ -46,7 +48,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...staticPages,
     ...categories.filter(hasWallpapers).map((item) => ({
       url: absoluteUrl(`/categories/${item.slug}`),
-      lastModified: item.updated_at,
+      // Dark has no row of its own, so it is dated by the newest wallpaper like the other hubs.
+      lastModified: item.updated_at || libraryUpdated,
       changeFrequency: "weekly" as const,
       priority: 0.7,
     })),

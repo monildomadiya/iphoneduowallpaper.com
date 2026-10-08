@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { CategoryTiles } from "@/components/site/tiles";
 import { EmptyState, JsonLd, PageHeader } from "@/components/ui/primitives";
-import { getCategories } from "@/lib/data/taxonomy";
+import { getCategories, getDarkCategory } from "@/lib/data/taxonomy";
 import { buildMetadata, collectionPageJsonLd } from "@/lib/seo";
 import { stockedFirst } from "@/lib/utils";
 
@@ -18,7 +18,9 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function CategoriesPage() {
-  const categories = stockedFirst(await getCategories());
+  const [stored, dark] = await Promise.all([getCategories(), getDarkCategory()]);
+  // Dark lists wallpapers from every category, so it goes first.
+  const categories = stockedFirst([dark, ...stored]);
 
   return (
     <>
