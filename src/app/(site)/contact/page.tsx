@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ContactForm } from "@/components/site/forms";
 import { getSiteSettings } from "@/lib/data/settings";
+import { languageAlternates } from "@/lib/i18n";
 import { buildMetadata } from "@/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -11,6 +12,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: "Contact Us",
     description: `Get in touch with ${settings.site_name} for wallpaper requests, feedback, partnerships or support.`,
     path: "/contact",
+    languages: languageAlternates("/contact"),
   });
 }
 

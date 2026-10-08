@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { useActionState, useEffect, useRef } from "react";
 import { submitContact, submitReport } from "@/app/(site)/actions";
 import type { ActionResult } from "@/lib/actions";
+import type { ContactFormStrings } from "@/lib/i18n/types";
 import { cn } from "@/lib/utils";
 
 const inputClass =
@@ -67,16 +68,26 @@ function SuccessMessage({ message }: { message?: string }) {
   );
 }
 
-function SubmitButton({ pending, label }: { pending: boolean; label: string }) {
+function SubmitButton({ pending, label, sending = "Sending…" }: { pending: boolean; label: string; sending?: string }) {
   return (
     <button type="submit" disabled={pending} className="btn-primary w-full disabled:opacity-60 sm:w-auto">
       {pending ? <Loader2 className="size-4 animate-spin" /> : null}
-      {pending ? "Sending…" : label}
+      {pending ? sending : label}
     </button>
   );
 }
 
-export function ContactForm() {
+const EN_CONTACT: ContactFormStrings = {
+  name: "Name",
+  email: "Email",
+  subject: "Subject",
+  subjectPlaceholder: "Wallpaper request, feedback, partnership…",
+  message: "Message",
+  send: "Send message",
+  sending: "Sending…",
+};
+
+export function ContactForm({ strings: t = EN_CONTACT, locale = "en" }: { strings?: ContactFormStrings; locale?: string }) {
   const [state, action, pending] = useActionState<ActionResult | null, FormData>(submitContact, null);
   const errors = state && !state.ok ? state.fieldErrors ?? {} : {};
 
@@ -85,11 +96,13 @@ export function ContactForm() {
   return (
     <form action={action} className="relative space-y-5" noValidate>
       <SpamGuards />
+      {/* Tells the server action which language to answer in. */}
+      <input type="hidden" name="locale" value={locale} />
       <div className="grid gap-5 sm:grid-cols-2">
-        <Field label="Name" name="name" error={errors.name}>
+        <Field label={t.name} name="name" error={errors.name}>
           <input id="name" name="name" required autoComplete="name" className={inputClass} aria-invalid={Boolean(errors.name)} />
         </Field>
-        <Field label="Email" name="email" error={errors.email}>
+        <Field label={t.email} name="email" error={errors.email}>
           <input
             id="email"
             name="email"
@@ -101,10 +114,10 @@ export function ContactForm() {
           />
         </Field>
       </div>
-      <Field label="Subject" name="subject" error={errors.subject}>
-        <input id="subject" name="subject" className={inputClass} placeholder="Wallpaper request, feedback, partnership…" />
+      <Field label={t.subject} name="subject" error={errors.subject}>
+        <input id="subject" name="subject" className={inputClass} placeholder={t.subjectPlaceholder} />
       </Field>
-      <Field label="Message" name="message" error={errors.message}>
+      <Field label={t.message} name="message" error={errors.message}>
         <textarea id="message" name="message" required rows={6} className={cn(inputClass, "resize-y")} aria-invalid={Boolean(errors.message)} />
       </Field>
       {state && !state.ok ? (
@@ -112,7 +125,7 @@ export function ContactForm() {
           {state.error}
         </p>
       ) : null}
-      <SubmitButton pending={pending} label="Send message" />
+      <SubmitButton pending={pending} label={t.send} sending={t.sending} />
     </form>
   );
 }

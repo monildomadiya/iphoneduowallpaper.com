@@ -257,6 +257,44 @@ export interface NotFoundStrings {
   english: string;
 }
 
+/** `{site}` and `{email}` are filled in. Section bodies are Markdown. */
+export interface AboutStrings {
+  title: string;
+  description: string;
+  eyebrow: string;
+  h1: string;
+  h1Accent: string;
+  lead: string;
+  principles: { title: string; body: string }[];
+  sections: { id?: string; title: string; body: string }[];
+}
+
+export interface ContactFormStrings {
+  name: string;
+  email: string;
+  subject: string;
+  subjectPlaceholder: string;
+  message: string;
+  send: string;
+  sending: string;
+}
+
+export interface ContactStrings {
+  title: string;
+  description: string;
+  eyebrow: string;
+  h1: string;
+  lead: string;
+  emailTitle: string;
+  responseTitle: string;
+  responseBody: string;
+  copyrightTitle: string;
+  copyrightBefore: string;
+  dmcaLink: string;
+  copyrightAfter: string;
+  form: ContactFormStrings;
+}
+
 export interface LocalGuide {
   /** The English guide's slug; the translation lives at /{locale}/blog/{slug}. */
   slug: string;
@@ -338,4 +376,6 @@ export interface LocaleContent {
   taxonomy: TaxonomyStrings;
   search: SearchStrings;
   notFound: NotFoundStrings;
+  about: AboutStrings;
+  contact: ContactStrings;
 }

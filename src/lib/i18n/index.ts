@@ -25,6 +25,8 @@ const TRANSLATED = new Set([
   "/wallpapers",
   "/categories",
   "/devices",
+  "/about",
+  "/contact",
   ...ES.guides.map((guide) => `/blog/${guide.slug}`),
   ...inBoth(ES.taxonomy.categories, TR.taxonomy.categories).map((slug) => `/categories/${slug}`),
   ...inBoth(ES.taxonomy.devices, TR.taxonomy.devices).map((slug) => `/devices/${slug}`),

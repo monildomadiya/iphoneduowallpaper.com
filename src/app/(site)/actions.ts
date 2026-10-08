@@ -3,47 +3,49 @@
 import { headers } from "next/headers";
 import { z } from "zod";
 import { failure, success, type ActionResult } from "@/lib/actions";
+import { CONTACT_MESSAGES, contactMessages, type ContactMessages } from "@/lib/i18n/contact-messages";
 import { getClientIp, hashIp, rateLimit } from "@/lib/rate-limit";
 import { getServiceSupabase } from "@/lib/supabase/service";
 
 const MIN_FILL_MS = 2500;
 
-async function guard(formData: FormData, bucket: string): Promise<ActionResult | null> {
+async function guard(
+  formData: FormData,
+  bucket: string,
+  messages: ContactMessages = CONTACT_MESSAGES.en,
+): Promise<ActionResult | null> {
   const startedAt = Number(formData.get("startedAt"));
   if (!Number.isFinite(startedAt) || startedAt <= 0 || Date.now() - startedAt < MIN_FILL_MS) {
-    return { ok: false, error: "Please take a moment to complete the form, then try again." };
+    return { ok: false, error: messages.slow };
   }
   const ip = getClientIp(await headers());
   const limit = rateLimit(`${bucket}:${hashIp(ip)}`, 5, 15 * 60_000);
   if (!limit.ok) {
-    return {
-      ok: false,
-      error: `You've sent several messages recently. Please try again in ${Math.ceil(limit.retryAfter / 60)} minutes.`,
-    };
+    return { ok: false, error: messages.rateLimited.replace("{n}", String(Math.ceil(limit.retryAfter / 60))) };
   }
   return null;
 }
 
-const contactSchema = z.object({
-  name: z.string().trim().min(2, "Please enter your name.").max(80, "Name is too long."),
-  email: z.email("Please enter a valid email address.").max(160),
-  subject: z.string().trim().max(140, "Subject is too long.").optional(),
-  message: z
-    .string()
-    .trim()
-    .min(10, "Your message should be at least 10 characters.")
-    .max(5000, "Your message is too long."),
-});
+/** Validation messages come back in the language of the page the form was sent from. */
+function contactSchema(messages: ContactMessages) {
+  return z.object({
+    name: z.string().trim().min(2, messages.nameShort).max(80, messages.nameLong),
+    email: z.email(messages.email).max(160),
+    subject: z.string().trim().max(140, messages.subjectLong).optional(),
+    message: z.string().trim().min(10, messages.messageShort).max(5000, messages.messageLong),
+  });
+}
 
 export async function submitContact(_previous: ActionResult | null, formData: FormData): Promise<ActionResult> {
+  const messages = contactMessages(formData.get("locale"));
   // Honeypot field: real visitors never see or fill it.
-  if (formData.get("company")) return success(undefined, "Thanks! Your message has been sent.");
+  if (formData.get("company")) return success(undefined, messages.success);
 
-  const blocked = await guard(formData, "contact");
+  const blocked = await guard(formData, "contact", messages);
   if (blocked) return blocked;
 
   try {
-    const data = contactSchema.parse({
+    const data = contactSchema(messages).parse({
       name: formData.get("name"),
       email: String(formData.get("email") ?? "").trim(),
       subject: formData.get("subject") || undefined,
@@ -61,9 +63,9 @@ export async function submitContact(_previous: ActionResult | null, formData: Fo
     });
     if (error) throw error;
 
-    return success(undefined, "Thanks for reaching out! Your message has been sent and we'll reply by email.");
+    return success(undefined, messages.success);
   } catch (error) {
-    return failure(error, "We couldn't send your message right now. Please email us directly instead.");
+    return failure(error, messages.failure);
   }
 }
 

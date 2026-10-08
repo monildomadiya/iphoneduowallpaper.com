@@ -1,4 +1,5 @@
 import { ES_LISTING, ES_TAXONOMY } from "@/lib/i18n/es-taxonomy";
+import { ES_ABOUT, ES_CONTACT } from "@/lib/i18n/es-pages";
 import { ES_SEARCH } from "@/lib/i18n/search-strings";
 import { ES_WALLPAPER } from "@/lib/i18n/es-wallpaper";
 import type { LocaleContent } from "@/lib/i18n/types";
@@ -36,8 +37,8 @@ export const ES: LocaleContent = {
       closeSearch: "Cerrar búsqueda",
       quickLinks: "Accesos rápidos",
       menuLinks: [
-        { href: "/about", label: "Quiénes somos" },
-        { href: "/contact", label: "Contacto" },
+        { href: "/es/about", label: "Quiénes somos" },
+        { href: "/es/contact", label: "Contacto" },
         { href: "/privacy-policy", label: "Privacidad" },
         { href: "/terms", label: "Términos" },
       ],
@@ -80,8 +81,8 @@ export const ES: LocaleContent = {
             { href: "/es/blog", label: "Todas las guías" },
             { href: "/es/blog/official-iphone-duo-wallpaper", label: "Fondo oficial del iPhone Duo" },
             { href: "/es/blog/iphone-duo-wallpaper-sizes-explained", label: "Tamaños de fondo" },
-            { href: "/about", label: "Quiénes somos" },
-            { href: "/contact", label: "Contacto" },
+            { href: "/es/about", label: "Quiénes somos" },
+            { href: "/es/contact", label: "Contacto" },
           ],
         },
         {
@@ -437,4 +438,6 @@ Explora nuestros fondos para la [pantalla interior del iPhone Duo](/es/devices/i
     browse: "Ver fondos",
     english: "Ver esta página en inglés",
   },
+  about: ES_ABOUT,
+  contact: ES_CONTACT,
 };

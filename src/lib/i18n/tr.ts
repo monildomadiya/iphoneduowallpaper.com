@@ -1,4 +1,5 @@
 import { TR_LISTING, TR_TAXONOMY } from "@/lib/i18n/tr-taxonomy";
+import { TR_ABOUT, TR_CONTACT } from "@/lib/i18n/tr-pages";
 import { TR_SEARCH } from "@/lib/i18n/search-strings";
 import { TR_WALLPAPER } from "@/lib/i18n/tr-wallpaper";
 import type { LocaleContent } from "@/lib/i18n/types";
@@ -36,8 +37,8 @@ export const TR: LocaleContent = {
       closeSearch: "Aramayı kapat",
       quickLinks: "Hızlı bağlantılar",
       menuLinks: [
-        { href: "/about", label: "Hakkımızda" },
-        { href: "/contact", label: "İletişim" },
+        { href: "/tr/about", label: "Hakkımızda" },
+        { href: "/tr/contact", label: "İletişim" },
         { href: "/privacy-policy", label: "Gizlilik" },
         { href: "/terms", label: "Koşullar" },
       ],
@@ -80,8 +81,8 @@ export const TR: LocaleContent = {
             { href: "/tr/blog", label: "Tüm rehberler" },
             { href: "/tr/blog/official-iphone-duo-wallpaper", label: "Resmî iPhone Duo duvar kağıdı" },
             { href: "/tr/blog/iphone-duo-wallpaper-sizes-explained", label: "Duvar kağıdı boyutları" },
-            { href: "/about", label: "Hakkımızda" },
-            { href: "/contact", label: "İletişim" },
+            { href: "/tr/about", label: "Hakkımızda" },
+            { href: "/tr/contact", label: "İletişim" },
           ],
         },
         {
@@ -436,4 +437,6 @@ JPEG ve PNG her yerde çalışır. PNG düz renkleri ve degradeleri bantlanmadan
     browse: "Duvar kağıtlarına göz at",
     english: "Bu sayfayı İngilizce görüntüle",
   },
+  about: TR_ABOUT,
+  contact: TR_CONTACT,
 };

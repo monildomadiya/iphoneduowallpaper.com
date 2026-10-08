@@ -2,6 +2,7 @@ import { Layers, Ruler, ShieldCheck, Sparkles } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getSiteSettings } from "@/lib/data/settings";
+import { languageAlternates } from "@/lib/i18n";
 import { buildMetadata } from "@/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -10,6 +11,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: "About Us",
     description: `${settings.site_name} is an independent library of free, full-resolution wallpapers designed for iPhone Duo's inner and outer displays.`,
     path: "/about",
+    languages: languageAlternates("/about"),
   });
 }
 

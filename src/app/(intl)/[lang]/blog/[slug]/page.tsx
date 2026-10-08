@@ -101,7 +101,7 @@ export default async function LocalizedGuidePage({ params }: PageProps<"/[lang]/
           </p>
           <p className="mt-6 text-[14px] text-fg-3">
             {blog.by}{" "}
-            <Link href="/about#editorial-team" rel="author" className="hover:text-fg hover:underline">
+            <Link href={`/${found.lang}/about#editorial-team`} rel="author" className="hover:text-fg hover:underline">
               {author}
             </Link>{" "}
             · <time dateTime={guide.published}>{formatDate(guide.published, undefined, found.lang)}</time> ·{" "}
