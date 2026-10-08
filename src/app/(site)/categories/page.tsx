@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { CategoryTiles } from "@/components/site/tiles";
 import { EmptyState, JsonLd, PageHeader } from "@/components/ui/primitives";
 import { getCategories, getDarkCategory } from "@/lib/data/taxonomy";
+import { languageAlternates } from "@/lib/i18n";
 import { buildMetadata, collectionPageJsonLd } from "@/lib/seo";
 import { stockedFirst } from "@/lib/utils";
 
@@ -13,6 +14,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: "Wallpaper Categories",
     description: DESCRIPTION,
     path: "/categories",
+    languages: languageAlternates("/categories"),
     noIndex: (await getCategories()).length === 0,
   });
 }

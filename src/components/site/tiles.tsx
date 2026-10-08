@@ -1,20 +1,34 @@
 /* eslint-disable @next/next/no-img-element -- covers are pre-optimized WebP files served from Cloudflare R2 */
 import Link from "next/link";
 import { Artwork, DeviceFrame, bestVariantFor } from "@/components/wallpaper/device-frame";
+import { localeContent } from "@/lib/i18n";
+import { fill } from "@/lib/i18n/en";
+import { categoryCopy, categoryHref, deviceCopy, deviceHref } from "@/lib/i18n/taxonomy";
+import type { ForeignLocale } from "@/lib/i18n/types";
 import type { Category, Device, PostCardData } from "@/lib/types";
 import { cn, formatDate, imageUrl } from "@/lib/utils";
 
-function countLabel(count: number) {
-  return `${count} ${count === 1 ? "wallpaper" : "wallpapers"}`;
+function countLabel(count: number, locale?: ForeignLocale) {
+  if (!locale) return `${count} ${count === 1 ? "wallpaper" : "wallpapers"}`;
+  const t = localeContent(locale).listing;
+  return fill(count === 1 ? t.countOne : t.countMany, { n: count.toLocaleString(locale) });
 }
 
-export function CategoryTiles({ categories, className }: { categories: Category[]; className?: string }) {
+export function CategoryTiles({
+  categories,
+  className,
+  locale,
+}: {
+  categories: Category[];
+  className?: string;
+  locale?: ForeignLocale;
+}) {
   return (
     <ul className={cn("grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5", className)}>
       {categories.map((category, index) => (
         <li key={category.id}>
           <Link
-            href={`/categories/${category.slug}`}
+            href={categoryHref(category.slug, locale)}
             className="group relative block aspect-[4/5] overflow-hidden rounded-[24px] bg-surface shadow-card ring-1 ring-line"
           >
             {category.cover_thumb_key ? (
@@ -30,8 +44,10 @@ export function CategoryTiles({ categories, className }: { categories: Category[
             )}
             <div className="absolute inset-0 bg-linear-to-t from-black/65 via-black/10 to-transparent" />
             <div className="absolute inset-x-0 bottom-0 p-4 text-white">
-              <h3 className="text-[19px] font-semibold tracking-tight">{category.name}</h3>
-              <p className="mt-0.5 text-[13px] text-white/75">{countLabel(category.wallpaper_count)}</p>
+              <h3 className="text-[19px] font-semibold tracking-tight">
+                {(locale && categoryCopy(locale, category.slug)?.name) || category.name}
+              </h3>
+              <p className="mt-0.5 text-[13px] text-white/75">{countLabel(category.wallpaper_count, locale)}</p>
             </div>
           </Link>
         </li>
@@ -40,7 +56,15 @@ export function CategoryTiles({ categories, className }: { categories: Category[
   );
 }
 
-export function DeviceTiles({ devices, className }: { devices: Device[]; className?: string }) {
+export function DeviceTiles({
+  devices,
+  className,
+  locale,
+}: {
+  devices: Device[];
+  className?: string;
+  locale?: ForeignLocale;
+}) {
   return (
     <ul className={cn("grid grid-cols-2 gap-4 lg:grid-cols-4", className)}>
       {devices.map((device, index) => {
@@ -48,7 +72,7 @@ export function DeviceTiles({ devices, className }: { devices: Device[]; classNa
         return (
           <li key={device.id}>
             <Link
-              href={`/devices/${device.slug}`}
+              href={deviceHref(device.slug, locale)}
               className="group flex h-full flex-col items-center rounded-[28px] bg-surface px-5 pb-6 pt-8 text-center transition hover:bg-surface-hover"
             >
               <div className="flex h-44 w-full items-end justify-center md:h-52">
@@ -64,11 +88,13 @@ export function DeviceTiles({ devices, className }: { devices: Device[]; classNa
                 />
               </div>
               <p className="mt-6 text-[12px] font-semibold uppercase tracking-[0.12em] text-fg-3">{device.family}</p>
-              <h3 className="mt-1 text-[19px] font-semibold tracking-tight">{device.name}</h3>
+              <h3 className="mt-1 text-[19px] font-semibold tracking-tight">
+                {(locale && deviceCopy(locale, device.slug)?.name) || device.name}
+              </h3>
               <p className="mt-1 text-[14px] text-fg-2">
                 {device.width} × {device.height} px
               </p>
-              <p className="mt-0.5 text-[13px] text-fg-3">{countLabel(device.wallpaper_count)}</p>
+              <p className="mt-0.5 text-[13px] text-fg-3">{countLabel(device.wallpaper_count, locale)}</p>
             </Link>
           </li>
         );

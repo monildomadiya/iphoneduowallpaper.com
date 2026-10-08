@@ -6,6 +6,7 @@ import { AdSlot } from "@/components/ads/ad-slot";
 import { Breadcrumbs, PageHeader } from "@/components/ui/primitives";
 import { WallpaperListing } from "@/components/wallpaper/wallpaper-listing";
 import { getCategories, getCategoryBySlug, getDarkCategory } from "@/lib/data/taxonomy";
+import { languageAlternates } from "@/lib/i18n";
 import { buildMetadata } from "@/lib/seo";
 import { categoryGuide } from "@/lib/site";
 import { imageUrl, stockedFirst } from "@/lib/utils";
@@ -30,6 +31,7 @@ export async function generateMetadata({ params }: PageProps<"/categories/[slug]
       category.description ||
       `Download free ${category.name.toLowerCase()} wallpapers in full resolution for iPhone Duo and iPhone 18 Pro.`,
     path: `/categories/${category.slug}`,
+    languages: languageAlternates(`/categories/${category.slug}`),
     image: category.cover_thumb_key ? { url: imageUrl(category.cover_thumb_key), alt: category.name } : null,
     // An empty listing is thin content; it becomes indexable with its first wallpaper.
     noIndex: category.wallpaper_count === 0,

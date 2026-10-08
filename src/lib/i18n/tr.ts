@@ -1,3 +1,4 @@
+import { TR_LISTING, TR_TAXONOMY } from "@/lib/i18n/tr-taxonomy";
 import { TR_WALLPAPER } from "@/lib/i18n/tr-wallpaper";
 import type { LocaleContent } from "@/lib/i18n/types";
 
@@ -15,9 +16,9 @@ export const TR: LocaleContent = {
     homeHref: "/tr",
     homeLabel: "Ana sayfa",
     nav: [
-      { href: "/wallpapers", label: "Duvar kağıtları", icon: "wallpapers" },
-      { href: "/categories", label: "Kategoriler", icon: "categories" },
-      { href: "/devices", label: "Cihazlar", icon: "devices" },
+      { href: "/tr/wallpapers", label: "Duvar kağıtları", icon: "wallpapers" },
+      { href: "/tr/categories", label: "Kategoriler", icon: "categories" },
+      { href: "/tr/devices", label: "Cihazlar", icon: "devices" },
       { href: "/tr/maker", label: "Oluşturucu", icon: "maker" },
       { href: "/tr/blog", label: "Rehberler", icon: "guides" },
     ],
@@ -40,12 +41,12 @@ export const TR: LocaleContent = {
       ],
     },
     quickLinks: [
-      { href: "/wallpapers?sort=popular", label: "En çok indirilen duvar kağıtları" },
+      { href: "/tr/wallpapers?sort=popular", label: "En çok indirilen duvar kağıtları" },
       { href: "/tr/maker", label: "iPhone Duo duvar kağıdı oluşturucu" },
-      { href: "/categories/dark", label: "Koyu ve AMOLED duvar kağıtları" },
-      { href: "/categories/landscape", label: "Manzara duvar kağıtları" },
-      { href: "/devices/iphone-duo-inner-display", label: "iPhone Duo iç ekran" },
-      { href: "/devices/iphone-duo-outer-display", label: "iPhone Duo dış ekran" },
+      { href: "/tr/categories/dark", label: "Koyu ve AMOLED duvar kağıtları" },
+      { href: "/tr/categories/landscape", label: "Manzara duvar kağıtları" },
+      { href: "/tr/devices/iphone-duo-inner-display", label: "iPhone Duo iç ekran" },
+      { href: "/tr/devices/iphone-duo-outer-display", label: "iPhone Duo dış ekran" },
     ],
     footer: {
       disclaimer:
@@ -54,21 +55,21 @@ export const TR: LocaleContent = {
         {
           title: "Keşfet",
           links: [
-            { href: "/wallpapers", label: "Tüm duvar kağıtları" },
-            { href: "/wallpapers?sort=popular", label: "En çok indirilenler" },
-            { href: "/categories", label: "Kategoriler" },
-            { href: "/categories/dark", label: "Koyu ve AMOLED" },
-            { href: "/categories/landscape", label: "Manzara" },
+            { href: "/tr/wallpapers", label: "Tüm duvar kağıtları" },
+            { href: "/tr/wallpapers?sort=popular", label: "En çok indirilenler" },
+            { href: "/tr/categories", label: "Kategoriler" },
+            { href: "/tr/categories/dark", label: "Koyu ve AMOLED" },
+            { href: "/tr/categories/landscape", label: "Manzara" },
             { href: "/tr/maker", label: "Duvar kağıdı oluşturucu" },
           ],
         },
         {
           title: "Cihazlar",
           links: [
-            { href: "/devices/iphone-duo-outer-display", label: "iPhone Duo dış ekran" },
-            { href: "/devices/iphone-duo-inner-display", label: "iPhone Duo iç ekran" },
-            { href: "/devices/iphone-18-pro-max", label: "iPhone 18 Pro Max" },
-            { href: "/devices/iphone-18-pro", label: "iPhone 18 Pro" },
+            { href: "/tr/devices/iphone-duo-outer-display", label: "iPhone Duo dış ekran" },
+            { href: "/tr/devices/iphone-duo-inner-display", label: "iPhone Duo iç ekran" },
+            { href: "/tr/devices/iphone-18-pro-max", label: "iPhone 18 Pro Max" },
+            { href: "/tr/devices/iphone-18-pro", label: "iPhone 18 Pro" },
           ],
         },
         {
@@ -135,7 +136,7 @@ export const TR: LocaleContent = {
     aboutTitle: "iPhone Duo'nun iki ekranı için duvar kağıtları.",
     about: `iPhone Duo —iPhone 18 Duo ya da iPhone Fold olarak da aranıyor— şekilleri birbirinden çok farklı iki ekrana sahip: 1398 × 2034 çözünürlüklü, uzun, 5,4 inç bir dış ekran ve küçük bir tablet gibi açılan, 2670 × 1878 çözünürlüklü, geniş, 7,6 inç bir iç ekran. Normal bir iPhone için hazırlanmış bir duvar kağıdı dış ekranda üstten ve alttan bir şerit kaybeder, iç ekranda ise çok daha fazlasını.
 
-Buradaki her duvar kağıdı orijinal çözünürlüğünde, HD olarak ücretsiz indirilebilir ve her biri, kaydetmeden önce [dış ekrana](/devices/iphone-duo-outer-display) ve [iç ekrana](/devices/iphone-duo-inner-display) nasıl oturduğunu gösterir. Hangi boyuta ihtiyacınız olduğundan emin değil misiniz? [iPhone Duo duvar kağıdı boyutları](/tr/blog/iphone-duo-wallpaper-sizes-explained) rehberimizi okuyun. Apple'ın çöl kumullu resmî duvar kağıdını mı arıyorsunuz? [Resmî iPhone Duo duvar kağıdı](/tr/blog/official-iphone-duo-wallpaper) rehberinde anlatıyoruz.
+Buradaki her duvar kağıdı orijinal çözünürlüğünde, HD olarak ücretsiz indirilebilir ve her biri, kaydetmeden önce [dış ekrana](/tr/devices/iphone-duo-outer-display) ve [iç ekrana](/tr/devices/iphone-duo-inner-display) nasıl oturduğunu gösterir. Hangi boyuta ihtiyacınız olduğundan emin değil misiniz? [iPhone Duo duvar kağıdı boyutları](/tr/blog/iphone-duo-wallpaper-sizes-explained) rehberimizi okuyun. Apple'ın çöl kumullu resmî duvar kağıdını mı arıyorsunuz? [Resmî iPhone Duo duvar kağıdı](/tr/blog/official-iphone-duo-wallpaper) rehberinde anlatıyoruz.
 
 Her duvar kağıdının sayfası İngilizcedir; indirme ve ekran uyumu kontrolü aynı şekilde çalışır.`,
     faqTitle: ["Sorularınız mı var?", "Yanıtlarımız hazır."],
@@ -210,7 +211,7 @@ Her duvar kağıdının sayfası İngilizcedir; indirme ve ekran uyumu kontrolü
 
 Oluşturucu her ekran için tam çözünürlüğünde ayrı bir kırpma yapar; böylece iOS görseli büyütmek yerine piksel piksel gösterir. En iyi sonuç için en az 2670 piksel genişliğinde bir fotoğrafla başlayın. Konuyu dış kırpmada ortada tutun; iç ekranda ise telefonun katlandığı orta çizgiden biraz yana kaydırın. Daha fazla ayrıntı [iPhone Duo duvar kağıdı boyutları](/tr/blog/iphone-duo-wallpaper-sizes-explained) rehberimizde.
 
-Bitti mi? İki ekran için yapılmış [diğer duvar kağıtlarına göz atın](/wallpapers).`,
+Bitti mi? İki ekran için yapılmış [diğer duvar kağıtlarına göz atın](/tr/wallpapers).`,
     faqTitle: ["Sorularınız mı var?", "Oluşturucu hakkında."],
     faq: [
       {
@@ -366,7 +367,7 @@ Resmî duvar kağıdındaki gün batımında çölün sakinliğini seviyor ama k
 - [Snow Mountain and Moon](/tr/wallpapers/minimal-snow-mountain-moon-landscape-duo-wallpaper): yumuşak mavi bir gökyüzü altında buzlu zirveler.
 - [Misty Mountain Pine](/tr/wallpapers/misty-mountain-pine-tree-duo-wallpaper): bulutların içinde kaybolan kayalık zirveler.
 
-Her duvar kağıdı sayfası, indirmeden önce tam çözünürlüğü ve görselin iPhone Duo'nun dış ve iç ekranına ve iPhone 18 Pro'ya nasıl oturduğunu gösterir. Bu tarzda daha fazlası için [Manzara](/categories/landscape) kategorisine, koyu sürüm gibi gece sahneleri için [Koyu ve AMOLED](/categories/dark) sayfasına göz atın. Kendi fotoğrafınızı mı kullanmak istiyorsunuz? [iPhone Duo duvar kağıdı oluşturucu](/tr/maker) onu iki ekran için kırpar.`,
+Her duvar kağıdı sayfası, indirmeden önce tam çözünürlüğü ve görselin iPhone Duo'nun dış ve iç ekranına ve iPhone 18 Pro'ya nasıl oturduğunu gösterir. Bu tarzda daha fazlası için [Manzara](/tr/categories/landscape) kategorisine, koyu sürüm gibi gece sahneleri için [Koyu ve AMOLED](/tr/categories/dark) sayfasına göz atın. Kendi fotoğrafınızı mı kullanmak istiyorsunuz? [iPhone Duo duvar kağıdı oluşturucu](/tr/maker) onu iki ekran için kırpar.`,
     },
     {
       slug: "iphone-duo-wallpaper-sizes-explained",
@@ -418,8 +419,10 @@ JPEG ve PNG her yerde çalışır. PNG düz renkleri ve degradeleri bantlanmadan
 3. İç ekranda ana konuyu tam orta çizgiden uzak tutun.
 4. Önizlemeyi kaydetmek yerine orijinal dosyayı indirin.
 
-[iPhone Duo iç ekran duvar kağıtlarımıza](/devices/iphone-duo-inner-display) ve [dış ekran duvar kağıtlarımıza](/devices/iphone-duo-outer-display) göz atın; hepsi yayınlanmadan önce boyut açısından kontrol edilir. Apple'ın duvar kağıdını mı arıyorsunuz? [Resmî iPhone Duo duvar kağıdı](/tr/blog/official-iphone-duo-wallpaper) rehberini okuyun.`,
+[iPhone Duo iç ekran duvar kağıtlarımıza](/tr/devices/iphone-duo-inner-display) ve [dış ekran duvar kağıtlarımıza](/tr/devices/iphone-duo-outer-display) göz atın; hepsi yayınlanmadan önce boyut açısından kontrol edilir. Apple'ın duvar kağıdını mı arıyorsunuz? [Resmî iPhone Duo duvar kağıdı](/tr/blog/official-iphone-duo-wallpaper) rehberini okuyun.`,
     },
   ],
   wallpaper: TR_WALLPAPER,
+  listing: TR_LISTING,
+  taxonomy: TR_TAXONOMY,
 };

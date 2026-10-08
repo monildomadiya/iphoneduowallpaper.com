@@ -6,6 +6,7 @@ import { Breadcrumbs, JsonLd, PageHeader, SectionHeading } from "@/components/ui
 import { DeviceFrame, bestVariantFor } from "@/components/wallpaper/device-frame";
 import { WallpaperListing } from "@/components/wallpaper/wallpaper-listing";
 import { getDeviceBySlug, getDevices } from "@/lib/data/taxonomy";
+import { languageAlternates } from "@/lib/i18n";
 import { buildMetadata, faqJsonLd } from "@/lib/seo";
 import { deviceFaq } from "@/lib/site";
 import { aspectRatioLabel, imageUrl, orientationLabel } from "@/lib/utils";
@@ -30,6 +31,7 @@ export async function generateMetadata({ params }: PageProps<"/devices/[slug]">)
       device.seo_description ||
       `Free ${device.name} wallpapers for the ${device.width}x${device.height} screen. Full-resolution downloads, each with a fit check for this display. No sign-up.`,
     path: `/devices/${device.slug}`,
+    languages: languageAlternates(`/devices/${device.slug}`),
     noIndex: device.wallpaper_count === 0,
   });
 }

@@ -1,3 +1,4 @@
+import { ES_LISTING, ES_TAXONOMY } from "@/lib/i18n/es-taxonomy";
 import { ES_WALLPAPER } from "@/lib/i18n/es-wallpaper";
 import type { LocaleContent } from "@/lib/i18n/types";
 
@@ -15,9 +16,9 @@ export const ES: LocaleContent = {
     homeHref: "/es",
     homeLabel: "Inicio",
     nav: [
-      { href: "/wallpapers", label: "Fondos", icon: "wallpapers" },
-      { href: "/categories", label: "Categorías", icon: "categories" },
-      { href: "/devices", label: "Dispositivos", icon: "devices" },
+      { href: "/es/wallpapers", label: "Fondos", icon: "wallpapers" },
+      { href: "/es/categories", label: "Categorías", icon: "categories" },
+      { href: "/es/devices", label: "Dispositivos", icon: "devices" },
       { href: "/es/maker", label: "Creador", icon: "maker" },
       { href: "/es/blog", label: "Guías", icon: "guides" },
     ],
@@ -40,12 +41,12 @@ export const ES: LocaleContent = {
       ],
     },
     quickLinks: [
-      { href: "/wallpapers?sort=popular", label: "Fondos más descargados" },
+      { href: "/es/wallpapers?sort=popular", label: "Fondos más descargados" },
       { href: "/es/maker", label: "Creador de fondos para iPhone Duo" },
-      { href: "/categories/dark", label: "Fondos oscuros y AMOLED" },
-      { href: "/categories/landscape", label: "Fondos de paisajes" },
-      { href: "/devices/iphone-duo-inner-display", label: "Pantalla interior del iPhone Duo" },
-      { href: "/devices/iphone-duo-outer-display", label: "Pantalla exterior del iPhone Duo" },
+      { href: "/es/categories/dark", label: "Fondos oscuros y AMOLED" },
+      { href: "/es/categories/landscape", label: "Fondos de paisajes" },
+      { href: "/es/devices/iphone-duo-inner-display", label: "Pantalla interior del iPhone Duo" },
+      { href: "/es/devices/iphone-duo-outer-display", label: "Pantalla exterior del iPhone Duo" },
     ],
     footer: {
       disclaimer:
@@ -54,21 +55,21 @@ export const ES: LocaleContent = {
         {
           title: "Explorar",
           links: [
-            { href: "/wallpapers", label: "Todos los fondos" },
-            { href: "/wallpapers?sort=popular", label: "Más descargados" },
-            { href: "/categories", label: "Categorías" },
-            { href: "/categories/dark", label: "Oscuros y AMOLED" },
-            { href: "/categories/landscape", label: "Paisajes" },
+            { href: "/es/wallpapers", label: "Todos los fondos" },
+            { href: "/es/wallpapers?sort=popular", label: "Más descargados" },
+            { href: "/es/categories", label: "Categorías" },
+            { href: "/es/categories/dark", label: "Oscuros y AMOLED" },
+            { href: "/es/categories/landscape", label: "Paisajes" },
             { href: "/es/maker", label: "Creador de fondos" },
           ],
         },
         {
           title: "Dispositivos",
           links: [
-            { href: "/devices/iphone-duo-outer-display", label: "iPhone Duo, pantalla exterior" },
-            { href: "/devices/iphone-duo-inner-display", label: "iPhone Duo, pantalla interior" },
-            { href: "/devices/iphone-18-pro-max", label: "iPhone 18 Pro Max" },
-            { href: "/devices/iphone-18-pro", label: "iPhone 18 Pro" },
+            { href: "/es/devices/iphone-duo-outer-display", label: "iPhone Duo, pantalla exterior" },
+            { href: "/es/devices/iphone-duo-inner-display", label: "iPhone Duo, pantalla interior" },
+            { href: "/es/devices/iphone-18-pro-max", label: "iPhone 18 Pro Max" },
+            { href: "/es/devices/iphone-18-pro", label: "iPhone 18 Pro" },
           ],
         },
         {
@@ -136,7 +137,7 @@ export const ES: LocaleContent = {
     aboutTitle: "Fondos para las dos pantallas del iPhone Duo.",
     about: `El iPhone Duo —también conocido como iPhone 18 Duo o iPhone Fold— tiene dos pantallas con formas muy distintas: una exterior alta de 5,4 pulgadas a 1398 × 2034 y una interior ancha de 7,6 pulgadas a 2670 × 1878 que se abre como una pequeña tableta. Un fondo pensado para un iPhone normal pierde una franja arriba y abajo en la pantalla exterior, y mucho más en la interior.
 
-Todos los fondos de esta web se descargan gratis en HD y a su resolución original, y cada uno indica cómo encaja en la [pantalla exterior](/devices/iphone-duo-outer-display) y en la [pantalla interior](/devices/iphone-duo-inner-display) antes de guardarlo. ¿No sabes qué tamaño necesitas? Lee nuestra guía de [tamaños de fondo para iPhone Duo](/es/blog/iphone-duo-wallpaper-sizes-explained). ¿Buscas el fondo oficial de Apple con las dunas del desierto? Lo explicamos en [el fondo de pantalla oficial del iPhone Duo](/es/blog/official-iphone-duo-wallpaper).
+Todos los fondos de esta web se descargan gratis en HD y a su resolución original, y cada uno indica cómo encaja en la [pantalla exterior](/es/devices/iphone-duo-outer-display) y en la [pantalla interior](/es/devices/iphone-duo-inner-display) antes de guardarlo. ¿No sabes qué tamaño necesitas? Lee nuestra guía de [tamaños de fondo para iPhone Duo](/es/blog/iphone-duo-wallpaper-sizes-explained). ¿Buscas el fondo oficial de Apple con las dunas del desierto? Lo explicamos en [el fondo de pantalla oficial del iPhone Duo](/es/blog/official-iphone-duo-wallpaper).
 
 Las fichas de cada fondo están en inglés, pero la descarga y la comprobación de encaje funcionan igual.`,
     faqTitle: ["¿Preguntas?", "Tenemos respuestas."],
@@ -211,7 +212,7 @@ Las fichas de cada fondo están en inglés, pero la descarga y la comprobación 
 
 El creador hace un recorte para cada pantalla a su resolución exacta, así iOS la muestra píxel a píxel en lugar de ampliarla. Para un mejor resultado, empieza con una foto de al menos 2670 píxeles de ancho. Centra el motivo en el recorte exterior y, en la pantalla interior, apártalo un poco de la línea central, donde se pliega el teléfono. Encontrarás más detalles en nuestra guía de [tamaños de fondo para iPhone Duo](/es/blog/iphone-duo-wallpaper-sizes-explained).
 
-¿Ya está? [Busca más fondos](/wallpapers) hechos para las dos pantallas.`,
+¿Ya está? [Busca más fondos](/es/wallpapers) hechos para las dos pantallas.`,
     faqTitle: ["¿Preguntas?", "Sobre el creador."],
     faq: [
       {
@@ -367,7 +368,7 @@ Si te gusta la calma del desierto al atardecer del fondo oficial pero quieres al
 - [Snow Mountain and Moon](/es/wallpapers/minimal-snow-mountain-moon-landscape-duo-wallpaper): picos helados bajo un cielo azul suave.
 - [Misty Mountain Pine](/es/wallpapers/misty-mountain-pine-tree-duo-wallpaper): picos rocosos que se pierden entre las nubes.
 
-Cada página de fondo muestra la resolución exacta y cómo encaja la imagen en la pantalla exterior e interior del iPhone Duo y en el iPhone 18 Pro antes de descargarla. Para ver más de este estilo, entra en la categoría [Paisajes](/categories/landscape) o en [Oscuros y AMOLED](/categories/dark) para escenas nocturnas como la versión oscura. ¿Prefieres usar tu propia foto? El [creador de fondos para iPhone Duo](/es/maker) la recorta para las dos pantallas.`,
+Cada página de fondo muestra la resolución exacta y cómo encaja la imagen en la pantalla exterior e interior del iPhone Duo y en el iPhone 18 Pro antes de descargarla. Para ver más de este estilo, entra en la categoría [Paisajes](/es/categories/landscape) o en [Oscuros y AMOLED](/es/categories/dark) para escenas nocturnas como la versión oscura. ¿Prefieres usar tu propia foto? El [creador de fondos para iPhone Duo](/es/maker) la recorta para las dos pantallas.`,
     },
     {
       slug: "iphone-duo-wallpaper-sizes-explained",
@@ -419,8 +420,10 @@ JPEG y PNG funcionan en todas partes. PNG mantiene los colores planos y los degr
 3. En la pantalla interior, aparta el motivo principal de la línea central.
 4. Descarga el archivo original en lugar de guardar una vista previa.
 
-Explora nuestros fondos para la [pantalla interior del iPhone Duo](/devices/iphone-duo-inner-display) y para la [pantalla exterior](/devices/iphone-duo-outer-display): todos se comprueban antes de publicarse. ¿Buscas el fondo de Apple? Lee sobre [el fondo de pantalla oficial del iPhone Duo](/es/blog/official-iphone-duo-wallpaper).`,
+Explora nuestros fondos para la [pantalla interior del iPhone Duo](/es/devices/iphone-duo-inner-display) y para la [pantalla exterior](/es/devices/iphone-duo-outer-display): todos se comprueban antes de publicarse. ¿Buscas el fondo de Apple? Lee sobre [el fondo de pantalla oficial del iPhone Duo](/es/blog/official-iphone-duo-wallpaper).`,
     },
   ],
   wallpaper: ES_WALLPAPER,
+  listing: ES_LISTING,
+  taxonomy: ES_TAXONOMY,
 };

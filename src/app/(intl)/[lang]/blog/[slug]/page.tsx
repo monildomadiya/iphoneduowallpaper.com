@@ -140,7 +140,7 @@ export default async function LocalizedGuidePage({ params }: PageProps<"/[lang]/
           <SectionHeading
             title={blog.wallpapers[0]}
             subtitle={blog.wallpapers[1]}
-            href={guide.slug === "official-iphone-duo-wallpaper" && landscape ? "/categories/landscape" : "/wallpapers"}
+            href={guide.slug === "official-iphone-duo-wallpaper" && landscape ? `/${found.lang}/categories/landscape` : `/${found.lang}/wallpapers`}
           />
           <WallpaperGrid wallpapers={wallpapers.items} locale={found.lang} />
         </section>

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { DeviceTiles } from "@/components/site/tiles";
 import { EmptyState, JsonLd, PageHeader } from "@/components/ui/primitives";
 import { getDevices } from "@/lib/data/taxonomy";
+import { languageAlternates } from "@/lib/i18n";
 import { buildMetadata, collectionPageJsonLd } from "@/lib/seo";
 
 const TITLE = "Wallpapers by Device — iPhone Duo, iPhone 18 Pro & Pro Max";
@@ -14,6 +15,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: TITLE,
     description: DESCRIPTION,
     path: "/devices",
+    languages: languageAlternates("/devices"),
   });
 }
 

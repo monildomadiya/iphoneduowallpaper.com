@@ -159,6 +159,76 @@ export interface WallpaperStrings {
   devices: Record<string, string>;
 }
 
+/** The sortable grid on listing pages. */
+export interface ListingStrings {
+  countOne: string;
+  countMany: string;
+  page: string;
+  latest: string;
+  popular: string;
+  sortLabel: string;
+  emptyTitle: string;
+  emptyDescription: string;
+  endTitle: string;
+  endDescription: string;
+  back: string;
+  browseAll: string;
+  previous: string;
+  next: string;
+  pagination: string;
+}
+
+export interface HubStrings {
+  title: string;
+  description: string;
+  eyebrow: string;
+  h1: string;
+  lead: string;
+}
+
+export interface CategoryCopy {
+  name: string;
+  h1: string;
+  title: string;
+  description: string;
+  guide?: LinkItem;
+}
+
+export interface DeviceCopy {
+  name: string;
+  /** The device as the subject of a sentence ("la pantalla exterior del iPhone Duo"). */
+  faqName: string;
+  h1: string;
+  title: string;
+  description: string;
+}
+
+export interface TaxonomyStrings {
+  wallpapersHub: HubStrings;
+  categoriesHub: HubStrings;
+  devicesHub: HubStrings & { caption: string; columns: [string, string, string, string]; more: string };
+  categoryEyebrow: string;
+  categories: Record<string, CategoryCopy>;
+  darkWhyTitle: string;
+  /** Markdown. */
+  darkWhy: string;
+  deviceSeoDescription: string;
+  specs: { display: string; resolution: string; ratio: string; density: string; orientation: string; inch: string };
+  sizesTitle: string;
+  sizesSubtitle: string;
+  devices: Record<string, DeviceCopy>;
+  faq: {
+    sizeQ: string;
+    sizeA: string;
+    fitQ: string;
+    fitInner: string;
+    fitDuoOuter: string;
+    fitNormal: string;
+    setQ: string;
+    setA: string;
+  };
+}
+
 export interface LocalGuide {
   /** The English guide's slug; the translation lives at /{locale}/blog/{slug}. */
   slug: string;
@@ -236,4 +306,6 @@ export interface LocaleContent {
   };
   guides: LocalGuide[];
   wallpaper: WallpaperStrings;
+  listing: ListingStrings;
+  taxonomy: TaxonomyStrings;
 }

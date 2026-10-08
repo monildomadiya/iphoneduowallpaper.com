@@ -85,10 +85,10 @@ export default async function LocalizedHomePage({ params }: PageProps<"/[lang]">
             {home.intro}
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-4">
-            <Link href="/wallpapers" className="btn-primary">
+            <Link href={`/${lang}/wallpapers`} className="btn-primary">
               {home.browse}
             </Link>
-            <Link href="/categories" className="link-apple inline-flex items-center gap-0.5 text-[17px]">
+            <Link href={`/${lang}/categories`} className="link-apple inline-flex items-center gap-0.5 text-[17px]">
               {home.explore}
               <ChevronRight className="size-4" />
             </Link>
@@ -98,7 +98,7 @@ export default async function LocalizedHomePage({ params }: PageProps<"/[lang]">
         <div className="container-apple relative mt-14 md:mt-20">
           <div className="mx-auto flex max-w-5xl items-end justify-center gap-4 sm:gap-8">
             <Link
-              href={outer ? wallpaperHref(outer.slug, lang) : "/wallpapers"}
+              href={outer ? wallpaperHref(outer.slug, lang) : `/${lang}/wallpapers`}
               aria-label={outer?.title ?? home.browse}
               className="block w-[31%] max-w-[250px] animate-float"
             >
@@ -111,7 +111,7 @@ export default async function LocalizedHomePage({ params }: PageProps<"/[lang]">
               />
             </Link>
             <Link
-              href={inner ? wallpaperHref(inner.slug, lang) : "/wallpapers"}
+              href={inner ? wallpaperHref(inner.slug, lang) : `/${lang}/wallpapers`}
               aria-label={inner?.title ?? home.browse}
               className="block w-[64%] max-w-[640px] animate-float-delayed"
             >
@@ -150,7 +150,7 @@ export default async function LocalizedHomePage({ params }: PageProps<"/[lang]">
       {featured.items.length ? (
         <section className="mt-24">
           <div className="container-apple">
-            <SectionHeading title={home.featured[0]} subtitle={home.featured[1]} href="/wallpapers" linkLabel={home.viewAll} />
+            <SectionHeading title={home.featured[0]} subtitle={home.featured[1]} href={`/${lang}/wallpapers`} linkLabel={home.viewAll} />
           </div>
           <ul className="no-scrollbar container-apple flex snap-x snap-mandatory gap-5 overflow-x-auto pb-4">
             {featured.items.map((wallpaper, index) => (
@@ -164,7 +164,7 @@ export default async function LocalizedHomePage({ params }: PageProps<"/[lang]">
 
       {latest.items.length ? (
         <section className="container-apple mt-24">
-          <SectionHeading title={home.latest[0]} subtitle={home.latest[1]} href="/wallpapers" linkLabel={home.viewAll} />
+          <SectionHeading title={home.latest[0]} subtitle={home.latest[1]} href={`/${lang}/wallpapers`} linkLabel={home.viewAll} />
           <WallpaperGrid wallpapers={latest.items} locale={lang} />
         </section>
       ) : null}
@@ -174,8 +174,8 @@ export default async function LocalizedHomePage({ params }: PageProps<"/[lang]">
       </div>
 
       <section className="container-apple mt-24">
-        <SectionHeading title={home.categories[0]} subtitle={home.categories[1]} href="/categories" linkLabel={home.viewAll} />
-        <CategoryTiles categories={stockedFirst([dark, ...categories]).slice(0, 10)} />
+        <SectionHeading title={home.categories[0]} subtitle={home.categories[1]} href={`/${lang}/categories`} linkLabel={home.viewAll} />
+        <CategoryTiles categories={stockedFirst([dark, ...categories]).slice(0, 10)} locale={lang} />
       </section>
 
       <section className="container-apple mt-24">

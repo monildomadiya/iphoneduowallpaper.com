@@ -125,11 +125,13 @@ export function Pagination({
   page,
   totalPages,
   params = {},
+  labels = { pagination: "Pagination", previous: "Previous page", next: "Next page" },
 }: {
   basePath: string;
   page: number;
   totalPages: number;
   params?: Record<string, string | undefined>;
+  labels?: { pagination: string; previous: string; next: string };
 }) {
   if (totalPages <= 1) return null;
 
@@ -143,9 +145,9 @@ export function Pagination({
   const pill = "grid h-10 min-w-10 place-items-center rounded-full px-3 text-[15px] transition";
 
   return (
-    <nav aria-label="Pagination" className="mt-14 flex items-center justify-center gap-1.5">
+    <nav aria-label={labels.pagination} className="mt-14 flex items-center justify-center gap-1.5">
       {page > 1 ? (
-        <Link href={pageHref(basePath, page - 1, params)} rel="prev" className={cn(pill, "hover:bg-surface")} aria-label="Previous page">
+        <Link href={pageHref(basePath, page - 1, params)} rel="prev" className={cn(pill, "hover:bg-surface")} aria-label={labels.previous}>
           <ChevronLeft className="size-4" />
         </Link>
       ) : null}
@@ -166,7 +168,7 @@ export function Pagination({
         ),
       )}
       {page < totalPages ? (
-        <Link href={pageHref(basePath, page + 1, params)} rel="next" className={cn(pill, "hover:bg-surface")} aria-label="Next page">
+        <Link href={pageHref(basePath, page + 1, params)} rel="next" className={cn(pill, "hover:bg-surface")} aria-label={labels.next}>
           <ChevronRight className="size-4" />
         </Link>
       ) : null}
@@ -200,18 +202,20 @@ export function SortTabs({
   basePath,
   current,
   params = {},
+  labels = { latest: "Latest", popular: "Most downloaded", sort: "Sort wallpapers" },
 }: {
   basePath: string;
   current: "latest" | "popular";
   params?: Record<string, string | undefined>;
+  labels?: { latest: string; popular: string; sort: string };
 }) {
   const options = [
-    { value: "latest", label: "Latest" },
-    { value: "popular", label: "Most downloaded" },
+    { value: "latest", label: labels.latest },
+    { value: "popular", label: labels.popular },
   ] as const;
 
   return (
-    <div role="tablist" aria-label="Sort wallpapers" className="inline-flex rounded-full bg-surface p-1">
+    <div role="tablist" aria-label={labels.sort} className="inline-flex rounded-full bg-surface p-1">
       {options.map((option) => {
         const search = new URLSearchParams();
         for (const [key, value] of Object.entries(params)) if (value) search.set(key, value);

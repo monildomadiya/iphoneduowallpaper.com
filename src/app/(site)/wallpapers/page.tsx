@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { AdSlot } from "@/components/ads/ad-slot";
 import { JsonLd, PageHeader } from "@/components/ui/primitives";
 import { WallpaperListing } from "@/components/wallpaper/wallpaper-listing";
+import { languageAlternates } from "@/lib/i18n";
 import { buildMetadata, collectionPageJsonLd } from "@/lib/seo";
 
 const TITLE = "All iPhone Duo Wallpapers — Free HD Downloads";
@@ -13,6 +14,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: TITLE,
     description: DESCRIPTION,
     path: "/wallpapers",
+    languages: languageAlternates("/wallpapers"),
   });
 }
 

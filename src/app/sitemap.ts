@@ -66,19 +66,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     ...staticPages.map(withLanguages),
     ...translatedPages,
-    ...categories.filter(hasWallpapers).map((item) => ({
-      url: absoluteUrl(`/categories/${item.slug}`),
-      // Dark has no row of its own, so it is dated by the newest wallpaper like the other hubs.
-      lastModified: item.updated_at || libraryUpdated,
-      changeFrequency: "weekly" as const,
-      priority: 0.7,
-    })),
-    ...devices.filter(hasWallpapers).map((item) => ({
-      url: absoluteUrl(`/devices/${item.slug}`),
-      lastModified: item.updated_at,
-      changeFrequency: "weekly" as const,
-      priority: 0.7,
-    })),
+    ...categories.filter(hasWallpapers).map((item) =>
+      withLanguages({
+        url: absoluteUrl(`/categories/${item.slug}`),
+        // Dark has no row of its own, so it is dated by the newest wallpaper like the other hubs.
+        lastModified: item.updated_at || libraryUpdated,
+        changeFrequency: "weekly" as const,
+        priority: 0.7,
+      }),
+    ),
+    ...devices.filter(hasWallpapers).map((item) =>
+      withLanguages({
+        url: absoluteUrl(`/devices/${item.slug}`),
+        lastModified: item.updated_at,
+        changeFrequency: "weekly" as const,
+        priority: 0.7,
+      }),
+    ),
     ...posts.map((item) =>
       withLanguages({
         url: absoluteUrl(`/blog/${item.slug}`),

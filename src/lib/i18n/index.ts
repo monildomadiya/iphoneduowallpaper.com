@@ -18,7 +18,17 @@ export function localeContent(locale: ForeignLocale): LocaleContent {
 }
 
 /** English paths that have a translation, mapped to the translated path (prefix + same path). */
-const TRANSLATED = new Set(["/", "/maker", ...ES.guides.map((guide) => `/blog/${guide.slug}`)]);
+const inBoth = (es: Record<string, unknown>, tr: Record<string, unknown>) => Object.keys(es).filter((key) => key in tr);
+const TRANSLATED = new Set([
+  "/",
+  "/maker",
+  "/wallpapers",
+  "/categories",
+  "/devices",
+  ...ES.guides.map((guide) => `/blog/${guide.slug}`),
+  ...inBoth(ES.taxonomy.categories, TR.taxonomy.categories).map((slug) => `/categories/${slug}`),
+  ...inBoth(ES.taxonomy.devices, TR.taxonomy.devices).map((slug) => `/devices/${slug}`),
+]);
 
 export function localizedPath(locale: ForeignLocale, englishPath: string): string {
   return englishPath === "/" ? `/${locale}` : `/${locale}${englishPath}`;

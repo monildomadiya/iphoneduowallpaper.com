@@ -6,6 +6,7 @@ import { Breadcrumbs, PageHeader } from "@/components/ui/primitives";
 import { WallpaperListing } from "@/components/wallpaper/wallpaper-listing";
 import { getCategories, getDarkCategory } from "@/lib/data/taxonomy";
 import { getDarkWallpapers } from "@/lib/data/wallpapers";
+import { languageAlternates } from "@/lib/i18n";
 import { buildMetadata } from "@/lib/seo";
 import { DARK_CATEGORY } from "@/lib/site";
 import { imageUrl, stockedFirst } from "@/lib/utils";
@@ -18,6 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: DARK_CATEGORY.title,
     description: DARK_CATEGORY.description,
     path: PATH,
+    languages: languageAlternates(PATH),
     image: dark.cover_thumb_key ? { url: imageUrl(dark.cover_thumb_key), alt: DARK_CATEGORY.name } : null,
     noIndex: dark.wallpaper_count === 0,
   });

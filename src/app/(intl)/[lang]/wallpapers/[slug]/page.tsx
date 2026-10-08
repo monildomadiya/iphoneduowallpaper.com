@@ -13,6 +13,7 @@ import { getRelatedWallpapers, getWallpaperBySlug } from "@/lib/data/wallpapers"
 import { FOREIGN_LOCALES, isForeignLocale, languageAlternates, localeContent } from "@/lib/i18n";
 import { fill } from "@/lib/i18n/en";
 import { localizedFitNote, localizedOrientation, localizedOverview } from "@/lib/i18n/wallpaper-copy";
+import { categoryCopy, categoryHref, deviceCopy, deviceHref } from "@/lib/i18n/taxonomy";
 import { translatedWallpaperSlugs, wallpaperTranslation } from "@/lib/i18n/wallpapers";
 import { buildMetadata, wallpaperJsonLd } from "@/lib/seo";
 import { absoluteUrl, cn, formatBytes, formatDate, imageUrl, qualityLabel, screenFit, truncate } from "@/lib/utils";
@@ -90,7 +91,9 @@ export default async function LocalizedWallpaperPage({ params }: PageProps<"/[la
   ]);
 
   const path = `/${locale}/wallpapers/${wallpaper.slug}`;
-  const categoryName = wallpaper.category ? (t.categories[wallpaper.category.slug] ?? wallpaper.category.name) : null;
+  const categoryName = wallpaper.category
+    ? (categoryCopy(locale, wallpaper.category.slug)?.name ?? t.categories[wallpaper.category.slug] ?? wallpaper.category.name)
+    : null;
   const details = [
     {
       label: t.labels.resolution,
@@ -122,9 +125,9 @@ export default async function LocalizedWallpaperPage({ params }: PageProps<"/[la
       <div className="container-apple pt-6">
         <Breadcrumbs
           items={[
-            { name: t.breadcrumb, path: "/wallpapers" },
+            { name: t.breadcrumb, path: `/${locale}/wallpapers` },
             ...(wallpaper.category && categoryName
-              ? [{ name: categoryName, path: `/categories/${wallpaper.category.slug}` }]
+              ? [{ name: categoryName, path: categoryHref(wallpaper.category.slug, locale) }]
               : []),
             { name: translation.title, path },
           ]}
@@ -146,7 +149,7 @@ export default async function LocalizedWallpaperPage({ params }: PageProps<"/[la
           <article>
             <p className="text-[15px] font-semibold text-fg-2">
               {wallpaper.category && categoryName ? (
-                <Link href={`/categories/${wallpaper.category.slug}`} className="hover:text-link">
+                <Link href={categoryHref(wallpaper.category.slug, locale)} className="hover:text-link">
                   {categoryName}
                 </Link>
               ) : null}
@@ -215,8 +218,8 @@ export default async function LocalizedWallpaperPage({ params }: PageProps<"/[la
                     return (
                       <li key={device.id} className="flex items-center justify-between gap-4 py-3">
                         <div className="min-w-0">
-                          <Link href={`/devices/${device.slug}`} className="block truncate text-[15px] font-medium hover:text-link">
-                            {t.devices[device.slug] ?? device.name}
+                          <Link href={deviceHref(device.slug, locale)} className="block truncate text-[15px] font-medium hover:text-link">
+                            {deviceCopy(locale, device.slug)?.name ?? t.devices[device.slug] ?? device.name}
                           </Link>
                           <p className="text-[13px] text-fg-3">
                             {device.width} × {device.height} px ·{" "}
@@ -310,7 +313,7 @@ export default async function LocalizedWallpaperPage({ params }: PageProps<"/[la
             <SectionHeading
               title={t.more}
               subtitle={categoryName ? fill(t.moreCategory, { name: categoryName }) : t.moreOther}
-              href={wallpaper.category ? `/categories/${wallpaper.category.slug}` : "/wallpapers"}
+              href={wallpaper.category ? categoryHref(wallpaper.category.slug, locale) : `/${locale}/wallpapers`}
             />
             <WallpaperGrid wallpapers={related} locale={locale} />
           </section>
