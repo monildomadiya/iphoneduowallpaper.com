@@ -20,6 +20,10 @@ interface MetadataInput {
   absoluteTitle?: boolean;
   publishedTime?: string | null;
   modifiedTime?: string | null;
+  /** hreflang links, from `languageAlternates`, for a page that also exists in other languages. */
+  languages?: Record<string, string>;
+  /** Open Graph locale of a translated page; en_US otherwise. */
+  locale?: string;
 }
 
 export async function buildMetadata(input: MetadataInput): Promise<Metadata> {
@@ -45,14 +49,14 @@ export async function buildMetadata(input: MetadataInput): Promise<Metadata> {
   return {
     title: absoluteTitle ? { absolute: input.title } : input.title,
     description,
-    alternates: { canonical: url },
+    alternates: { canonical: url, ...(input.languages ? { languages: input.languages } : {}) },
     openGraph: {
       type: input.type ?? "website",
       url,
       title: input.title,
       description,
       siteName: settings.site_name,
-      locale: "en_US",
+      locale: input.locale ?? "en_US",
       ...(images ? { images } : {}),
       ...(input.type === "article"
         ? {
@@ -216,6 +220,52 @@ export function webApplicationJsonLd(input: { name: string; description: string;
     inLanguage: "en-US",
     isPartOf: { "@id": WEBSITE_ID },
     publisher: { "@id": ORGANIZATION_ID },
+  };
+}
+
+/** A translated page, tied to the site entity and marked with its language. */
+export function localizedPageJsonLd(input: { name: string; description: string; path: string; inLanguage: string }): JsonLd {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": `${absoluteUrl(input.path)}#webpage`,
+    name: input.name,
+    description: input.description,
+    url: absoluteUrl(input.path),
+    inLanguage: input.inLanguage,
+    isPartOf: { "@id": WEBSITE_ID },
+    publisher: { "@id": ORGANIZATION_ID },
+  };
+}
+
+/** A translated guide, pointing back at the English article it was translated from. */
+export function localizedArticleJsonLd(input: {
+  headline: string;
+  description: string;
+  path: string;
+  englishPath: string;
+  inLanguage: string;
+  published: string;
+  content: string;
+  authorName: string;
+}): JsonLd {
+  const url = absoluteUrl(input.path);
+  return {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "@id": `${url}#article`,
+    headline: input.headline,
+    description: input.description,
+    image: [absoluteUrl("/opengraph-image")],
+    datePublished: input.published,
+    dateModified: input.published,
+    inLanguage: input.inLanguage,
+    wordCount: stripMarkdown(input.content).split(/\s+/).filter(Boolean).length,
+    translationOfWork: { "@id": `${absoluteUrl(input.englishPath)}#article` },
+    author: { "@type": "Organization", name: input.authorName, url: absoluteUrl("/about#editorial-team") },
+    publisher: { "@id": ORGANIZATION_ID },
+    isPartOf: { "@id": WEBSITE_ID },
+    mainEntityOfPage: { "@type": "WebPage", "@id": url },
   };
 }
 

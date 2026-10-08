@@ -11,6 +11,7 @@ import { getPostBySlug, getPrerenderPostSlugs, getRelatedPosts } from "@/lib/dat
 import { getSiteSettings } from "@/lib/data/settings";
 import { getCategories } from "@/lib/data/taxonomy";
 import { listWallpapers } from "@/lib/data/wallpapers";
+import { languageAlternates } from "@/lib/i18n";
 import { articleJsonLd, buildMetadata } from "@/lib/seo";
 import { categoryGuide } from "@/lib/site";
 import { formatDate, imageUrl, readingMinutes, slugify, stripMarkdown, truncate } from "@/lib/utils";
@@ -35,6 +36,7 @@ export async function generateMetadata({ params }: PageProps<"/blog/[slug]">): P
     type: "article",
     publishedTime: post.published_at,
     modifiedTime: post.updated_at,
+    languages: languageAlternates(`/blog/${post.slug}`),
     // Without a cover, ./opengraph-image draws the card. Its URL carries a hash Next adds inside
     // the (site) group, so Next has to fill it in rather than this hard-coding a path.
     image: post.cover_key ? { url: imageUrl(post.cover_key), alt: post.title } : false,

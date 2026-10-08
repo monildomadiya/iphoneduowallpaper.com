@@ -71,8 +71,15 @@ export function PageHeader({
   );
 }
 
-export function Breadcrumbs({ items }: { items: { name: string; path: string }[] }) {
-  const all = [{ name: "Home", path: "/" }, ...items];
+export function Breadcrumbs({
+  items,
+  home = { name: "Home", path: "/" },
+}: {
+  items: { name: string; path: string }[];
+  /** A translated page starts the trail at its own home page. */
+  home?: { name: string; path: string };
+}) {
+  const all = [home, ...items];
   return (
     <>
       <nav aria-label="Breadcrumb" className="text-[13px] text-fg-2">

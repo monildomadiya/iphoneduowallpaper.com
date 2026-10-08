@@ -2,10 +2,21 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import type { CookieStrings } from "@/lib/i18n/types";
 
 const STORAGE_KEY = "cookie-notice-accepted";
 
-export function CookieBanner() {
+const EN_COOKIES: CookieStrings = {
+  label: "Cookie notice",
+  before: "We use cookies to keep the site working, measure traffic and show ads from partners such as Google. Read our ",
+  between: " and ",
+  after: ".",
+  cookiePolicy: "Cookie Policy",
+  privacyPolicy: "Privacy Policy",
+  accept: "Got it",
+};
+
+export function CookieBanner({ strings: t = EN_COOKIES }: { strings?: CookieStrings }) {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -31,24 +42,23 @@ export function CookieBanner() {
   return (
     <div
       role="region"
-      aria-label="Cookie notice"
+      aria-label={t.label}
       className="fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-30 mx-auto max-w-2xl animate-fade-up md:bottom-6"
     >
       <div className="glass flex flex-col gap-3 rounded-2xl border border-line p-4 shadow-float sm:flex-row sm:items-center sm:gap-5">
         <p className="text-[13px] leading-5 text-fg-2">
-          We use cookies to keep the site working, measure traffic and show ads from partners such as Google. Read
-          our{" "}
+          {t.before}
           <Link href="/cookie-policy" className="link-apple">
-            Cookie Policy
-          </Link>{" "}
-          and{" "}
-          <Link href="/privacy-policy" className="link-apple">
-            Privacy Policy
+            {t.cookiePolicy}
           </Link>
-          .
+          {t.between}
+          <Link href="/privacy-policy" className="link-apple">
+            {t.privacyPolicy}
+          </Link>
+          {t.after}
         </p>
         <button type="button" onClick={accept} className="btn-primary shrink-0 px-5 py-2 text-sm">
-          Got it
+          {t.accept}
         </button>
       </div>
     </div>

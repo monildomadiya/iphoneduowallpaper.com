@@ -5,15 +5,17 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
+import { EN_HEADER } from "@/lib/i18n/en";
+import type { HeaderStrings, LinkItem, NavIcon, NavItem } from "@/lib/i18n/types";
 import { MAIN_NAV } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
-const NAV_ICONS: Record<string, { icon: typeof Images; tint: string }> = {
-  "/wallpapers": { icon: Images, tint: "from-[#0a84ff] to-[#5e5ce6]" },
-  "/categories": { icon: FolderOpen, tint: "from-[#ff9f0a] to-[#ff375f]" },
-  "/devices": { icon: Smartphone, tint: "from-[#30d158] to-[#0a84ff]" },
-  "/maker": { icon: WandSparkles, tint: "from-[#bf5af2] to-[#ff375f]" },
-  "/blog": { icon: BookOpen, tint: "from-[#64d2ff] to-[#5e5ce6]" },
+const NAV_ICONS: Record<NavIcon, { icon: typeof Images; tint: string }> = {
+  wallpapers: { icon: Images, tint: "from-[#0a84ff] to-[#5e5ce6]" },
+  categories: { icon: FolderOpen, tint: "from-[#ff9f0a] to-[#ff375f]" },
+  devices: { icon: Smartphone, tint: "from-[#30d158] to-[#0a84ff]" },
+  maker: { icon: WandSparkles, tint: "from-[#bf5af2] to-[#ff375f]" },
+  guides: { icon: BookOpen, tint: "from-[#64d2ff] to-[#5e5ce6]" },
 };
 
 function isActive(pathname: string | null, href: string) {
@@ -53,11 +55,11 @@ export function HeaderBar({ children }: { children: React.ReactNode }) {
 }
 
 /** Plain nav links. Rendered without an active state as the prerendered fallback. */
-export function NavLinks({ pathname }: { pathname: string | null }) {
+export function NavLinks({ pathname, items = MAIN_NAV }: { pathname: string | null; items?: NavItem[] }) {
   return (
     <nav aria-label="Primary" className="hidden flex-1 justify-center md:flex">
       <ul className="flex items-center gap-0.5 rounded-full bg-black/[0.045] p-1">
-        {MAIN_NAV.map((item) => {
+        {items.map((item) => {
           const active = isActive(pathname, item.href);
           return (
             <li key={item.href}>
@@ -82,8 +84,8 @@ export function NavLinks({ pathname }: { pathname: string | null }) {
 }
 
 /** Highlights the current section. Must be wrapped in <Suspense> because it reads the URL. */
-export function DesktopNav() {
-  return <NavLinks pathname={usePathname()} />;
+export function DesktopNav({ items }: { items?: NavItem[] }) {
+  return <NavLinks pathname={usePathname()} items={items} />;
 }
 
 const noopSubscribe = () => () => {};
@@ -96,12 +98,15 @@ function useShortcutLabel() {
   );
 }
 
-interface QuickLink {
-  href: string;
-  label: string;
-}
-
-export function HeaderControls({ quickLinks }: { quickLinks: QuickLink[] }) {
+export function HeaderControls({
+  quickLinks,
+  nav = MAIN_NAV,
+  strings: t = EN_HEADER,
+}: {
+  quickLinks: LinkItem[];
+  nav?: NavItem[];
+  strings?: HeaderStrings;
+}) {
   const router = useRouter();
   const shortcut = useShortcutLabel();
   const [panel, setPanel] = useState<"search" | "menu" | null>(null);
@@ -152,20 +157,20 @@ export function HeaderControls({ quickLinks }: { quickLinks: QuickLink[] }) {
       <div className="ml-auto flex shrink-0 items-center gap-1 md:ml-0">
         <button
           type="button"
-          aria-label="Search wallpapers"
+          aria-label={t.searchLabel}
           aria-expanded={panel === "search"}
           onClick={() => setPanel(panel === "search" ? null : "search")}
           className="hidden h-10 w-44 shrink-0 items-center gap-2 rounded-full bg-black/[0.045] pl-3.5 pr-2 text-[13px] text-fg-3 transition hover:bg-black/[0.07] lg:flex"
         >
           <Search className="size-4" strokeWidth={2} />
-          <span className="flex-1 truncate whitespace-nowrap text-left">Search…</span>
+          <span className="flex-1 truncate whitespace-nowrap text-left">{t.search}</span>
           <kbd className="rounded-md bg-white px-1.5 py-0.5 font-sans text-[11px] font-medium text-fg-2 shadow-[0_1px_1px_rgba(0,0,0,0.08)] ring-1 ring-black/[0.06]">
             {shortcut}
           </kbd>
         </button>
         <button
           type="button"
-          aria-label="Search wallpapers"
+          aria-label={t.searchLabel}
           aria-expanded={panel === "search"}
           onClick={() => setPanel(panel === "search" ? null : "search")}
           className={cn(iconButton, "lg:hidden")}
@@ -174,7 +179,7 @@ export function HeaderControls({ quickLinks }: { quickLinks: QuickLink[] }) {
         </button>
         <button
           type="button"
-          aria-label={panel === "menu" ? "Close menu" : "Open menu"}
+          aria-label={panel === "menu" ? t.closeMenu : t.openMenu}
           aria-expanded={panel === "menu"}
           onClick={() => setPanel(panel === "menu" ? null : "menu")}
           className={cn(iconButton, "bg-black/[0.045] md:hidden")}
@@ -201,7 +206,7 @@ export function HeaderControls({ quickLinks }: { quickLinks: QuickLink[] }) {
             <div className="fixed inset-0 z-40" role="presentation">
               <button
                 type="button"
-                aria-label="Close"
+                aria-label={t.close}
                 tabIndex={-1}
                 className="absolute inset-0 animate-fade-in bg-[#0b0b1f]/25 backdrop-blur-[6px]"
                 onClick={close}
@@ -220,7 +225,7 @@ export function HeaderControls({ quickLinks }: { quickLinks: QuickLink[] }) {
                           ref={inputRef}
                           name="q"
                           type="search"
-                          placeholder="Search wallpapers…"
+                          placeholder={t.searchPlaceholder}
                           autoComplete="off"
                           enterKeyHint="search"
                           className="w-full bg-transparent text-[17px] font-medium text-fg outline-none placeholder:font-normal placeholder:text-fg-3 md:text-lg"
@@ -228,14 +233,14 @@ export function HeaderControls({ quickLinks }: { quickLinks: QuickLink[] }) {
                         <button
                           type="button"
                           onClick={close}
-                          aria-label="Close search"
+                          aria-label={t.closeSearch}
                           className="grid size-7 shrink-0 place-items-center rounded-full bg-black/[0.06] text-fg-2 transition hover:bg-black/10"
                         >
                           <X className="size-3.5" />
                         </button>
                       </form>
                       <p className="px-3 pb-1 pt-5 text-[11px] font-semibold uppercase tracking-[0.12em] text-fg-3">
-                        Quick links
+                        {t.quickLinks}
                       </p>
                       <ul>
                         {quickLinks.map((link) => (
@@ -255,8 +260,8 @@ export function HeaderControls({ quickLinks }: { quickLinks: QuickLink[] }) {
                   ) : (
                     <nav aria-label="Mobile">
                       <ul className="space-y-1">
-                        {MAIN_NAV.map((item, index) => {
-                          const meta = NAV_ICONS[item.href];
+                        {nav.map((item, index) => {
+                          const meta = NAV_ICONS[item.icon];
                           const Icon = meta?.icon ?? Images;
                           // The menu only renders after a tap, so reading the URL here is safe and
                           // keeps usePathname (and its Suspense requirement) out of the header shell.
@@ -288,18 +293,11 @@ export function HeaderControls({ quickLinks }: { quickLinks: QuickLink[] }) {
                         })}
                       </ul>
                       <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2 border-t border-line px-3 pb-1 pt-4 text-[13px] text-fg-2">
-                        <Link href="/about" onClick={close} className="hover:text-fg">
-                          About
-                        </Link>
-                        <Link href="/contact" onClick={close} className="hover:text-fg">
-                          Contact
-                        </Link>
-                        <Link href="/privacy-policy" onClick={close} className="hover:text-fg">
-                          Privacy
-                        </Link>
-                        <Link href="/terms" onClick={close} className="hover:text-fg">
-                          Terms
-                        </Link>
+                        {t.menuLinks.map((link) => (
+                          <Link key={link.href} href={link.href} onClick={close} className="hover:text-fg">
+                            {link.label}
+                          </Link>
+                        ))}
                       </div>
                     </nav>
                   )}

@@ -10,6 +10,7 @@ import { listPosts } from "@/lib/data/posts";
 import { getSiteSettings } from "@/lib/data/settings";
 import { getCategories, getDarkCategory, getDevices } from "@/lib/data/taxonomy";
 import { listWallpapers } from "@/lib/data/wallpapers";
+import { languageAlternates } from "@/lib/i18n";
 import { buildMetadata, faqJsonLd, organizationJsonLd, websiteJsonLd } from "@/lib/seo";
 import { HOME_DESCRIPTION, HOME_FAQ, homeTitle } from "@/lib/site";
 import type { WallpaperCardData } from "@/lib/types";
@@ -22,6 +23,7 @@ export async function generateMetadata(): Promise<Metadata> {
     absoluteTitle: true,
     description: HOME_DESCRIPTION,
     path: "/",
+    languages: languageAlternates("/"),
   });
 }
 

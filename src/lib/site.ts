@@ -1,3 +1,4 @@
+import type { NavItem } from "@/lib/i18n/types";
 import { aspectRatioLabel } from "@/lib/utils";
 
 export const LEGAL_LAST_UPDATED = "September 14, 2026";
@@ -6,13 +7,13 @@ export const LEGAL_LAST_UPDATED = "September 14, 2026";
 export const MOCKUP_TIME = "9:41";
 export const MOCKUP_DATE = "Friday, October 23";
 
-export const MAIN_NAV = [
-  { href: "/wallpapers", label: "Wallpapers" },
-  { href: "/categories", label: "Categories" },
-  { href: "/devices", label: "Devices" },
-  { href: "/maker", label: "Maker" },
-  { href: "/blog", label: "Guides" },
-] as const;
+export const MAIN_NAV: NavItem[] = [
+  { href: "/wallpapers", label: "Wallpapers", icon: "wallpapers" },
+  { href: "/categories", label: "Categories", icon: "categories" },
+  { href: "/devices", label: "Devices", icon: "devices" },
+  { href: "/maker", label: "Maker", icon: "maker" },
+  { href: "/blog", label: "Guides", icon: "guides" },
+];
 
 export const FOOTER_NAV: { title: string; links: { href: string; label: string }[] }[] = [
   {

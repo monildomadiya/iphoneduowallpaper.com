@@ -77,9 +77,18 @@ export function DeviceTiles({ devices, className }: { devices: Device[]; classNa
   );
 }
 
-export function PostCard({ post }: { post: PostCardData }) {
+export function PostCard({
+  post,
+  href = `/blog/${post.slug}`,
+  locale,
+}: {
+  post: PostCardData;
+  /** A translated guide lives under its language prefix. */
+  href?: string;
+  locale?: string;
+}) {
   return (
-    <Link href={`/blog/${post.slug}`} className="group flex h-full flex-col overflow-hidden rounded-[28px] bg-surface transition hover:bg-surface-hover">
+    <Link href={href} className="group flex h-full flex-col overflow-hidden rounded-[28px] bg-surface transition hover:bg-surface-hover">
       <div className="relative aspect-[16/9] overflow-hidden">
         {post.cover_key ? (
           <img
@@ -100,7 +109,7 @@ export function PostCard({ post }: { post: PostCardData }) {
         <h3 className="mt-2 text-[21px] font-semibold leading-7 tracking-tight">{post.title}</h3>
         {post.excerpt ? <p className="mt-2 line-clamp-3 text-[15px] leading-6 text-fg-2">{post.excerpt}</p> : null}
         <p className="mt-auto pt-5 text-[13px] text-fg-3">
-          {formatDate(post.published_at, { month: "short", day: "numeric", year: "numeric" })}
+          {formatDate(post.published_at, { month: "short", day: "numeric", year: "numeric" }, locale)}
         </p>
       </div>
     </Link>

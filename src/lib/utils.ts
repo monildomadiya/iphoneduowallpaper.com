@@ -76,11 +76,12 @@ export function formatNumber(value: number): string {
 export function formatDate(
   iso: string | null | undefined,
   options: Intl.DateTimeFormatOptions = { year: "numeric", month: "long", day: "numeric" },
+  locale = "en-US",
 ): string {
   if (!iso) return "";
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) return "";
-  return new Intl.DateTimeFormat("en-US", { timeZone: "UTC", ...options }).format(date);
+  return new Intl.DateTimeFormat(locale, { timeZone: "UTC", ...options }).format(date);
 }
 
 export function qualityLabel(width: number, height: number): string {

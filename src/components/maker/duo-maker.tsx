@@ -5,6 +5,8 @@ import { Check, CircleAlert, Download, ImagePlus, RotateCcw } from "lucide-react
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { DEVICE_SPECS, DeviceFrame, type ScreenMode } from "@/components/wallpaper/device-frame";
+import { EN_MAKER, fill } from "@/lib/i18n/en";
+import type { MakerStrings } from "@/lib/i18n/types";
 import { cn } from "@/lib/utils";
 
 type ScreenKey = "duo-outer" | "duo-inner";
@@ -32,18 +34,9 @@ export interface MakerWallpaper {
   title: string;
 }
 
-const SCREENS: { key: ScreenKey; name: string; hint: string }[] = [
-  { key: "duo-outer", name: "Outer display", hint: "Folded · 5.4-inch" },
-  { key: "duo-inner", name: "Inner display", hint: "Unfolded · 7.6-inch" },
-];
 const CENTERED: Framing = { zoom: 1, x: 0.5, y: 0.5 };
 const MAX_ZOOM = 4;
 const MAX_FILE_BYTES = 40 * 1024 * 1024;
-const MODES: { value: ScreenMode; label: string }[] = [
-  { value: "lock", label: "Lock Screen" },
-  { value: "home", label: "Home Screen" },
-  { value: "clean", label: "Clean" },
-];
 
 const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
 
@@ -62,12 +55,19 @@ function cropRect(source: Pick<Source, "width" | "height">, framing: Framing, ke
 }
 
 /** Same thresholds as the screen-fit check on wallpaper pages. */
-function sharpness(scale: number, zoom: number) {
-  if (scale <= 1) return { label: "Pixel-perfect", note: "Downscaled to fit — stays sharp.", ok: true };
-  const enlarged = `Enlarged ${Math.round((scale - 1) * 100)}% to fill the screen.`;
-  if (scale <= 1.3) return { label: "Great fit", note: enlarged, ok: true };
-  const fix = zoom > 1 ? "Zoom out or use a larger photo." : "A larger photo will look sharper.";
-  return { label: scale <= 1.8 ? "Slightly soft" : "Soft", note: `${enlarged} ${fix}`, ok: false };
+function sharpness(scale: number, zoom: number, t: MakerStrings) {
+  if (scale <= 1) return { label: t.pixelPerfect, note: t.pixelPerfectNote, ok: true };
+  const enlarged = fill(t.enlarged, { n: Math.round((scale - 1) * 100) });
+  if (scale <= 1.3) return { label: t.greatFit, note: enlarged, ok: true };
+  const fix = zoom > 1 ? t.fixZoomOut : t.fixLarger;
+  return { label: scale <= 1.8 ? t.slightlySoft : t.soft, note: `${enlarged} ${fix}`, ok: false };
+}
+
+interface Screen {
+  key: ScreenKey;
+  name: string;
+  hint: string;
+  download: string;
 }
 
 function fileBase(name: string) {
@@ -165,19 +165,21 @@ function ScreenEditor({
   busy,
   onFrame,
   onDownload,
+  t,
 }: {
-  screen: (typeof SCREENS)[number];
+  screen: Screen;
   source: Source | null;
   framing: Framing;
   mode: ScreenMode;
   busy: boolean;
   onFrame: (framing: Framing) => void;
   onDownload: () => void;
+  t: MakerStrings;
 }) {
   const spec = DEVICE_SPECS[screen.key];
   const drag = useRef<{ id: number; x: number; y: number; start: Framing } | null>(null);
   const rect = source ? cropRect(source, framing, screen.key) : null;
-  const quality = rect ? sharpness(rect.scale, framing.zoom) : null;
+  const quality = rect ? sharpness(rect.scale, framing.zoom, t) : null;
 
   // Stores the centre the crop actually ended up at, so a drag past the edge doesn't build up slack.
   function moveTo(next: Framing) {
@@ -250,7 +252,7 @@ function ScreenEditor({
         )}
         tabIndex={source ? 0 : -1}
         role={source ? "group" : undefined}
-        aria-label={source ? `${screen.name} preview. Drag or use the arrow keys to move the picture.` : undefined}
+        aria-label={source ? fill(t.dragHint, { screen: screen.name }) : undefined}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={() => (drag.current = null)}
@@ -283,7 +285,7 @@ function ScreenEditor({
       <div className="mt-5 space-y-4">
         <div className="flex items-center gap-3">
           <label htmlFor={zoomId} className="w-12 shrink-0 text-[13px] font-medium text-fg-2">
-            Zoom
+            {t.zoom}
           </label>
           <input
             id={zoomId}
@@ -301,7 +303,7 @@ function ScreenEditor({
             onClick={() => onFrame(CENTERED)}
             disabled={!source}
             className="grid size-8 shrink-0 place-items-center rounded-full text-fg-2 transition hover:bg-surface hover:text-fg disabled:opacity-40"
-            aria-label={`Reset ${screen.name} framing`}
+            aria-label={fill(t.reset, { screen: screen.name })}
           >
             <RotateCcw className="size-4" />
           </button>
@@ -322,20 +324,29 @@ function ScreenEditor({
               </span>
             </>
           ) : (
-            "Choose a photo to see how sharp it will be on this screen."
+            t.emptyHint
           )}
         </p>
 
         <button type="button" onClick={onDownload} disabled={!source || busy} className="btn-secondary h-11 w-full disabled:opacity-50">
           <Download className="size-[18px]" />
-          Download {screen.name.toLowerCase()}
+          {screen.download}
         </button>
       </div>
     </div>
   );
 }
 
-export function DuoMaker({ wallpaper }: { wallpaper: MakerWallpaper | null }) {
+export function DuoMaker({ wallpaper, strings: t = EN_MAKER }: { wallpaper: MakerWallpaper | null; strings?: MakerStrings }) {
+  const screens: Screen[] = [
+    { key: "duo-outer", name: t.outerName, hint: t.outerHint, download: t.downloadOuter },
+    { key: "duo-inner", name: t.innerName, hint: t.innerHint, download: t.downloadInner },
+  ];
+  const modes: { value: ScreenMode; label: string }[] = [
+    { value: "lock", label: t.modeLock },
+    { value: "home", label: t.modeHome },
+    { value: "clean", label: t.modeClean },
+  ];
   const [source, setSource] = useState<Source | null>(null);
   const [framings, setFramings] = useState<Record<ScreenKey, Framing>>({ "duo-outer": CENTERED, "duo-inner": CENTERED });
   const [mode, setMode] = useState<ScreenMode>("lock");
@@ -362,7 +373,7 @@ export function DuoMaker({ wallpaper }: { wallpaper: MakerWallpaper | null }) {
         });
       })
       .catch(() => {
-        if (!cancelled) toast.error("Could not load this wallpaper. Choose a photo instead.");
+        if (!cancelled) toast.error(t.loadFailed);
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -370,7 +381,7 @@ export function DuoMaker({ wallpaper }: { wallpaper: MakerWallpaper | null }) {
     return () => {
       cancelled = true;
     };
-  }, [wallpaper]);
+  }, [wallpaper, t.loadFailed]);
 
   useEffect(
     () => () => {
@@ -382,11 +393,11 @@ export function DuoMaker({ wallpaper }: { wallpaper: MakerWallpaper | null }) {
   async function openFile(file: File | undefined) {
     if (!file) return;
     if (file.type && !file.type.startsWith("image/")) {
-      toast.error("That file is not an image.");
+      toast.error(t.notImage);
       return;
     }
     if (file.size > MAX_FILE_BYTES) {
-      toast.error("That photo is over 40 MB. Choose a smaller one.");
+      toast.error(t.tooLarge);
       return;
     }
     const url = URL.createObjectURL(file);
@@ -398,7 +409,7 @@ export function DuoMaker({ wallpaper }: { wallpaper: MakerWallpaper | null }) {
       setFramings({ "duo-outer": CENTERED, "duo-inner": CENTERED });
     } catch {
       URL.revokeObjectURL(url);
-      toast.error("This browser can't open that image. Try a JPG, PNG or WebP.");
+      toast.error(t.cantOpen);
     }
   }
 
@@ -415,7 +426,7 @@ export function DuoMaker({ wallpaper }: { wallpaper: MakerWallpaper | null }) {
         if (index < keys.length - 1) await new Promise((resolve) => setTimeout(resolve, 500));
       }
     } catch {
-      toast.error("Could not create the wallpaper. Try again or choose another photo.");
+      toast.error(t.exportFailed);
     } finally {
       setBusy(false);
     }
@@ -442,18 +453,18 @@ export function DuoMaker({ wallpaper }: { wallpaper: MakerWallpaper | null }) {
         <div className="flex min-w-0 items-center gap-4">
           <button type="button" onClick={() => input.current?.click()} className="btn-primary h-11 shrink-0">
             <ImagePlus className="size-[18px]" />
-            {source ? "Change photo" : "Choose a photo"}
+            {source ? t.change : t.choose}
           </button>
           <p className="min-w-0 text-[13px] leading-5 text-fg-2">
             {loading ? (
-              "Loading wallpaper…"
+              t.loading
             ) : source ? (
               <>
                 <span className="block truncate font-medium text-fg">{source.local ? source.name : wallpaper?.title}</span>
-                {source.width} × {source.height} pixels
+                {fill(t.pixels, { w: source.width, h: source.height })}
               </>
             ) : (
-              "Or drop an image here. It stays on your device."
+              t.dropHint
             )}
           </p>
           <input
@@ -470,9 +481,9 @@ export function DuoMaker({ wallpaper }: { wallpaper: MakerWallpaper | null }) {
           />
         </div>
         <div className="flex flex-wrap gap-2">
-          <Segmented label="Preview" value={mode} options={MODES} onChange={setMode} />
+          <Segmented label={t.previewLabel} value={mode} options={modes} onChange={setMode} />
           <Segmented
-            label="File format"
+            label={t.formatLabel}
             value={format}
             options={[
               { value: "jpeg", label: "JPG" },
@@ -484,7 +495,7 @@ export function DuoMaker({ wallpaper }: { wallpaper: MakerWallpaper | null }) {
       </div>
 
       <div className="mt-8 grid gap-10 md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] md:items-start md:gap-8">
-        {SCREENS.map((screen) => (
+        {screens.map((screen) => (
           <ScreenEditor
             key={screen.key}
             screen={screen}
@@ -494,6 +505,7 @@ export function DuoMaker({ wallpaper }: { wallpaper: MakerWallpaper | null }) {
             busy={busy}
             onFrame={(framing) => setFramings((current) => ({ ...current, [screen.key]: framing }))}
             onDownload={() => void download([screen.key])}
+            t={t}
           />
         ))}
       </div>
@@ -506,11 +518,13 @@ export function DuoMaker({ wallpaper }: { wallpaper: MakerWallpaper | null }) {
           className="btn-primary h-12 w-full max-w-sm disabled:opacity-50"
         >
           <Download className="size-[18px]" />
-          {busy ? "Preparing…" : "Download both"}
+          {busy ? t.preparing : t.downloadBoth}
         </button>
         <p className="text-center text-[13px] text-fg-3">
-          Exports exactly {DEVICE_SPECS["duo-outer"].width} × {DEVICE_SPECS["duo-outer"].height} and{" "}
-          {DEVICE_SPECS["duo-inner"].width} × {DEVICE_SPECS["duo-inner"].height}. Your photo is never uploaded.
+          {fill(t.exportNote, {
+            outer: `${DEVICE_SPECS["duo-outer"].width} × ${DEVICE_SPECS["duo-outer"].height}`,
+            inner: `${DEVICE_SPECS["duo-inner"].width} × ${DEVICE_SPECS["duo-inner"].height}`,
+          })}
         </p>
       </div>
     </div>

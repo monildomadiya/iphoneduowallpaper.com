@@ -1,5 +1,7 @@
 import { cacheLife } from "next/cache";
 import Link from "next/link";
+import { fill } from "@/lib/i18n/en";
+import type { Chrome } from "@/lib/i18n/types";
 import { FOOTER_NAV } from "@/lib/site";
 import type { SiteSettings } from "@/lib/types";
 import { LogoMark } from "./logo";
@@ -19,21 +21,30 @@ const SOCIAL_LABELS: Record<string, string> = {
   facebook: "Facebook",
 };
 
-export function SiteFooter({ settings }: { settings: SiteSettings }) {
+const EN_DISCLAIMER =
+  "{site} is an independent website and is not affiliated with, endorsed by or sponsored by Apple Inc. iPhone, iPhone Duo and iOS are trademarks of Apple Inc., registered in the U.S. and other countries, and are used here only to describe device compatibility. Wallpapers are provided for personal, non-commercial use.";
+
+/** Every language links to the others, so each version is one click (and one crawl) away. */
+const LANGUAGES = [
+  { href: "/", label: "English", lang: "en" },
+  { href: "/es", label: "Español", lang: "es" },
+  { href: "/tr", label: "Türkçe", lang: "tr" },
+];
+
+export function SiteFooter({ settings, chrome }: { settings: SiteSettings; chrome?: Chrome }) {
   const socials = Object.entries(settings.social_links ?? {}).filter(([, url]) => Boolean(url));
+  const groups = chrome?.footer.groups ?? FOOTER_NAV;
+  const current = chrome?.locale ?? "en";
 
   return (
     <footer className="mt-24 border-t border-line bg-surface text-[12px] leading-5 text-fg-2">
       <div className="container-apple py-10">
         <p className="border-b border-line pb-5 text-fg-3">
-          {settings.site_name} is an independent website and is not affiliated with, endorsed by or sponsored by
-          Apple Inc. iPhone, iPhone Duo and iOS are trademarks of Apple Inc., registered in the U.S. and other
-          countries, and are used here only to describe device compatibility. Wallpapers are provided for personal,
-          non-commercial use.
+          {fill(chrome?.footer.disclaimer ?? EN_DISCLAIMER, { site: settings.site_name })}
         </p>
 
         <div className="grid grid-cols-2 gap-x-6 gap-y-8 py-8 sm:grid-cols-4">
-          {FOOTER_NAV.map((group) => (
+          {groups.map((group) => (
             <div key={group.title}>
               <h2 className="mb-2.5 font-semibold text-fg">{group.title}</h2>
               <ul className="space-y-2">
@@ -53,9 +64,22 @@ export function SiteFooter({ settings }: { settings: SiteSettings }) {
           <div className="flex items-center gap-2">
             <LogoMark className="size-4" />
             <span>
-              Copyright © <CopyrightYear /> {settings.site_name}. All rights reserved.
+              Copyright © <CopyrightYear /> {settings.site_name}. {chrome?.footer.rights ?? "All rights reserved."}
             </span>
           </div>
+          <nav aria-label={chrome?.footer.languages ?? "Languages"} className="flex items-center gap-3">
+            {LANGUAGES.map((language) =>
+              language.lang === current ? (
+                <span key={language.lang} lang={language.lang} aria-current="true" className="font-semibold text-fg">
+                  {language.label}
+                </span>
+              ) : (
+                <Link key={language.lang} href={language.href} lang={language.lang} hrefLang={language.lang} className="hover:text-fg">
+                  {language.label}
+                </Link>
+              ),
+            )}
+          </nav>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
             {socials.map(([network, url]) => (
               <a key={network} href={url} target="_blank" rel="noopener noreferrer me" className="hover:text-fg">

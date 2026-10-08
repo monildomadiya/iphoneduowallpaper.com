@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { getPostSitemapEntries } from "@/lib/data/posts";
 import { getCategories, getDarkCategory, getDevices } from "@/lib/data/taxonomy";
 import { getWallpaperSitemapEntries } from "@/lib/data/wallpapers";
+import { FOREIGN_LOCALES, languageAlternates, localizedPath, translatedEnglishPaths } from "@/lib/i18n";
 import { absoluteUrl, imageUrl } from "@/lib/utils";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -41,11 +42,29 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: absoluteUrl("/dmca"), changeFrequency: "yearly", priority: 0.2 },
   ];
 
+  // Each translated page and its English original list every language version, as hreflang asks.
+  const withLanguages = (entry: MetadataRoute.Sitemap[number]): MetadataRoute.Sitemap[number] => {
+    const path = new URL(entry.url).pathname;
+    const languages = languageAlternates(path);
+    return languages ? { ...entry, alternates: { languages } } : entry;
+  };
+  const translatedPages: MetadataRoute.Sitemap = FOREIGN_LOCALES.flatMap((locale) => [
+    ...translatedEnglishPaths().map((path) => ({
+      url: absoluteUrl(localizedPath(locale, path)),
+      lastModified: libraryUpdated,
+      changeFrequency: "weekly" as const,
+      priority: path === "/" ? 0.9 : 0.7,
+      alternates: { languages: languageAlternates(path) },
+    })),
+    { url: absoluteUrl(`/${locale}/blog`), lastModified: libraryUpdated, changeFrequency: "monthly" as const, priority: 0.5 },
+  ]);
+
   // Empty taxonomy pages are noindex (thin content), so they join the sitemap once they have wallpapers.
   const hasWallpapers = (item: { wallpaper_count: number }) => item.wallpaper_count > 0;
 
   return [
-    ...staticPages,
+    ...staticPages.map(withLanguages),
+    ...translatedPages,
     ...categories.filter(hasWallpapers).map((item) => ({
       url: absoluteUrl(`/categories/${item.slug}`),
       // Dark has no row of its own, so it is dated by the newest wallpaper like the other hubs.
@@ -59,12 +78,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "weekly" as const,
       priority: 0.7,
     })),
-    ...posts.map((item) => ({
-      url: absoluteUrl(`/blog/${item.slug}`),
-      lastModified: item.updated_at,
-      changeFrequency: "monthly" as const,
-      priority: 0.6,
-    })),
+    ...posts.map((item) =>
+      withLanguages({
+        url: absoluteUrl(`/blog/${item.slug}`),
+        lastModified: item.updated_at,
+        changeFrequency: "monthly" as const,
+        priority: 0.6,
+      }),
+    ),
     ...wallpapers.map((item) => ({
       url: absoluteUrl(`/wallpapers/${item.slug}`),
       lastModified: item.updated_at,

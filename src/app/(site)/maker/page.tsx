@@ -5,12 +5,18 @@ import { DuoMaker } from "@/components/maker/duo-maker";
 import { FaqList } from "@/components/site/tiles";
 import { Breadcrumbs, JsonLd, PageHeader, SectionHeading } from "@/components/ui/primitives";
 import { getWallpaperBySlug } from "@/lib/data/wallpapers";
+import { languageAlternates } from "@/lib/i18n";
 import { buildMetadata, faqJsonLd, webApplicationJsonLd } from "@/lib/seo";
 import { MAKER_DESCRIPTION, MAKER_FAQ, MAKER_TITLE } from "@/lib/site";
 import { imageUrl } from "@/lib/utils";
 
 export async function generateMetadata(): Promise<Metadata> {
-  return buildMetadata({ title: MAKER_TITLE, description: MAKER_DESCRIPTION, path: "/maker" });
+  return buildMetadata({
+    title: MAKER_TITLE,
+    description: MAKER_DESCRIPTION,
+    path: "/maker",
+    languages: languageAlternates("/maker"),
+  });
 }
 
 const STEPS = [
