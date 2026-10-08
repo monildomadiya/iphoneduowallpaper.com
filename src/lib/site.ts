@@ -36,6 +36,7 @@ export const FOOTER_NAV: { title: string; links: { href: string; label: string }
     title: "Resources",
     links: [
       { href: "/blog", label: "Guides & Tips" },
+      { href: "/blog/official-iphone-duo-wallpaper", label: "Official iPhone Duo Wallpaper" },
       { href: "/blog/iphone-duo-wallpaper-sizes-explained", label: "Wallpaper Sizes" },
       { href: "/blog/how-to-set-wallpaper-on-iphone", label: "How to Set a Wallpaper" },
       { href: "/blog/why-is-my-iphone-wallpaper-blurry", label: "Fix a Blurry Wallpaper" },
@@ -119,6 +120,11 @@ export const HOME_FAQ = [
     question: "Is iPhone Duo the same as iPhone 18 Duo or the iPhone Fold?",
     answer:
       "Yes — they are names for the same foldable iPhone. It has a 5.4-inch outer display (1398 × 2034) you use when it is closed and a 7.6-inch inner display (2670 × 1878) that opens like a small tablet. Every wallpaper here is checked against both screens.",
+  },
+  {
+    question: "Where can I get the official iPhone Duo wallpaper?",
+    answer:
+      "Apple's official iPhone Duo wallpaper — desert dunes in front of a mountain range, in light and dark versions — comes preinstalled on iPhone Duo. It is Apple's copyrighted artwork, so we don't host it; our guide to the official wallpaper explains its sizes and how to set it. Every wallpaper on this site is original artwork made for the same two screens.",
   },
   {
     question: "Are these iPhone Duo wallpapers 4K?",

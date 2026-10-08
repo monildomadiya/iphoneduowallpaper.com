@@ -253,6 +253,13 @@ export default async function HomePage() {
               </Link>
               .
             </p>
+            <p>
+              Looking for Apple&apos;s own desert dunes wallpaper? Our guide to the{" "}
+              <Link href="/blog/official-iphone-duo-wallpaper" className="link-apple">
+                official iPhone Duo wallpaper
+              </Link>{" "}
+              covers the light and dark versions, their exact sizes and how to set them.
+            </p>
           </div>
         </div>
       </section>

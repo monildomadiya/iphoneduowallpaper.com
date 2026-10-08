@@ -1147,3 +1147,82 @@ $md$,
   'What makes a wallpaper look like iOS: smooth gradients, glass, light and calm composition. Why the style suits iPhone, and how to pick iOS-inspired designs.'
 )
 on conflict (slug) do nothing;
+
+-- ---------------------------------------------------------------------
+-- "Official iPhone Duo wallpaper" (October 2026). Page one of Google for
+-- "iphone duo wallpaper" is almost all news posts about Apple's stock
+-- dunes wallpaper, and the site had nothing answering that. Apple's files
+-- are not ours to host, so this explains them and points to originals.
+-- ---------------------------------------------------------------------
+insert into public.posts (title, slug, excerpt, content, tags, status, seo_title, seo_description)
+values
+(
+  'The Official iPhone Duo Wallpaper: Light and Dark Dunes, Sizes and How to Get It',
+  'official-iphone-duo-wallpaper',
+  'Apple made four stock wallpapers for iPhone Duo: desert dunes under a mountain range, in light and dark. Here is what they are, the exact sizes for each screen, where they come from and how to set them.',
+  $md$
+When Apple announced iPhone Duo, its first foldable iPhone, it showed it off with a new stock wallpaper: sweeping desert dunes in front of a rugged mountain range. It is the image most people mean when they search for "iPhone Duo wallpaper". This guide covers what the official wallpaper is, the exact sizes for each screen, where the files come from, and how to get the same look on the phone you have now.
+
+## What the official iPhone Duo wallpaper looks like
+
+There are **four** official images: two for light mode and two for dark mode.
+
+- **Light versions** show the dunes in daylight — warm beige sand under a pale blue sky.
+- **Dark versions** show the same landscape at night, with deep shadows, a star-filled sky and a soft glow along the horizon.
+
+Like most of Apple's recent wallpapers, the pair is meant to switch with your appearance setting: light during the day, dark at night or whenever Dark Mode is on.
+
+## Why there are two files for each version
+
+iPhone Duo has two screens with very different shapes, so one picture cannot fill both:
+
+| Screen | Resolution | Shape |
+| --- | --- | --- |
+| Outer display (5.4-inch, folded) | 1398 × 2034 | Tall portrait |
+| Inner display (7.6-inch, unfolded) | 2670 × 1878 | Wide landscape |
+
+Apple solves this by drawing the scene for both. Folded, the outer display shows a closer crop of the dunes. Unfolded, the wallpaper widens to show the whole landscape across the inner display. That is why the official set comes as a tall image and a wide image for each of light and dark.
+
+If you only take one file, take the one made for the screen you will use it on. A tall outer-display image stretched across the wide inner display is enlarged about 1.9 times and loses more than half of its height. For the full explanation, see [iPhone Duo wallpaper sizes explained](/blog/iphone-duo-wallpaper-sizes-explained).
+
+## Are the official wallpapers 4K?
+
+No. The files Apple made are sized exactly for each screen: 1398 × 2034 for the outer display and 2670 × 1878 for the inner display. Neither reaches 3840 pixels on the long edge, the usual meaning of 4K. You may see "4K" versions online — those are upscales made by enlarging Apple's files. An upscale can look clean on a bigger screen, but it does not add detail that was not in the original. On iPhone Duo itself, the original files are already pixel-for-pixel sharp.
+
+## Where the official wallpaper comes from
+
+The wallpapers ship on iPhone Duo and are already in the wallpaper gallery when you set up the phone. iOS 27 for other iPhones does not include them. Before launch, they were found inside Apple's developer tools (the iPhone Duo simulator in the Xcode 27.1 beta) and published by Apple news sites such as [9to5Mac](https://9to5mac.com/2026/09/18/download-the-iphone-duos-official-light-and-dark-wallpapers-here/).
+
+**We do not host Apple's wallpapers.** They are Apple's copyrighted artwork: they come with the device for use on it, but they are not free to redistribute. Everything on this site is original artwork made for the iPhone Duo screens.
+
+## How to set the official wallpaper on iPhone Duo
+
+1. Touch and hold the Lock Screen, then tap the **+** button.
+2. Scroll to Apple's collections and pick the dunes wallpaper.
+3. Choose whether it should follow your appearance (light by day, dark by night).
+4. Tap **Add**, then **Set as Wallpaper Pair** to use it on the Home Screen too.
+
+On iPhone Duo, set up each screen while the phone is in that position — folded for the outer display, unfolded for the inner display — so you see the crop you are actually getting.
+
+## Using a downloaded copy on another iPhone
+
+If you saved one of the official images to use on iPhone 18 Pro or an older iPhone, pick the tall outer-display version. It is close to the shape of a normal iPhone screen, so it fills the display with little cropping. The wide inner-display version will be cut to a narrow vertical slice. Then follow [how to set a wallpaper on iPhone](/blog/how-to-set-wallpaper-on-iphone).
+
+## Original wallpapers with the same mood
+
+If you like the calm, desert-at-dusk feel of the official wallpaper but want something no one else has, these originals from our library have the same kind of quiet landscape:
+
+- [Midnight Blue Desert Dunes](/wallpapers/midnight-blue-desert-dunes-dual-iphone-wallpaper) — smooth sand curves under a minimal night sky, the closest match to the dark version.
+- [Monochrome Desert River](/wallpapers/monochrome-desert-river-minimalist-wallpaper) — black dunes with a bright river winding through them.
+- [Midnight Peak](/wallpapers/midnight-peak-amoled-duo-wallpaper) — a single snowy peak on true black, for AMOLED fans.
+- [Snow Mountain and Moon](/wallpapers/minimal-snow-mountain-moon-landscape-duo-wallpaper) — icy peaks under a soft blue sky.
+- [Misty Mountain Pine](/wallpapers/misty-mountain-pine-tree-duo-wallpaper) — rocky peaks fading into cloud.
+
+Each wallpaper page shows the exact resolution and how the image fits the iPhone Duo outer display, the inner display and iPhone 18 Pro before you download. For more in this style, browse the [Minimal](/categories/minimal) and [iOS Inspired](/categories/ios-inspired-wallpapers) categories.
+$md$,
+  array['iPhone Duo', 'official wallpapers', 'guides'],
+  'published',
+  'Official iPhone Duo Wallpaper: Light & Dark, Sizes, Download',
+  'The official iPhone Duo wallpaper is desert dunes in light and dark. Exact sizes for the outer and inner displays, whether it is 4K, and how to set it.'
+)
+on conflict (slug) do nothing;
