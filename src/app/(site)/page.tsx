@@ -238,7 +238,7 @@ export default async function HomePage() {
               bottom on the outer screen and much more on the inner one.
             </p>
             <p>
-              Every wallpaper here is free to download in 4K or HD at its original resolution, and each page shows how it
+              Every wallpaper here is free to download in HD at its original resolution, and each page shows how it
               fits the{" "}
               <Link href="/devices/iphone-duo-outer-display" className="link-apple">
                 outer display
