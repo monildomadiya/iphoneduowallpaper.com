@@ -49,6 +49,7 @@ export interface PreviewLabels {
   clean: string;
   outer: string;
   inner: string;
+  date?: string;
 }
 
 const EN_LABELS: PreviewLabels = {
@@ -101,6 +102,7 @@ export function WallpaperPreview({
           alt={alt}
           color={color}
           mode={mode}
+          date={t.date}
           priority
           className={cn(
             "relative animate-fade-in",

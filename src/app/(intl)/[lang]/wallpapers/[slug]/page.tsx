@@ -16,6 +16,7 @@ import { localizedFitNote, localizedOrientation, localizedOverview } from "@/lib
 import { categoryCopy, categoryHref, deviceCopy, deviceHref } from "@/lib/i18n/taxonomy";
 import { translatedWallpaperSlugs, wallpaperTranslation } from "@/lib/i18n/wallpapers";
 import { buildMetadata, wallpaperJsonLd } from "@/lib/seo";
+import { mockupDate } from "@/lib/site";
 import { absoluteUrl, cn, formatBytes, formatDate, imageUrl, qualityLabel, screenFit, truncate } from "@/lib/utils";
 import { screenFitDetail } from "@/lib/wallpaper-copy";
 
@@ -142,7 +143,7 @@ export default async function LocalizedWallpaperPage({ params }: PageProps<"/[la
               color={wallpaper.dominant_color}
               width={wallpaper.width}
               height={wallpaper.height}
-              labels={t.preview}
+              labels={{ ...t.preview, date: mockupDate(locale) }}
             />
           </div>
 

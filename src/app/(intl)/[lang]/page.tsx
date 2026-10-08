@@ -14,6 +14,7 @@ import { guideCard, isForeignLocale, languageAlternates, localeContent, localize
 import { fill } from "@/lib/i18n/en";
 import { wallpaperHref } from "@/lib/i18n/wallpapers";
 import { buildMetadata, faqJsonLd, localizedPageJsonLd } from "@/lib/seo";
+import { mockupDate } from "@/lib/site";
 import { formatNumber, imageUrl, stockedFirst } from "@/lib/utils";
 
 export const instant = false;
@@ -108,6 +109,7 @@ export default async function LocalizedHomePage({ params }: PageProps<"/[lang]">
                 color={outer?.dominant_color}
                 priority
                 artwork={0}
+                date={mockupDate(lang)}
               />
             </Link>
             <Link
@@ -121,6 +123,7 @@ export default async function LocalizedHomePage({ params }: PageProps<"/[lang]">
                 color={inner?.dominant_color}
                 priority
                 artwork={2}
+                date={mockupDate(lang)}
               />
             </Link>
           </div>

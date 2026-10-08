@@ -11,6 +11,7 @@ import { fill } from "@/lib/i18n/en";
 import { deviceCopy, localizedDeviceFaq } from "@/lib/i18n/taxonomy";
 import { localizedOrientation } from "@/lib/i18n/wallpaper-copy";
 import { buildMetadata, faqJsonLd, localizedPageJsonLd } from "@/lib/seo";
+import { mockupDate } from "@/lib/site";
 import { aspectRatioLabel, imageUrl } from "@/lib/utils";
 
 // Renders on the server before responding so untranslated devices return a real 404 status.
@@ -106,6 +107,7 @@ export default async function LocalizedDevicePage({ params, searchParams }: Page
             variant={variant}
             src={device.cover_thumb_key ? imageUrl(device.cover_thumb_key) : null}
             artwork={2}
+            date={mockupDate(locale)}
             className={variant === "duo-inner" ? "w-full max-w-[460px]" : "w-[52%] max-w-[250px]"}
             priority
           />

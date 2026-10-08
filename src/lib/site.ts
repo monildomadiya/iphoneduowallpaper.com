@@ -7,6 +7,18 @@ export const LEGAL_LAST_UPDATED = "September 14, 2026";
 export const MOCKUP_TIME = "9:41";
 export const MOCKUP_DATE = "Friday, October 23";
 
+/**
+ * The same day as a Lock Screen in another language shows it: "viernes, 23 de octubre",
+ * "23 Ekim Cuma". Built on the server and handed to client mockups as text, so the browser's own
+ * date data can't render it differently and break hydration.
+ */
+export function mockupDate(locale?: string): string {
+  if (!locale || locale === "en") return MOCKUP_DATE;
+  return new Intl.DateTimeFormat(locale, { weekday: "long", month: "long", day: "numeric", timeZone: "UTC" }).format(
+    new Date(Date.UTC(2026, 9, 23)),
+  );
+}
+
 export const MAIN_NAV: NavItem[] = [
   { href: "/wallpapers", label: "Wallpapers", icon: "wallpapers" },
   { href: "/categories", label: "Categories", icon: "categories" },

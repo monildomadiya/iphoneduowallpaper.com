@@ -166,6 +166,7 @@ function ScreenEditor({
   onFrame,
   onDownload,
   t,
+  date,
 }: {
   screen: Screen;
   source: Source | null;
@@ -175,6 +176,7 @@ function ScreenEditor({
   onFrame: (framing: Framing) => void;
   onDownload: () => void;
   t: MakerStrings;
+  date?: string;
 }) {
   const spec = DEVICE_SPECS[screen.key];
   const drag = useRef<{ id: number; x: number; y: number; start: Framing } | null>(null);
@@ -262,6 +264,7 @@ function ScreenEditor({
         <DeviceFrame
           variant={screen.key}
           mode={mode}
+          date={date}
           artwork={screen.key === "duo-outer" ? 0 : 2}
           screen={
             source && rect ? (
@@ -337,7 +340,16 @@ function ScreenEditor({
   );
 }
 
-export function DuoMaker({ wallpaper, strings: t = EN_MAKER }: { wallpaper: MakerWallpaper | null; strings?: MakerStrings }) {
+export function DuoMaker({
+  wallpaper,
+  strings: t = EN_MAKER,
+  date,
+}: {
+  wallpaper: MakerWallpaper | null;
+  strings?: MakerStrings;
+  /** Lock Screen date in the page's language. */
+  date?: string;
+}) {
   const screens: Screen[] = [
     { key: "duo-outer", name: t.outerName, hint: t.outerHint, download: t.downloadOuter },
     { key: "duo-inner", name: t.innerName, hint: t.innerHint, download: t.downloadInner },
@@ -506,6 +518,7 @@ export function DuoMaker({ wallpaper, strings: t = EN_MAKER }: { wallpaper: Make
             onFrame={(framing) => setFramings((current) => ({ ...current, [screen.key]: framing }))}
             onDownload={() => void download([screen.key])}
             t={t}
+            date={date}
           />
         ))}
       </div>

@@ -4,6 +4,7 @@ import { Artwork, DeviceFrame, bestVariantFor } from "@/components/wallpaper/dev
 import { localeContent } from "@/lib/i18n";
 import { fill } from "@/lib/i18n/en";
 import { categoryCopy, categoryHref, deviceCopy, deviceHref } from "@/lib/i18n/taxonomy";
+import { mockupDate } from "@/lib/site";
 import type { ForeignLocale } from "@/lib/i18n/types";
 import type { Category, Device, PostCardData } from "@/lib/types";
 import { cn, formatDate, imageUrl } from "@/lib/utils";
@@ -81,6 +82,7 @@ export function DeviceTiles({
                   src={device.cover_thumb_key ? imageUrl(device.cover_thumb_key) : null}
                   artwork={index}
                   mode="lock"
+                  date={mockupDate(locale)}
                   className={cn(
                     "transition duration-700 ease-apple group-hover:-translate-y-1.5",
                     variant === "duo-inner" ? "w-full max-w-[250px]" : "h-full",

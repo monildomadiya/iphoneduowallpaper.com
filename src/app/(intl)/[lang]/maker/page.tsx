@@ -11,6 +11,7 @@ import { fill } from "@/lib/i18n/en";
 import type { ForeignLocale } from "@/lib/i18n/types";
 import { wallpaperTranslation } from "@/lib/i18n/wallpapers";
 import { buildMetadata, faqJsonLd, webApplicationJsonLd } from "@/lib/seo";
+import { mockupDate } from "@/lib/site";
 import { imageUrl } from "@/lib/utils";
 
 export const instant = false;
@@ -42,6 +43,7 @@ async function MakerWithWallpaper({
     <DuoMaker
       key={wallpaper?.id ?? "blank"}
       strings={strings}
+      date={mockupDate(locale)}
       wallpaper={
         wallpaper
           ? {
@@ -75,7 +77,7 @@ export default async function LocalizedMakerPage({ params, searchParams }: PageP
       <PageHeader eyebrow={maker.eyebrow} title={maker.h1} description={maker.lead} />
 
       <section className="container-apple" aria-label={maker.h1}>
-        <Suspense fallback={<DuoMaker wallpaper={null} strings={maker.ui} />}>
+        <Suspense fallback={<DuoMaker wallpaper={null} strings={maker.ui} date={mockupDate(lang)} />}>
           <MakerWithWallpaper locale={lang} searchParams={searchParams} />
         </Suspense>
       </section>

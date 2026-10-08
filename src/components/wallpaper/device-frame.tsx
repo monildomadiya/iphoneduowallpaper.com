@@ -40,7 +40,7 @@ export function Artwork({ index = 0 }: { index?: number }) {
   );
 }
 
-function LockScreen({ variant }: { variant: DeviceVariant }) {
+function LockScreen({ variant, date }: { variant: DeviceVariant; date: string }) {
   const inner = variant === "duo-inner";
   const button = inner ? "4.2cqw" : "11cqw";
   const icon = inner ? "1.8cqw" : "4.6cqw";
@@ -55,7 +55,7 @@ function LockScreen({ variant }: { variant: DeviceVariant }) {
       }}
     >
       <p className="font-semibold tracking-tight" style={{ fontSize: inner ? "1.9cqw" : "4.7cqw" }}>
-        {MOCKUP_DATE}
+        {date}
       </p>
       <p
         className="font-bold leading-none tracking-[-0.02em]"
@@ -133,6 +133,8 @@ interface DeviceFrameProps {
   artwork?: number;
   /** Drawn in place of the image — the wallpaper maker positions its own crop inside the screen. */
   screen?: React.ReactNode;
+  /** The Lock Screen date in the page's language (see `mockupDate`). */
+  date?: string;
   className?: string;
 }
 
@@ -146,6 +148,7 @@ export function DeviceFrame({
   priority = false,
   artwork = 0,
   screen,
+  date = MOCKUP_DATE,
   className,
 }: DeviceFrameProps) {
   const spec = DEVICE_SPECS[variant];
@@ -189,7 +192,7 @@ export function DeviceFrame({
               />
             ) : null}
 
-            {mode === "lock" ? <LockScreen variant={variant} /> : null}
+            {mode === "lock" ? <LockScreen variant={variant} date={date} /> : null}
             {mode === "home" ? <HomeScreen variant={variant} /> : null}
 
             {variant === "pro" ? (
