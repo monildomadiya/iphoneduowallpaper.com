@@ -10,6 +10,7 @@ export const MAIN_NAV = [
   { href: "/wallpapers", label: "Wallpapers" },
   { href: "/categories", label: "Categories" },
   { href: "/devices", label: "Devices" },
+  { href: "/maker", label: "Maker" },
   { href: "/blog", label: "Guides" },
 ] as const;
 
@@ -20,6 +21,7 @@ export const FOOTER_NAV: { title: string; links: { href: string; label: string }
       { href: "/wallpapers", label: "All Wallpapers" },
       { href: "/wallpapers?sort=popular", label: "Most Downloaded" },
       { href: "/categories", label: "Categories" },
+      { href: "/maker", label: "Wallpaper Maker" },
       { href: "/search", label: "Search" },
     ],
   },
@@ -105,6 +107,45 @@ export function homeTitle(siteName: string): string {
 
 export const HOME_DESCRIPTION =
   "Download free HD iPhone Duo wallpapers for the 7.6-inch inner and 5.4-inch outer displays of the foldable iPhone 18 Duo. No app, no sign-up.";
+
+/** duowallpaper.org ranks a maker page; people search "iphone duo wallpaper maker" and "make iphone duo wallpaper". */
+export const MAKER_TITLE = "iPhone Duo Wallpaper Maker — Free Outer & Inner Crops";
+
+export const MAKER_DESCRIPTION =
+  "Make an iPhone Duo wallpaper from any photo: crop it for the 1398 × 2034 outer and 2670 × 1878 inner displays and download both. Free, private, in your browser.";
+
+export const MAKER_FAQ = [
+  {
+    question: "Is the iPhone Duo wallpaper maker free?",
+    answer:
+      "Yes. There is no account, no watermark and no limit on how many wallpapers you make. Wallpapers you make from your own photos are yours to use however you like.",
+  },
+  {
+    question: "Is my photo uploaded anywhere?",
+    answer:
+      "No. The photo is opened and cropped by your browser on your own device, and the finished files are saved straight from it. Nothing is sent to our server.",
+  },
+  {
+    question: "What sizes does the maker export?",
+    answer:
+      "Exactly 1398 × 2034 pixels for the iPhone Duo outer display and 2670 × 1878 pixels for the inner display, as JPG or PNG. At those sizes iOS shows the image pixel for pixel instead of zooming it.",
+  },
+  {
+    question: "Why does the maker say my photo is soft?",
+    answer:
+      "The photo has fewer pixels than the screen in the area you picked, so it has to be enlarged. Zoom out, or use a larger original — at least 2670 pixels wide covers the inner display, and at least 2034 pixels tall covers the outer display.",
+  },
+  {
+    question: "Which image formats can I use?",
+    answer:
+      "JPG, PNG and WebP work in every modern browser. When you choose a photo from your iPhone library, iOS usually hands it to the browser as a JPG, so HEIC photos work there too.",
+  },
+  {
+    question: "How do I set the two files on iPhone Duo?",
+    answer:
+      "Save both files to Photos, then touch and hold the Lock Screen, tap +, choose Photos and pick the file for that screen. Our guide to setting a wallpaper on iPhone walks through every step.",
+  },
+];
 
 export const HOME_FAQ = [
   {

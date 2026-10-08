@@ -507,6 +507,7 @@ You don't need expensive software. Any of these will do the job:
 - **Photopea** (web): a free, browser-based editor that works much like Photoshop, with layers, masks and gradient tools.
 - **Figma** (web and desktop): excellent for clean vector shapes, gradients and minimal designs. A free plan is available.
 - **Procreate** (iPad): ideal for painting and illustration, with custom canvas sizes. One-time purchase.
+- **Our [iPhone Duo Wallpaper Maker](/maker)** (any browser): to turn a photo you already have into both files at once, drag and zoom it in a live preview of each screen and download a 1398 × 2034 and a 2670 × 1878 copy. It runs on your device, so the photo is never uploaded.
 - **The Photos app** (iPhone): to turn one of your own photos into a wallpaper, the built-in crop tool includes a **Wallpaper** aspect ratio that matches your screen.
 
 ## Step 4: Design for OLED

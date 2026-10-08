@@ -264,6 +264,22 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* ------------------------------------------------------------ Maker */}
+      <section className="container-apple mt-24">
+        <div className="flex flex-col items-start gap-6 rounded-[32px] bg-surface px-6 py-10 md:flex-row md:items-center md:justify-between md:px-12">
+          <div className="max-w-2xl">
+            <h2 className="headline-section">Make your own.</h2>
+            <p className="mt-3 text-[17px] leading-7 text-fg-2">
+              Turn any photo into a matched pair: 1398 × 2034 for the outer display and 2670 × 1878 for the inner
+              display, framed for each screen. Free, and your photo never leaves your device.
+            </p>
+          </div>
+          <Link href="/maker" className="btn-primary shrink-0">
+            Open the wallpaper maker
+          </Link>
+        </div>
+      </section>
+
       {/* ------------------------------------------------------------ FAQ */}
       <section className="container-apple mt-24">
         <SectionHeading title="Questions?" subtitle="We have answers." />

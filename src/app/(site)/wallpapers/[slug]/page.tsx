@@ -1,4 +1,4 @@
-import { Check, CircleAlert, Download, Expand, Flag, Info } from "lucide-react";
+import { Check, CircleAlert, Download, Expand, Flag, Info, WandSparkles } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -159,6 +159,14 @@ export default async function WallpaperPage({ params }: PageProps<"/wallpapers/[
               </a>
               <ShareButton title={wallpaper.title} path={path} />
             </div>
+            <Link
+              href={`/maker?wallpaper=${wallpaper.slug}`}
+              rel="nofollow"
+              className="link-apple mt-4 inline-flex items-center gap-1.5 text-[15px] font-medium"
+            >
+              <WandSparkles className="size-4" />
+              Make outer &amp; inner display files from this wallpaper
+            </Link>
             <p className="mt-3 flex items-start gap-1.5 text-[13px] leading-5 text-fg-3">
               <Info className="mt-0.5 size-3.5 shrink-0" />
               <span>

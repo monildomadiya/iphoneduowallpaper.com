@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, BookOpen, FolderOpen, Images, Search, Smartphone, X } from "lucide-react";
+import { ArrowRight, BookOpen, FolderOpen, Images, Search, Smartphone, WandSparkles, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
@@ -12,6 +12,7 @@ const NAV_ICONS: Record<string, { icon: typeof Images; tint: string }> = {
   "/wallpapers": { icon: Images, tint: "from-[#0a84ff] to-[#5e5ce6]" },
   "/categories": { icon: FolderOpen, tint: "from-[#ff9f0a] to-[#ff375f]" },
   "/devices": { icon: Smartphone, tint: "from-[#30d158] to-[#0a84ff]" },
+  "/maker": { icon: WandSparkles, tint: "from-[#bf5af2] to-[#ff375f]" },
   "/blog": { icon: BookOpen, tint: "from-[#64d2ff] to-[#5e5ce6]" },
 };
 

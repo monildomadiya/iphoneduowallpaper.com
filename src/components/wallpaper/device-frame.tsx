@@ -131,6 +131,8 @@ interface DeviceFrameProps {
   mode?: ScreenMode;
   priority?: boolean;
   artwork?: number;
+  /** Drawn in place of the image — the wallpaper maker positions its own crop inside the screen. */
+  screen?: React.ReactNode;
   className?: string;
 }
 
@@ -143,6 +145,7 @@ export function DeviceFrame({
   mode = "lock",
   priority = false,
   artwork = 0,
+  screen,
   className,
 }: DeviceFrameProps) {
   const spec = DEVICE_SPECS[variant];
@@ -164,19 +167,20 @@ export function DeviceFrame({
             className="relative size-full overflow-hidden"
             style={{ borderRadius: screenRadius, backgroundColor: color }}
           >
-            {src ? (
-              <img
-                src={src}
-                alt={alt}
-                loading={priority ? "eager" : "lazy"}
-                fetchPriority={priority ? "high" : "auto"}
-                decoding="async"
-                draggable={false}
-                className="absolute inset-0 size-full object-cover"
-              />
-            ) : (
-              <Artwork index={artwork} />
-            )}
+            {screen ??
+              (src ? (
+                <img
+                  src={src}
+                  alt={alt}
+                  loading={priority ? "eager" : "lazy"}
+                  fetchPriority={priority ? "high" : "auto"}
+                  decoding="async"
+                  draggable={false}
+                  className="absolute inset-0 size-full object-cover"
+                />
+              ) : (
+                <Artwork index={artwork} />
+              ))}
 
             {variant === "duo-inner" ? (
               <span

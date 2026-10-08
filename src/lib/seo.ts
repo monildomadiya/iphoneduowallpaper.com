@@ -199,6 +199,26 @@ export function articleJsonLd(post: Post, settings: SiteSettings): JsonLd {
   };
 }
 
+/** A free in-browser tool, tied to the site entity like every other page. */
+export function webApplicationJsonLd(input: { name: string; description: string; path: string }): JsonLd {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "@id": `${absoluteUrl(input.path)}#app`,
+    name: input.name,
+    description: input.description,
+    url: absoluteUrl(input.path),
+    applicationCategory: "DesignApplication",
+    operatingSystem: "Any",
+    browserRequirements: "Requires JavaScript",
+    isAccessibleForFree: true,
+    offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+    inLanguage: "en-US",
+    isPartOf: { "@id": WEBSITE_ID },
+    publisher: { "@id": ORGANIZATION_ID },
+  };
+}
+
 export function faqJsonLd(faqs: { question: string; answer: string }[]): JsonLd {
   return {
     "@context": "https://schema.org",
