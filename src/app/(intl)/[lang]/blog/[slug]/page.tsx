@@ -30,7 +30,7 @@ function findGuide(lang: string, slug: string) {
 export async function generateMetadata({ params }: PageProps<"/[lang]/blog/[slug]">): Promise<Metadata> {
   const { lang, slug } = await params;
   const found = findGuide(lang, slug);
-  if (!found) return { title: "Not found", robots: { index: false, follow: true } };
+  if (!found) return { title: "404", robots: { index: false, follow: true } };
   const { guide, content } = found;
   return buildMetadata({
     title: guide.seoTitle,

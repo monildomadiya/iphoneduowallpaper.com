@@ -14,7 +14,7 @@ export const instant = false;
 export async function generateMetadata({ params }: PageProps<"/[lang]/categories/dark">): Promise<Metadata> {
   const { lang } = await params;
   const copy = isForeignLocale(lang) ? categoryCopy(lang, DARK_CATEGORY.slug) : null;
-  if (!isForeignLocale(lang) || !copy) return { title: "Not found", robots: { index: false, follow: true } };
+  if (!isForeignLocale(lang) || !copy) return { title: "404", robots: { index: false, follow: true } };
   const dark = await getDarkCategory();
   return buildMetadata({
     title: copy.title,

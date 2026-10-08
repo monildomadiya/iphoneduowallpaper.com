@@ -33,7 +33,7 @@ async function load(lang: string, slug: string) {
 export async function generateMetadata({ params }: PageProps<"/[lang]/devices/[slug]">): Promise<Metadata> {
   const { lang, slug } = await params;
   const found = await load(lang, slug);
-  if (!found) return { title: "Not found", robots: { index: false, follow: true } };
+  if (!found) return { title: "404", robots: { index: false, follow: true } };
   const { copy, device } = found;
   const { taxonomy, ogLocale } = localeContent(found.lang);
   return buildMetadata({

@@ -428,4 +428,12 @@ JPEG ve PNG her yerde çalışır. PNG düz renkleri ve degradeleri bantlanmadan
   listing: TR_LISTING,
   taxonomy: TR_TAXONOMY,
   search: TR_SEARCH,
+  notFound: {
+    eyebrow: "Hata 404",
+    h1: "Bu sayfa katlanıp gitti.",
+    body: "Aradığınız sayfa yok ya da taşınmış. Bunlardan birini deneyin.",
+    home: "Ana sayfaya git",
+    browse: "Duvar kağıtlarına göz at",
+    english: "Bu sayfayı İngilizce görüntüle",
+  },
 };

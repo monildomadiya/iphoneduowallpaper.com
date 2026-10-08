@@ -429,4 +429,12 @@ Explora nuestros fondos para la [pantalla interior del iPhone Duo](/es/devices/i
   listing: ES_LISTING,
   taxonomy: ES_TAXONOMY,
   search: ES_SEARCH,
+  notFound: {
+    eyebrow: "Error 404",
+    h1: "Esta página se ha plegado.",
+    body: "La página que buscas no existe o se ha movido. Prueba con una de estas.",
+    home: "Ir al inicio",
+    browse: "Ver fondos",
+    english: "Ver esta página en inglés",
+  },
 };

@@ -247,6 +247,16 @@ export interface SearchStrings {
   stopWords: string[];
 }
 
+export interface NotFoundStrings {
+  eyebrow: string;
+  h1: string;
+  body: string;
+  home: string;
+  browse: string;
+  /** Offered when the missing page exists in English (a wallpaper not yet translated, say). */
+  english: string;
+}
+
 export interface LocalGuide {
   /** The English guide's slug; the translation lives at /{locale}/blog/{slug}. */
   slug: string;
@@ -327,4 +337,5 @@ export interface LocaleContent {
   listing: ListingStrings;
   taxonomy: TaxonomyStrings;
   search: SearchStrings;
+  notFound: NotFoundStrings;
 }
