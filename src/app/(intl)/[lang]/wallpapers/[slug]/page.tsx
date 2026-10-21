@@ -25,7 +25,7 @@ import { screenFitDetail } from "@/lib/wallpaper-copy";
 // Renders on the server before responding so untranslated slugs return a real 404 status.
 
 export function generateStaticParams() {
-  return FOREIGN_LOCALES.flatMap((lang) => translatedWallpaperSlugs(lang).slice(0, 12).map((slug) => ({ lang, slug })));
+  return FOREIGN_LOCALES.flatMap((lang) => translatedWallpaperSlugs(lang).map((slug) => ({ lang, slug })));
 }
 
 const MAX_TITLE = 60;

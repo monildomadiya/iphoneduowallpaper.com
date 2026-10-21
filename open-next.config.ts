@@ -7,6 +7,8 @@ const config = defineCloudflareConfig({
   incrementalCache: r2IncrementalCache,
   queue: doQueue,
   tagCache: shardedTagCache({ baseShardSize: 1 }),
+  // Serve ISR/SSG hits in the routing layer without starting NextServer.
+  enableCacheInterception: true,
 });
 
 // Avoid Turbopack's Windows chunk paths in the deployed Workers runtime.

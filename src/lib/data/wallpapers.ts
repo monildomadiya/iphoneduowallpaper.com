@@ -208,7 +208,7 @@ export async function searchWallpapers(term: string, page = 1, perPage = 24): Pr
     }, "searchWallpapers", [term, page, perPage], ["wallpapers"]);
 }
 /** Most-downloaded slugs to prerender at build time. */
-export async function getPrerenderWallpaperSlugs(limit = 60): Promise<string[]> {
+export async function getPrerenderWallpaperSlugs(limit = 5000): Promise<string[]> {
     return cachedPublicQuery(async () => {
         const supabase = getPublicSupabase();
         if (!supabase)

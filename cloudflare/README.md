@@ -16,6 +16,19 @@ its rendering scheduler still hung dynamic requests on Workers during live verif
 Public queries use `unstable_cache` with a 60-second TTL, argument-specific keys and the existing
 mutation tags. This retains shared R2 data caching and admin invalidation without the PPR scheduler.
 
+Public gallery, category, device and English blog query strings are rewritten internally to
+`cached-listings` routes whose page/sort values are ordinary route parameters. Their existing
+page components render each combination during the build. The address bar, public links,
+canonical URLs and per-page metadata continue to use the original URLs. English wallpaper
+details and all available translations are also pre-rendered, rather than only the first 60/12.
+OpenNext cache interception serves existing ISR entries before loading NextServer. Cache misses
+and newly published routes still use the renderer; admin/auth/API routes are excluded from these
+rewrites. Existing mutation tags and 60-second revalidation remain active.
+
+Run `node scripts/check-listing-rewrites.mjs` after changing the rewrite mapping. Verify both
+direct loads and client navigation, page 2, popular sorting, Spanish/Turkish pages, downloads,
+and a second request cycle after the revalidation period when deploying caching changes.
+
 ## Before deployment
 
 1. Apply `supabase/migrations/0002_variants.sql` in Supabase SQL Editor after `0001_init.sql`.
@@ -101,6 +114,8 @@ The SEO crawl of 422 sitemap URLs (two concurrent requests, one retry on 5xx) re
 186 HTTP 503 responses containing Cloudflare Error 1102, 233 HTTP 200 responses,
 two HTTP 404 responses and one request failure. Separate sequential checks recovered
 on a sampled blog page and robots.txt, so this is intermittent rather than a permanent outage.
+Worker tail logs subsequently confirmed `exceededCpu` outcomes at the free CPU limit.
+This led to the listing pre-rendering and cache-interception changes described above.
 The bundle-size check below does **not** validate runtime reliability. Do not treat a successful
 deployment or a few smoke requests as proof that this SSR workload fits Workers Free.
 Before relying on this hosting for indexing or an ad review, inspect Worker CPU/memory metrics
