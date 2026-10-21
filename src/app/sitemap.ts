@@ -15,6 +15,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     getDevices(),
   ]);
   const categories = [...stored, dark];
+  const populatedCategories = new Set(categories.filter((item) => item.wallpaper_count > 0).map((item) => item.slug));
+  const populatedDevices = new Set(devices.filter((item) => item.wallpaper_count > 0).map((item) => item.slug));
+  // Translation dictionaries can contain a renamed slug before the database does.
+  // Only advertise taxonomy URLs backed by an active, populated category or device.
+  const translatedPaths = translatedEnglishPaths().filter((path) => {
+    if (path.startsWith("/categories/")) return populatedCategories.has(path.slice("/categories/".length));
+    if (path.startsWith("/devices/")) return populatedDevices.has(path.slice("/devices/".length));
+    return true;
+  });
 
   // The newest wallpaper dates the hub pages that list it, so crawlers see them change.
   const libraryUpdated =
@@ -23,6 +32,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: MetadataRoute.Sitemap = [
     { url: absoluteUrl("/"), lastModified: libraryUpdated, changeFrequency: "daily", priority: 1 },
     { url: absoluteUrl("/wallpapers"), lastModified: libraryUpdated, changeFrequency: "daily", priority: 0.9 },
+    { url: absoluteUrl("/wallpapers/all"), lastModified: libraryUpdated, changeFrequency: "daily", priority: 0.6 },
     // A hub with nothing in it is noindex, so it stays out of the sitemap until it has something.
     ...(categories.length
       ? [{ url: absoluteUrl("/categories"), lastModified: libraryUpdated, changeFrequency: "weekly" as const, priority: 0.7 }]
@@ -34,6 +44,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       ? [{ url: absoluteUrl("/blog"), lastModified: libraryUpdated, changeFrequency: "weekly" as const, priority: 0.6 }]
       : []),
     { url: absoluteUrl("/maker"), changeFrequency: "monthly", priority: 0.8 },
+    { url: absoluteUrl("/wallpaper-help"), lastModified: "2026-10-21", changeFrequency: "monthly", priority: 0.7 },
     { url: absoluteUrl("/about"), changeFrequency: "yearly", priority: 0.4 },
     { url: absoluteUrl("/contact"), changeFrequency: "yearly", priority: 0.3 },
     { url: absoluteUrl("/privacy-policy"), changeFrequency: "yearly", priority: 0.2 },
@@ -50,7 +61,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     return languages ? { ...entry, alternates: { languages } } : entry;
   };
   const translatedPages: MetadataRoute.Sitemap = FOREIGN_LOCALES.flatMap((locale) => [
-    ...translatedEnglishPaths().map((path) => ({
+    ...translatedPaths.map((path) => ({
       url: absoluteUrl(localizedPath(locale, path)),
       lastModified: libraryUpdated,
       changeFrequency: "weekly" as const,
@@ -100,7 +111,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           lastModified: item.updated_at,
           changeFrequency: "monthly" as const,
           priority: 0.6,
-          images: [imageUrl(item.preview_key)].filter(Boolean),
+          images: [imageUrl(item.variants?.files.inner?.preview ?? item.preview_key)].filter(Boolean),
           ...(languageAlternates(`/wallpapers/${item.slug}`)
             ? { alternates: { languages: languageAlternates(`/wallpapers/${item.slug}`) } }
             : {}),
@@ -114,9 +125,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: item.updated_at,
       changeFrequency: "monthly" as const,
       priority: 0.8,
-      // Only the preview: it is the image the page actually renders, so it is the one Google Images
-      // can tie to this URL. Listing the original too just offered a second copy of the same picture.
-      images: [imageUrl(item.preview_key)].filter(Boolean),
+      // Only the preview the page renders, so Google Images ties it to this URL. The full-size files
+      // are in image-sitemap.xml.
+      images: [imageUrl(item.variants?.files.inner?.preview ?? item.preview_key)].filter(Boolean),
     })),
   ];
 }

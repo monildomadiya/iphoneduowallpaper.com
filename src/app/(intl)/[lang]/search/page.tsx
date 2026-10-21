@@ -15,7 +15,6 @@ import type { ForeignLocale } from "@/lib/i18n/types";
 import { buildMetadata } from "@/lib/seo";
 import { clampPage, stockedFirst } from "@/lib/utils";
 
-export const instant = false;
 
 export async function generateMetadata({ params }: PageProps<"/[lang]/search">): Promise<Metadata> {
   const { lang } = await params;

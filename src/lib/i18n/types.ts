@@ -106,6 +106,20 @@ export interface MakerStrings {
 }
 
 /** Everything a wallpaper page says around the picture. Placeholders: `{n}`, `{p}`, `{x}`, `{title}`, `{color}`, `{category}`, `{name}`. */
+export interface FileStrings {
+  /** Primary button: the iPhone Duo outer + inner pair. */
+  pair: string;
+  pairNote: string;
+  /** Heading over the one-screen buttons. */
+  single: string;
+  master: string;
+  /** Screen fit line for a file cut to the screen's exact size, with {w} and {h}. */
+  native: string;
+  fitPerfect: string;
+  /** Resolution row of a master made by AI upscaling, with {q}, {w} and {h}. */
+  upscaled: string;
+}
+
 export interface WallpaperStrings {
   /** Appended to the title in the <title> tag when it fits; `shortSuffix` when only that fits. */
   suffix: string;
@@ -157,6 +171,8 @@ export interface WallpaperStrings {
   featured: string;
   fallbackCategory: string;
   preview: { device: string; screen: string; lock: string; home: string; clean: string; outer: string; inner: string };
+  /** The download panel once a wallpaper has its per-device files. */
+  files: FileStrings;
   categories: Record<string, string>;
   devices: Record<string, string>;
 }
@@ -166,6 +182,8 @@ export interface ListingStrings {
   countOne: string;
   countMany: string;
   page: string;
+  /** Page number in a page title, with {n}: "Página {n}". */
+  pageTitle: string;
   latest: string;
   popular: string;
   sortLabel: string;
@@ -317,6 +335,8 @@ export interface LocaleContent {
   home: {
     title: string;
     description: string;
+    /** Replaces the matching fields once the library is 4K (`isLibrary4k`). */
+    fourK: { title: string; description: string; h1: string; h1Accent: string; intro: string; fullResolution: string; faqAnswer: string };
     badgeNew: string;
     badge: string;
     h1: string;

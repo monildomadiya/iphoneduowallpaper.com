@@ -114,6 +114,17 @@ export const TR: LocaleContent = {
     title: "iPhone Duo Duvar Kağıtları — Ücretsiz HD İndir",
     description:
       "iPhone 18 Duo'nun 5,4 inç dış ekranı ve 7,6 inç iç ekranı için ücretsiz HD iPhone Duo duvar kağıtları indirin. Uygulama yok, üyelik yok.",
+    fourK: {
+      title: "iPhone Duo Duvar Kağıtları 4K — Ücretsiz İndir",
+      description:
+        "iPhone Duo (iPhone 18 Duo) için yerel boyutlarda ücretsiz 4K duvar kağıtları: dış ekran için 1398×2034, iç ekran için 2670×1878. Hazır çiftler, üyelik yok.",
+      h1: "iPhone Duo duvar kağıtları,",
+      h1Accent: "4K.",
+      intro: "5,4 inç dış ekran ve 7,6 inç iç ekran için hazır çiftler, ayrıca iPhone 18 Pro boyutları.",
+      fullResolution: "4K, yerel boyutlar",
+      faqAnswer:
+        "Evet. Her duvar kağıdının 4K bir ana dosyası (uzun kenarda 3840 piksel) ve her ekranın yerel boyutunda hazır dosyaları var: dış ekran için 1398 × 2034, iç ekran için 2670 × 1878, ayrıca iPhone 18 Pro ve Pro Max. Ana dosyaların çoğu orijinal görselden yapay zekâ ile büyütüldü; her sayfa bunu ayrıntılarında belirtir.",
+    },
     badgeNew: "Yeni",
     badge: "iPhone Duo için tasarlandı",
     h1: "iPhone Duo duvar kağıtları,",

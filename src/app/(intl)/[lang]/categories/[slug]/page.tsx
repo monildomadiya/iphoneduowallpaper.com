@@ -3,12 +3,11 @@ import { notFound } from "next/navigation";
 import { getCategories, getCategoryBySlug, getDarkCategory } from "@/lib/data/taxonomy";
 import { FOREIGN_LOCALES, isForeignLocale, languageAlternates, localeContent } from "@/lib/i18n";
 import { categoryCopy } from "@/lib/i18n/taxonomy";
-import { buildMetadata } from "@/lib/seo";
+import { buildMetadata, listingPage } from "@/lib/seo";
 import { imageUrl, stockedFirst } from "@/lib/utils";
 import { LocalizedCategoryView } from "../category-view";
 
 // Renders on the server before responding so untranslated categories return a real 404 status.
-export const instant = false;
 
 export function generateStaticParams() {
   return FOREIGN_LOCALES.flatMap((lang) =>
@@ -25,11 +24,13 @@ async function load(lang: string, slug: string) {
   return copy && category ? { lang, copy, category } : null;
 }
 
-export async function generateMetadata({ params }: PageProps<"/[lang]/categories/[slug]">): Promise<Metadata> {
+export async function generateMetadata({ params, searchParams }: PageProps<"/[lang]/categories/[slug]">): Promise<Metadata> {
   const { lang, slug } = await params;
   const found = await load(lang, slug);
   if (!found) return { title: "404", robots: { index: false, follow: true } };
   return buildMetadata({
+    page: await listingPage(searchParams),
+    pageLabel: localeContent(found.lang).listing.pageTitle,
     title: found.copy.title,
     absoluteTitle: true,
     description: found.copy.description,

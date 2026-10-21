@@ -9,19 +9,19 @@ import { WallpaperCard, WallpaperGrid } from "@/components/wallpaper/wallpaper-c
 import { listPosts } from "@/lib/data/posts";
 import { getSiteSettings } from "@/lib/data/settings";
 import { getCategories, getDarkCategory, getDevices } from "@/lib/data/taxonomy";
-import { listWallpapers } from "@/lib/data/wallpapers";
+import { isLibrary4k, listWallpapers } from "@/lib/data/wallpapers";
 import { languageAlternates } from "@/lib/i18n";
 import { buildMetadata, faqJsonLd, organizationJsonLd, websiteJsonLd } from "@/lib/seo";
-import { HOME_DESCRIPTION, HOME_FAQ, homeTitle } from "@/lib/site";
+import { HOME_DESCRIPTION, HOME_DESCRIPTION_4K, SIZE_STRIP, homeFaq, homeTitle } from "@/lib/site";
 import type { WallpaperCardData } from "@/lib/types";
 import { formatNumber, imageUrl, stockedFirst } from "@/lib/utils";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const settings = await getSiteSettings();
+  const [settings, is4k] = await Promise.all([getSiteSettings(), isLibrary4k()]);
   return buildMetadata({
-    title: homeTitle(settings.site_name),
+    title: homeTitle(settings.site_name, is4k),
     absoluteTitle: true,
-    description: HOME_DESCRIPTION,
+    description: is4k ? HOME_DESCRIPTION_4K : HOME_DESCRIPTION,
     path: "/",
     languages: languageAlternates("/"),
   });
@@ -37,16 +37,20 @@ function pickHeroWallpapers(items: WallpaperCardData[]) {
 }
 
 export default async function HomePage() {
-  const [settings, featured, latest, popular, categories, dark, devices, posts] = await Promise.all([
+  const [settings, featured, latest, popular, categories, dark, devices, posts, is4k] = await Promise.all([
     getSiteSettings(),
     listWallpapers({ featured: true, perPage: 12 }),
-    listWallpapers({ perPage: 15 }),
-    listWallpapers({ sort: "popular", perPage: 10 }),
+    // The home page is where nearly all search clicks land; the more wallpapers it links, the more
+    // of the library is one hop from it.
+    listWallpapers({ perPage: 24 }),
+    listWallpapers({ sort: "popular", perPage: 12 }),
     getCategories(),
     getDarkCategory(),
     getDevices(),
     listPosts(1, 3),
+    isLibrary4k(),
   ]);
+  const faqs = homeFaq(is4k);
 
   const showcase = featured.items.length ? featured.items : latest.items;
   const hero = pickHeroWallpapers(showcase);
@@ -54,7 +58,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <JsonLd data={[websiteJsonLd(settings), organizationJsonLd(settings), faqJsonLd(HOME_FAQ)]} />
+      <JsonLd data={[websiteJsonLd(settings), organizationJsonLd(settings), faqJsonLd(faqs)]} />
 
       {/* ------------------------------------------------------------ Hero */}
       {/* Slides up under the floating header so the glow runs to the top edge instead of starting below it. */}
@@ -75,12 +79,24 @@ export default async function HomePage() {
             Made for iPhone Duo
           </p>
           <h1 className="headline-hero mx-auto mt-6 max-w-4xl text-balance">
-            iPhone Duo wallpapers, <span className="text-gradient-duo">unfolded.</span>
+            iPhone Duo Wallpapers{is4k ? " in 4K" : ""}
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-pretty text-[19px] leading-7 text-fg-2 md:text-[23px] md:leading-8">
-            {settings.tagline} Full-resolution designs for the 5.4-inch outer display, the 7.6-inch inner display and
-            iPhone 18 Pro.
+            <span className="text-gradient-duo font-semibold">Unfolded.</span> {settings.tagline}{" "}
+            {is4k
+              ? "Ready-made pairs for the 5.4-inch outer display and the 7.6-inch inner display, plus iPhone 18 Pro."
+              : "Designs for the 5.4-inch outer display, the 7.6-inch inner display and iPhone 18 Pro."}
           </p>
+          <ul aria-label="Screen sizes" className="mx-auto mt-5 flex max-w-2xl flex-wrap items-center justify-center gap-x-2 gap-y-1 text-[14px] text-fg-2">
+            {SIZE_STRIP.map((item, index) => (
+              <li key={item.label} className="flex items-center gap-2">
+                {index ? <span aria-hidden="true" className="text-fg-3">·</span> : null}
+                <span>
+                  {item.label} <span className="font-semibold tabular-nums text-fg">{item.size}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-4">
             <Link href="/wallpapers" className="btn-primary">
               Browse wallpapers
@@ -129,7 +145,7 @@ export default async function HomePage() {
           <ul className="mx-auto grid max-w-4xl grid-cols-2 gap-6 text-center md:grid-cols-4">
             {[
               { icon: Layers, label: hasWallpapers ? `${formatNumber(latest.total)} wallpapers` : "Growing library" },
-              { icon: Sparkles, label: "Full resolution" },
+              { icon: Sparkles, label: is4k ? "4K, native sizes" : "Full resolution" },
               { icon: Download, label: "Free, no sign-up" },
               { icon: ShieldCheck, label: "Original & licensed" },
             ].map(({ icon: Icon, label }) => (
@@ -241,8 +257,9 @@ export default async function HomePage() {
               bottom on the outer screen and much more on the inner one.
             </p>
             <p>
-              Every wallpaper here is free to download in HD at its original resolution, and each page shows how it
-              fits the{" "}
+              Every wallpaper here is free to download{" "}
+              {is4k ? "in 4K, with ready-made files at the native size of each screen" : "in HD at its original resolution"}
+              , and each page shows how it fits the{" "}
               <Link href="/devices/iphone-duo-outer-display" className="link-apple">
                 outer display
               </Link>{" "}
@@ -284,9 +301,16 @@ export default async function HomePage() {
       </section>
 
       {/* ------------------------------------------------------------ FAQ */}
+      <section className="container-apple mt-20">
+        <div className="rounded-[28px] border border-line bg-surface p-7 md:p-10">
+          <h2 className="headline-section">Know what fits before you save.</h2>
+          <p className="mt-4 max-w-2xl text-[17px] leading-7 text-fg-2">See how much of an image gets cropped, whether it needs enlarging, and which download to choose. Our wallpaper workshop also helps with ZIP files, soft images and Home Screen blur.</p>
+          <Link href="/wallpaper-help" className="link-apple mt-5 inline-block">Check your image with the fit calculator</Link>
+        </div>
+      </section>
       <section className="container-apple mt-24">
         <SectionHeading title="Questions?" subtitle="We have answers." />
-        <FaqList faqs={HOME_FAQ} />
+        <FaqList faqs={faqs} />
       </section>
     </>
   );

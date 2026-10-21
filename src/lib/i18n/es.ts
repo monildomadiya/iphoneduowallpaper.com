@@ -114,6 +114,18 @@ export const ES: LocaleContent = {
     title: "Fondos de Pantalla para iPhone Duo — Gratis en HD",
     description:
       "Descarga gratis fondos de pantalla HD para iPhone Duo, pensados para la pantalla exterior de 5,4 pulgadas y la interior de 7,6 del iPhone 18 Duo. Sin app ni registro.",
+    fourK: {
+      title: "Fondos de Pantalla para iPhone Duo en 4K — Gratis",
+      description:
+        "Fondos de pantalla 4K gratis para iPhone Duo (iPhone 18 Duo) en tamaños nativos: 1398×2034 para la pantalla exterior y 2670×1878 para la interior. Parejas listas, sin registro.",
+      h1: "Fondos de pantalla para iPhone Duo",
+      h1Accent: "en 4K.",
+      intro:
+        "Parejas listas para la pantalla exterior de 5,4 pulgadas y la interior de 7,6 pulgadas, además de los tamaños del iPhone 18 Pro.",
+      fullResolution: "4K y tamaños nativos",
+      faqAnswer:
+        "Sí. Cada fondo tiene un original 4K (3840 píxeles en el lado largo) y archivos listos al tamaño nativo de cada pantalla: 1398 × 2034 para la exterior, 2670 × 1878 para la interior y los tamaños del iPhone 18 Pro y Pro Max. La mayoría de los originales se ampliaron a partir de la obra original con un escalador por IA; cada página lo indica en sus detalles.",
+    },
     badgeNew: "Nuevo",
     badge: "Hecho para iPhone Duo",
     h1: "Fondos de pantalla para iPhone Duo,",

@@ -1,6 +1,7 @@
 "use server";
 
 import { randomUUID } from "node:crypto";
+import { after } from "next/server";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import { failure, idsSchema, success, type ActionResult } from "@/lib/actions";
@@ -17,6 +18,14 @@ import {
   type PresignedUpload,
 } from "@/lib/r2";
 import { isR2Configured } from "@/lib/server-env";
+import { rebuildVariants, variantKeys } from "@/lib/variants/server";
+
+/** Cuts the per-device files after the response is sent, so saving stays instant. */
+function scheduleVariants(wallpaperId: string) {
+  after(() =>
+    rebuildVariants(wallpaperId).catch((error) => console.error(`[variants] ${wallpaperId}`, error)),
+  );
+}
 
 const MAX_ORIGINAL_BYTES = 40 * 1024 * 1024;
 const DERIVED_EXTENSIONS = { "image/webp": "webp", "image/jpeg": "jpg" } as const;
@@ -80,6 +89,10 @@ const fieldsSchema = z.object({
   creditUrl: z.union([z.url({ protocol: /^https?$/, error: "Credit link must start with https://" }), z.literal("")]).nullish(),
   seoTitle: optionalText(120),
   seoDescription: optionalText(320),
+  // Absent from older clients (the Android app); then the stored values are left alone.
+  focalX: z.number().min(0).max(1).optional(),
+  focalY: z.number().min(0).max(1).optional(),
+  lockScreenFriendly: z.boolean().optional(),
 });
 
 const imageSchema = z.object({
@@ -155,6 +168,9 @@ function rowFields(data: z.infer<typeof fieldsSchema>) {
     credit_url: emptyToNull(data.creditUrl),
     seo_title: emptyToNull(data.seoTitle),
     seo_description: emptyToNull(data.seoDescription),
+    ...(data.focalX !== undefined ? { focal_x: Math.round(data.focalX * 1000) / 1000 } : {}),
+    ...(data.focalY !== undefined ? { focal_y: Math.round(data.focalY * 1000) / 1000 } : {}),
+    ...(data.lockScreenFriendly !== undefined ? { lock_screen_friendly: data.lockScreenFriendly } : {}),
   };
 }
 
@@ -186,6 +202,7 @@ export async function createWallpaper(input: CreateWallpaperInput): Promise<Acti
 
     await syncRelations(supabase, image.uploadId, fields.deviceIds, fields.collectionIds);
     refreshTag("wallpapers");
+    scheduleVariants(image.uploadId);
     return success({ id: image.uploadId, slug });
   } catch (error) {
     return failure(error, "Could not save the wallpaper.");
@@ -210,6 +227,7 @@ export async function updateWallpaper(
 
     await syncRelations(supabase, wallpaperId, fields.deviceIds, fields.collectionIds);
     refreshTag("wallpapers");
+    scheduleVariants(wallpaperId);
     return success({ slug }, "Wallpaper saved.");
   } catch (error) {
     return failure(error, "Could not save the wallpaper.");
@@ -248,8 +266,10 @@ export async function replaceWallpaperImage(
       .eq("id", wallpaperId);
     if (error) throw error;
 
+    // The old per-device files are removed once the new ones are cut.
     await deleteObjects([current.original_key, current.preview_key, current.thumb_key]);
     refreshTag("wallpapers");
+    scheduleVariants(wallpaperId);
     return success({ thumbKey: image.thumbKey, previewKey: image.previewKey }, "Image replaced.");
   } catch (error) {
     return failure(error, "Could not replace the image.");
@@ -266,10 +286,12 @@ export async function deleteWallpapers(ids: string[]): Promise<ActionResult<{ co
       .from("wallpapers")
       .delete()
       .in("id", wallpaperIds)
-      .select("original_key,preview_key,thumb_key");
+      .select("original_key,preview_key,thumb_key,variants");
     if (error) throw error;
 
-    await deleteObjects((data ?? []).flatMap((row) => [row.original_key, row.preview_key, row.thumb_key]));
+    await deleteObjects(
+      (data ?? []).flatMap((row) => [row.original_key, row.preview_key, row.thumb_key, ...variantKeys(row.variants)]),
+    );
     refreshTag("wallpapers");
     return success({ count: data?.length ?? 0 }, `${data?.length ?? 0} wallpaper(s) deleted.`);
   } catch (error) {

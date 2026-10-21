@@ -5,7 +5,6 @@ import { requireAdmin } from "@/lib/auth";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 // Admin screens read the session cookie, so they are allowed to block.
-export const instant = false;
 
 export default async function AdminPanelLayout({ children }: LayoutProps<"/admin">) {
   const admin = await requireAdmin();

@@ -53,7 +53,9 @@ export function AdSlot({ placement, className }: { placement: AdPlacement; class
       <p className="mb-1.5 text-center text-[10px] font-medium uppercase tracking-[0.12em] text-fg-3">
         Advertisement
       </p>
-      <div className="min-h-[100px] overflow-hidden">
+      {/* A responsive unit is usually 250–280 px tall; reserving that up front keeps the content
+          below from jumping when the ad arrives (CLS). Unfilled slots collapse in globals.css. */}
+      <div className="min-h-[280px] overflow-hidden">
         {/* Pages re-mount on navigation, so every page view requests a fresh ad. */}
         <AdUnit clientId={clientId} slot={slot} testMode={testMode} />
       </div>

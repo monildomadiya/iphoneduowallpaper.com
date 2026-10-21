@@ -15,6 +15,6 @@ export default function robots(): MetadataRoute.Robots {
       { userAgent: "Mediapartners-Google", allow: "/" },
     ],
     // No `host`: Google ignores the Host directive and flags it as an unrecognized rule in Search Console.
-    sitemap: `${siteUrl}/sitemap.xml`,
+    sitemap: [`${siteUrl}/sitemap.xml`, `${siteUrl}/image-sitemap.xml`],
   };
 }

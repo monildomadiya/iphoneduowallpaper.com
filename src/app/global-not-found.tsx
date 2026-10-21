@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { RootDocument } from "@/components/site/root-document";
 import { LogoMark } from "@/components/site/logo";
 import { NotFoundContent } from "@/components/site/not-found-content";
 
@@ -8,9 +9,10 @@ export const metadata: Metadata = {
   robots: { index: false, follow: true },
 };
 
-export default function NotFound() {
+/** Addresses no route matches. English, Spanish and Turkish have separate root layouts, so this page has no layout around it. */
+export default function GlobalNotFound() {
   return (
-    <>
+    <RootDocument lang="en">
       <header className="glass sticky top-0 z-50 border-b border-line">
         <div className="container-apple flex h-12 items-center">
           <Link href="/" className="inline-flex items-center gap-2 text-[15px] font-semibold tracking-tight">
@@ -22,6 +24,6 @@ export default function NotFound() {
       <main id="main">
         <NotFoundContent />
       </main>
-    </>
+    </RootDocument>
   );
 }

@@ -1,10 +1,11 @@
-import { Check, CircleAlert, Download, Expand, Flag, Info, WandSparkles } from "lucide-react";
+import { Check, CircleAlert, Flag, Info, WandSparkles } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AdSlot } from "@/components/ads/ad-slot";
 import { Breadcrumbs, JsonLd, SectionHeading } from "@/components/ui/primitives";
-import { ShareButton, ViewTracker } from "@/components/wallpaper/client-actions";
+import { ViewTracker } from "@/components/wallpaper/client-actions";
+import { DownloadPanel, EN_FILE_STRINGS, NativeFitList } from "@/components/wallpaper/download-panel";
 import { WallpaperGrid } from "@/components/wallpaper/wallpaper-card";
 import { WallpaperPreview } from "@/components/wallpaper/wallpaper-preview";
 import { getSiteSettings } from "@/lib/data/settings";
@@ -13,7 +14,7 @@ import { getPrerenderWallpaperSlugs, getRelatedWallpapers, getWallpaperBySlug } 
 import { languageAlternates } from "@/lib/i18n";
 import { buildMetadata, wallpaperJsonLd } from "@/lib/seo";
 import { wallpaperGuide } from "@/lib/site";
-import { SOURCE_TYPE_LABELS } from "@/lib/types";
+import { SOURCE_TYPE_LABELS, type WallpaperDetail } from "@/lib/types";
 import {
   cn,
   formatBytes,
@@ -27,10 +28,10 @@ import {
   wallpaperAlt,
   wallpaperPageTitle,
 } from "@/lib/utils";
-import { fitNote, screenFitDetail, wallpaperOverview } from "@/lib/wallpaper-copy";
+import { fill } from "@/lib/i18n/en";
+import { fitNote, screenFitDetail, wallpaperMetaDescription, wallpaperOverview } from "@/lib/wallpaper-copy";
 
 // Renders on the server before responding so unknown slugs return a real 404 status (better for SEO).
-export const instant = false;
 
 export async function generateStaticParams() {
   const slugs = await getPrerenderWallpaperSlugs();
@@ -46,14 +47,17 @@ export async function generateMetadata({ params }: PageProps<"/wallpapers/[slug]
   const wallpaper = await getWallpaperBySlug(slug);
   if (!wallpaper) return { title: "Wallpaper not found", robots: { index: false, follow: true } };
 
-  const family = wallpaper.devices[0]?.family ?? "iPhone Duo";
-  const title =
-    wallpaper.seo_title || wallpaperPageTitle(wallpaper.title, family, wallpaper.width, wallpaper.height);
+  const { variants } = wallpaper;
+  const title = wallpaper.seo_title || wallpaperPageTitle(wallpaper.title, Boolean(variants?.files["4k"]));
   const description =
     wallpaper.seo_description ||
-    (wallpaper.description
-      ? truncate(wallpaper.description, 155)
-      : truncate(`Free download. ${wallpaperOverview(wallpaper)[0]}`, 155));
+    (variants
+      ? wallpaperMetaDescription({ ...wallpaper, variants })
+      : wallpaper.description
+        ? truncate(wallpaper.description, 155)
+        : truncate(`Free download. ${wallpaperOverview(wallpaper)[0]}`, 155));
+  const preview = variants?.files.inner?.preview ?? wallpaper.preview_key;
+  const previewSize = variants?.files.inner ?? wallpaper;
 
   return buildMetadata({
     title,
@@ -61,12 +65,20 @@ export async function generateMetadata({ params }: PageProps<"/wallpapers/[slug]
     path: `/wallpapers/${wallpaper.slug}`,
     languages: languageAlternates(`/wallpapers/${wallpaper.slug}`),
     image: {
-      url: imageUrl(wallpaper.preview_key),
-      width: 1080,
-      height: Math.round((1080 * wallpaper.height) / wallpaper.width),
+      url: imageUrl(preview),
+      width: variants ? Math.round(previewSize.width / 2) : 1080,
+      height: variants ? Math.round(previewSize.height / 2) : Math.round((1080 * wallpaper.height) / wallpaper.width),
       alt: wallpaperAlt(wallpaper.title, wallpaper.width, wallpaper.height, wallpaper.category?.name),
     },
   });
+}
+
+/** The per-screen crops the preview mockups show, once they are built. */
+function previewSources(wallpaper: { variants: WallpaperDetail["variants"] }) {
+  const files = wallpaper.variants?.files;
+  if (!files) return undefined;
+  const url = (key?: string) => (key ? imageUrl(key) : undefined);
+  return { "duo-outer": url(files.outer?.preview), "duo-inner": url(files.inner?.preview), pro: url(files["pro-max"]?.preview) };
 }
 
 const FIT_STYLES = {
@@ -90,10 +102,24 @@ export default async function WallpaperPage({ params }: PageProps<"/wallpapers/[
   const path = `/wallpapers/${wallpaper.slug}`;
   const overview = wallpaperOverview(wallpaper);
   const guide = wallpaperGuide(wallpaper.category?.slug, wallpaper.tags);
+  const { variants } = wallpaper;
+  const master = variants?.files["4k"];
   const details = [
-    { label: "Resolution", value: `${wallpaper.width} × ${wallpaper.height} px (${qualityLabel(wallpaper.width, wallpaper.height)})` },
+    {
+      label: "Resolution",
+      value: master
+        ? `${master.width} × ${master.height} px (${
+            variants.upscaled
+              ? fill(EN_FILE_STRINGS.upscaled, { q: "4K", w: wallpaper.width, h: wallpaper.height })
+              : "4K"
+          })`
+        : `${wallpaper.width} × ${wallpaper.height} px (${qualityLabel(wallpaper.width, wallpaper.height)})`,
+    },
     { label: "Orientation", value: orientationLabel(wallpaper.width, wallpaper.height) },
-    { label: "File", value: `${formatLabel(wallpaper.mime_type)} · ${formatBytes(wallpaper.file_size)}` },
+    {
+      label: "File",
+      value: master ? `JPG · ${formatBytes(master.bytes)}` : `${formatLabel(wallpaper.mime_type)} · ${formatBytes(wallpaper.file_size)}`,
+    },
     { label: "Published", value: formatDate(wallpaper.published_at ?? wallpaper.created_at) },
     { label: "Downloads", value: formatNumber(wallpaper.downloads) },
     { label: "Source", value: SOURCE_TYPE_LABELS[wallpaper.source_type] },
@@ -119,6 +145,7 @@ export default async function WallpaperPage({ params }: PageProps<"/wallpapers/[
           <div className="lg:sticky lg:top-20 lg:self-start">
             <WallpaperPreview
               src={imageUrl(wallpaper.preview_key)}
+              sources={previewSources(wallpaper)}
               alt={wallpaperAlt(wallpaper.title, wallpaper.width, wallpaper.height, wallpaper.category?.name)}
               color={wallpaper.dominant_color}
               width={wallpaper.width}
@@ -137,30 +164,19 @@ export default async function WallpaperPage({ params }: PageProps<"/wallpapers/[
             ) : null}
             <h1 className="headline-page mt-2 text-balance">{wallpaper.title}</h1>
             <p className="mt-3 text-[17px] text-fg-2">
-              {wallpaper.width} × {wallpaper.height} · {formatBytes(wallpaper.file_size)} ·{" "}
+              {master ? `4K · ${master.width} × ${master.height}` : `${wallpaper.width} × ${wallpaper.height}`} ·{" "}
               {formatNumber(wallpaper.downloads)} {wallpaper.downloads === 1 ? "download" : "downloads"}
             </p>
             {wallpaper.description ? (
               <p className="mt-5 whitespace-pre-line text-[17px] leading-7 text-fg-2">{wallpaper.description}</p>
             ) : null}
 
-            <div className="mt-8 flex flex-wrap gap-3">
-              <a href={`/api/download/${wallpaper.id}`} rel="nofollow" className="btn-primary h-12 min-w-[220px] flex-1">
-                <Download className="size-[18px]" />
-                Download
-                <span className="font-normal opacity-80">· {formatBytes(wallpaper.file_size)}</span>
-              </a>
-              <a
-                href={`/api/download/${wallpaper.id}?mode=view`}
-                rel="nofollow noopener"
-                target="_blank"
-                className="btn-secondary h-12"
-              >
-                <Expand className="size-[18px]" />
-                View full size
-              </a>
-              <ShareButton title={wallpaper.title} path={path} />
-            </div>
+            <DownloadPanel
+              wallpaper={wallpaper}
+              title={wallpaper.title}
+              path={path}
+              labels={{ download: "Download", viewFull: "View full size", files: EN_FILE_STRINGS, deviceName: (_, name) => name }}
+            />
             <Link
               href={`/maker?wallpaper=${wallpaper.slug}`}
               rel="nofollow"
@@ -178,6 +194,9 @@ export default async function WallpaperPage({ params }: PageProps<"/wallpapers/[
                 </Link>
                 .
               </span>
+            </p>
+            <p className="mt-3 text-[13px] leading-5 text-fg-2">
+              Unsure which file to save? <Link href="/wallpaper-help" className="link-apple">Check cropping, image quality and download help.</Link>
             </p>
 
             <section className="mt-10">
@@ -199,30 +218,39 @@ export default async function WallpaperPage({ params }: PageProps<"/wallpapers/[
             {devices.length ? (
               <section className="mt-8 rounded-[24px] bg-surface p-5 md:p-6">
                 <h2 className="text-[19px] font-semibold tracking-tight">Screen fit</h2>
-                <ul className="mt-3 divide-y divide-line">
-                  {devices.map((device) => {
-                    const fit = screenFit(wallpaper.width, wallpaper.height, device.width, device.height);
-                    const style = FIT_STYLES[fit.level];
-                    const Icon = style.icon;
-                    return (
-                      <li key={device.id} className="flex items-center justify-between gap-4 py-3">
-                        <div className="min-w-0">
-                          <Link href={`/devices/${device.slug}`} className="block truncate text-[15px] font-medium hover:text-link">
-                            {device.name}
-                          </Link>
-                          <p className="text-[13px] text-fg-3">
-                            {device.width} × {device.height} px ·{" "}
-                            {fitNote(screenFitDetail(wallpaper.width, wallpaper.height, device))}
-                          </p>
-                        </div>
-                        <span className={cn("inline-flex shrink-0 items-center gap-1 text-[13px] font-medium", style.className)}>
-                          <Icon className="size-4" />
-                          {style.label}
-                        </span>
-                      </li>
-                    );
-                  })}
-                </ul>
+                {variants ? (
+                  <NativeFitList
+                    variants={variants}
+                    files={EN_FILE_STRINGS}
+                    deviceName={(_, name) => name}
+                    deviceHref={(slug) => `/devices/${slug}`}
+                  />
+                ) : (
+                  <ul className="mt-3 divide-y divide-line">
+                    {devices.map((device) => {
+                      const fit = screenFit(wallpaper.width, wallpaper.height, device.width, device.height);
+                      const style = FIT_STYLES[fit.level];
+                      const Icon = style.icon;
+                      return (
+                        <li key={device.id} className="flex items-center justify-between gap-4 py-3">
+                          <div className="min-w-0">
+                            <Link href={`/devices/${device.slug}`} className="block truncate text-[15px] font-medium hover:text-link">
+                              {device.name}
+                            </Link>
+                            <p className="text-[13px] text-fg-3">
+                              {device.width} × {device.height} px ·{" "}
+                              {fitNote(screenFitDetail(wallpaper.width, wallpaper.height, device))}
+                            </p>
+                          </div>
+                          <span className={cn("inline-flex shrink-0 items-center gap-1 text-[13px] font-medium", style.className)}>
+                            <Icon className="size-4" />
+                            {style.label}
+                          </span>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
               </section>
             ) : null}
 

@@ -2,20 +2,22 @@ import { ChevronRight } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { AdSlot } from "@/components/ads/ad-slot";
-import { Breadcrumbs, PageHeader } from "@/components/ui/primitives";
+import { Breadcrumbs, JsonLd, PageHeader } from "@/components/ui/primitives";
 import { WallpaperListing } from "@/components/wallpaper/wallpaper-listing";
 import { getCategories, getDarkCategory } from "@/lib/data/taxonomy";
 import { getDarkWallpapers } from "@/lib/data/wallpapers";
 import { languageAlternates } from "@/lib/i18n";
-import { buildMetadata } from "@/lib/seo";
+import { listingJsonLd } from "@/lib/listing-jsonld";
+import { buildMetadata, listingPage } from "@/lib/seo";
 import { DARK_CATEGORY } from "@/lib/site";
 import { imageUrl, stockedFirst } from "@/lib/utils";
 
 const PATH = `/categories/${DARK_CATEGORY.slug}`;
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata({ searchParams }: PageProps<"/categories/dark">): Promise<Metadata> {
   const dark = await getDarkCategory();
   return buildMetadata({
+    page: await listingPage(searchParams),
     title: DARK_CATEGORY.title,
     description: DARK_CATEGORY.description,
     path: PATH,
@@ -28,9 +30,20 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function DarkCategoryPage({ searchParams }: PageProps<"/categories/dark">) {
   const [{ ids }, categories] = await Promise.all([getDarkWallpapers(), getCategories()]);
   const others = stockedFirst(categories).slice(0, 8);
+  const jsonLd = await listingJsonLd({
+    name: DARK_CATEGORY.title,
+    description: DARK_CATEGORY.description,
+    path: PATH,
+    breadcrumb: [
+      { name: "Categories", path: "/categories" },
+      { name: DARK_CATEGORY.name, path: PATH },
+    ],
+    query: { ids },
+  });
 
   return (
     <>
+      <JsonLd data={jsonLd} />
       <div className="container-apple pt-6">
         <Breadcrumbs
           items={[

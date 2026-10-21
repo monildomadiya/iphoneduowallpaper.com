@@ -97,8 +97,17 @@ export const TR_WALLPAPER: WallpaperStrings = {
     outer: "Duo dış",
     inner: "Duo iç",
   },
+  files: {
+    pair: "iPhone Duo için indir",
+    pairNote: "Dış + iç ekran, ZIP",
+    single: "Ya da tek bir ekran",
+    master: "4K ana dosya",
+    native: "Yerel {w} × {h}: ekrana tam oturur",
+    fitPerfect: "Tam uyum",
+    upscaled: "{q}, {w} × {h} boyutundan yapay zekâyla büyütüldü",
+  },
   categories: {
-    "anime-4k": "Anime 4K",
+    anime: "Anime",
     car: "Araba",
     "halloween-wallpaper": "Cadılar Bayramı",
     "ios-inspired-wallpapers": "iOS Esintili",

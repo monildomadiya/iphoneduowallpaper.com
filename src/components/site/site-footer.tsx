@@ -1,4 +1,3 @@
-import { cacheLife } from "next/cache";
 import Link from "next/link";
 import { fill } from "@/lib/i18n/en";
 import type { Chrome } from "@/lib/i18n/types";
@@ -6,9 +5,7 @@ import { FOOTER_NAV } from "@/lib/site";
 import type { SiteSettings } from "@/lib/types";
 import { LogoMark } from "./logo";
 
-async function CopyrightYear() {
-  "use cache";
-  cacheLife("days");
+function CopyrightYear() {
   return <>{new Date().getFullYear()}</>;
 }
 

@@ -10,12 +10,12 @@ import { FOREIGN_LOCALES, isForeignLocale, languageAlternates, localeContent } f
 import { fill } from "@/lib/i18n/en";
 import { deviceCopy, localizedDeviceFaq } from "@/lib/i18n/taxonomy";
 import { localizedOrientation } from "@/lib/i18n/wallpaper-copy";
-import { buildMetadata, faqJsonLd, localizedPageJsonLd } from "@/lib/seo";
+import { listingJsonLd } from "@/lib/listing-jsonld";
+import { buildMetadata, faqJsonLd, listingPage } from "@/lib/seo";
 import { mockupDate } from "@/lib/site";
 import { aspectRatioLabel, imageUrl } from "@/lib/utils";
 
 // Renders on the server before responding so untranslated devices return a real 404 status.
-export const instant = false;
 
 export function generateStaticParams() {
   return FOREIGN_LOCALES.flatMap((lang) =>
@@ -30,13 +30,15 @@ async function load(lang: string, slug: string) {
   return copy && device ? { lang, copy, device } : null;
 }
 
-export async function generateMetadata({ params }: PageProps<"/[lang]/devices/[slug]">): Promise<Metadata> {
+export async function generateMetadata({ params, searchParams }: PageProps<"/[lang]/devices/[slug]">): Promise<Metadata> {
   const { lang, slug } = await params;
   const found = await load(lang, slug);
   if (!found) return { title: "404", robots: { index: false, follow: true } };
   const { copy, device } = found;
-  const { taxonomy, ogLocale } = localeContent(found.lang);
+  const { taxonomy, ogLocale, listing } = localeContent(found.lang);
   return buildMetadata({
+    page: await listingPage(searchParams),
+    pageLabel: listing.pageTitle,
     title: copy.title,
     absoluteTitle: true,
     description: fill(taxonomy.deviceSeoDescription, { name: copy.name, faqName: copy.faqName, w: device.width, h: device.height }),
@@ -68,12 +70,24 @@ export default async function LocalizedDevicePage({ params, searchParams }: Page
     { label: taxonomy.specs.orientation, value: localizedOrientation(device.width, device.height, wallpaper) },
   ];
   const faqs = localizedDeviceFaq(device, locale);
+  const jsonLd = await listingJsonLd({
+    name: copy.title,
+    description: copy.description,
+    path,
+    breadcrumb: [
+      { name: taxonomy.devicesHub.eyebrow, path: `/${locale}/devices` },
+      { name: copy.name, path },
+    ],
+    query: { deviceId: device.id },
+    locale,
+    home: { name: chrome.homeLabel, path: chrome.homeHref },
+  });
 
   return (
     <>
       <JsonLd
         data={[
-          localizedPageJsonLd({ name: copy.title, description: copy.description, path, inLanguage: locale }),
+          jsonLd,
           faqJsonLd(faqs),
         ]}
       />

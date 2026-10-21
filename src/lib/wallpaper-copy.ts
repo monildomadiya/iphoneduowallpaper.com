@@ -1,4 +1,5 @@
-import { orientationLabel, screenFit } from "@/lib/utils";
+import { orientationLabel, screenFit, wallpaperName } from "@/lib/utils";
+import type { WallpaperVariants } from "@/lib/variants/types";
 
 /**
  * Plain-language copy built from a wallpaper's own numbers. Every wallpaper page used to share
@@ -139,4 +140,30 @@ export function wallpaperOverview(wallpaper: WallpaperLike): string[] {
   if (subjects.length) paragraphs.push(`Themes: ${list(subjects)}.`);
 
   return paragraphs;
+}
+
+/** The first thing a description says the image shows: "…featuring glowing jack-o'-lanterns, …" → "Glowing jack-o'-lanterns". */
+function visualDetail(description: string | null): string | null {
+  const match = /\bfeaturing\s+(?:an?\s+|the\s+)?([^,.;]{6,70})/i.exec(description ?? "");
+  if (!match) return null;
+  const detail = match[1].replace(/\s+(and|with)$/i, "").trim();
+  return detail.charAt(0).toUpperCase() + detail.slice(1);
+}
+
+/**
+ * Meta description for a wallpaper whose per-device files are built: the sizes people search for,
+ * then a detail only this image has, so no two descriptions read the same.
+ */
+export function wallpaperMetaDescription(wallpaper: {
+  title: string;
+  description: string | null;
+  dominant_color: string;
+  variants: WallpaperVariants;
+}): string {
+  const quality = wallpaper.variants.files["4k"] ? "4K" : "HD";
+  const color = describeColor(wallpaper.dominant_color);
+  const detail = visualDetail(wallpaper.description) ?? (color ? `Mostly ${color.name}` : null);
+  const base = `Free ${quality} ${wallpaperName(wallpaper.title)} wallpaper for iPhone Duo — native 1398×2034 outer and 2670×1878 inner files, plus iPhone 18 Pro sizes.`;
+  // A detail cut off mid-phrase reads worse than none; it only goes in when it fits whole.
+  return detail && base.length + detail.length + 2 <= 160 ? `${base} ${detail}.` : base;
 }

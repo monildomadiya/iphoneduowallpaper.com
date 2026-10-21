@@ -97,8 +97,17 @@ export const ES_WALLPAPER: WallpaperStrings = {
     outer: "Duo exterior",
     inner: "Duo interior",
   },
+  files: {
+    pair: "Descargar para iPhone Duo",
+    pairNote: "Exterior + interior, ZIP",
+    single: "O solo una pantalla",
+    master: "Original 4K",
+    native: "Tamaño nativo {w} × {h}: encaja a la perfección",
+    fitPerfect: "Encaje perfecto",
+    upscaled: "{q}, ampliado con IA desde {w} × {h}",
+  },
   categories: {
-    "anime-4k": "Anime 4K",
+    anime: "Anime",
     car: "Autos",
     "halloween-wallpaper": "Halloween",
     "ios-inspired-wallpapers": "Inspirados en iOS",

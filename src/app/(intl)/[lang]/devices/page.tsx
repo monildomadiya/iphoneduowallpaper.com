@@ -10,7 +10,6 @@ import { fill } from "@/lib/i18n/en";
 import { deviceCopy, deviceHref } from "@/lib/i18n/taxonomy";
 import { buildMetadata, collectionPageJsonLd } from "@/lib/seo";
 
-export const instant = false;
 
 export async function generateMetadata({ params }: PageProps<"/[lang]/devices">): Promise<Metadata> {
   const { lang } = await params;

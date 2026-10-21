@@ -15,8 +15,9 @@ import {
 import { detectMimeType, processImage, uploadToStorage, ACCEPTED_TYPES } from "@/lib/admin/image-client";
 import { siteUrl } from "@/lib/env";
 import type { WallpaperAdminRow } from "@/lib/types";
-import { cn, formatBytes, formatCompact, formatDate, imageUrl, slugify } from "@/lib/utils";
+import { cn, formatBytes, formatCompact, formatDate, imageUrl, slugify, wallpaperPageTitle } from "@/lib/utils";
 import { Switch, TagInput, useConfirm } from "./client";
+import { FocalPicker } from "./focal-picker";
 import { Card, Field, StatusBadge, buttonClass, inputClass } from "./ui";
 import {
   CategorySelect,
@@ -57,8 +58,11 @@ export function WallpaperEditor({
   const [seoTitle, setSeoTitle] = useState(wallpaper.seo_title ?? "");
   const [seoDescription, setSeoDescription] = useState(wallpaper.seo_description ?? "");
   const [previewKey, setPreviewKey] = useState(wallpaper.preview_key);
+  const [focal, setFocal] = useState({ x: wallpaper.focal_x, y: wallpaper.focal_y });
+  const [lockScreenFriendly, setLockScreenFriendly] = useState(wallpaper.lock_screen_friendly);
+  const files = wallpaper.variants?.files;
 
-  const googleTitle = seoTitle || `${title} Wallpaper — ${wallpaper.width} × ${wallpaper.height}`;
+  const googleTitle = seoTitle || wallpaperPageTitle(title, Boolean(wallpaper.variants?.files["4k"]));
   const googleDescription =
     seoDescription ||
     description ||
@@ -80,6 +84,9 @@ export function WallpaperEditor({
         creditUrl,
         seoTitle,
         seoDescription,
+        focalX: focal.x,
+        focalY: focal.y,
+        lockScreenFriendly,
       });
       if (result.ok) {
         setSlug(result.data.slug);
@@ -281,6 +288,42 @@ export function WallpaperEditor({
               <TagInput name="tags" defaultValue={wallpaper.tags} onChange={setTags} />
             </Field>
             <Switch label="Featured" description="Highlight on the home page" checked={isFeatured} onChange={setIsFeatured} />
+          </div>
+        </Card>
+
+        <Card
+          title="Screen crops"
+          description="Set where the subject is. Saving cuts the iPhone Duo outer and inner, iPhone 18 Pro and Pro Max files around it."
+        >
+          <div className="space-y-5">
+            <FocalPicker
+              src={imageUrl(previewKey)}
+              width={wallpaper.width}
+              height={wallpaper.height}
+              x={focal.x}
+              y={focal.y}
+              onChange={(x, y) => setFocal({ x, y })}
+            />
+            <p className="text-[13px] text-fg-2">
+              {!files
+                ? process.env.NEXT_PUBLIC_VARIANTS_MODE === "workstation"
+                  ? "Device files: pending. Run npm run variants -- build --stale on the workstation after saving."
+                  : "Device files: not built yet — they are cut a few seconds after you save."
+                : files["4k"]
+                  ? `Device files: ready, with a ${files["4k"].width} × ${files["4k"].height} 4K master${wallpaper.variants?.upscaled ? " (AI-upscaled)" : ""}.`
+                  : `Device files: ready in HD only — the image is ${wallpaper.width} × ${wallpaper.height}. Run “npm run variants -- upscale” and “npm run variants -- build --stale” on the workstation to make it 4K.`}
+            </p>
+            {process.env.NEXT_PUBLIC_VARIANTS_MODE === "workstation" && files && (
+              <p className="text-[13px] text-fg-2">
+                After changing the image or focal point, run npm run variants -- build --stale on the workstation to refresh device files.
+              </p>
+            )}
+            <Switch
+              label="Lock Screen friendly"
+              description="The top third is calm enough for the clock; listed on the Lock Screen wallpapers page"
+              checked={lockScreenFriendly}
+              onChange={setLockScreenFriendly}
+            />
           </div>
         </Card>
 

@@ -7,7 +7,6 @@ import { siteUrl } from "@/lib/env";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 // Admin screens read the session cookie, so they are allowed to block.
-export const instant = false;
 
 export const metadata: Metadata = { title: "Ads & AdSense" };
 

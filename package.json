@@ -5,25 +5,36 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:cloudflare": "node scripts/build-cloudflare.mjs",
+    "preview": "npm run build:cloudflare && opennextjs-cloudflare preview",
+    "check:cloudflare": "node scripts/check-cloudflare.mjs",
+    "deploy": "npm run build:cloudflare && npm run deploy:cloudflare",
+    "deploy:cloudflare": "npm run check:cloudflare && opennextjs-cloudflare deploy",
+    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
     "start": "next start",
     "lint": "eslint",
     "typegen": "next typegen",
     "typecheck": "next typegen && tsc --noEmit",
-    "create-admin": "node scripts/create-admin.mjs"
+    "create-admin": "node scripts/create-admin.mjs",
+    "variants": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/build-variants.mjs"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1131.0",
     "@aws-sdk/s3-request-presigner": "^3.1131.0",
+    "@opennextjs/cloudflare": "1.20.12",
     "@supabase/ssr": "^0.12.7",
     "@supabase/supabase-js": "^2.116.0",
+    "aws4fetch": "^1.0.20",
     "clsx": "^2.1.1",
+    "fflate": "^0.8.3",
     "lucide-react": "^1.46.0",
-    "next": "16.3.5",
+    "next": "16.4.2",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "react-markdown": "^10.1.0",
     "remark-gfm": "^4.0.1",
     "server-only": "^0.0.1",
+    "sharp": "^0.35.5",
     "sonner": "^2.0.8",
     "tailwind-merge": "^3.7.0",
     "zod": "^4.6.5"
@@ -34,9 +45,10 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.3.5",
+    "eslint-config-next": "16.4.2",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "wrangler": "^4.151.3"
   },
   "engines": {
     "node": ">=20.9.0"

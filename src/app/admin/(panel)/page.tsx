@@ -11,7 +11,6 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { formatCompact, formatDate, formatNumber, imageUrl } from "@/lib/utils";
 
 // Admin screens read the session cookie, so they are allowed to block.
-export const instant = false;
 
 export const metadata: Metadata = { title: "Dashboard" };
 

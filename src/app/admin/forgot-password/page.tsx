@@ -3,7 +3,6 @@ import { ForgotPasswordForm } from "@/components/admin/auth-forms";
 import { AuthShell } from "@/components/admin/auth-shell";
 
 // Admin screens read the session cookie, so they are allowed to block.
-export const instant = false;
 
 export const metadata: Metadata = { title: "Reset password" };
 

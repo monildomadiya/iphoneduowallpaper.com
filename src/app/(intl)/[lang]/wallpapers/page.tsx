@@ -4,15 +4,16 @@ import { AdSlot } from "@/components/ads/ad-slot";
 import { Breadcrumbs, JsonLd, PageHeader } from "@/components/ui/primitives";
 import { WallpaperListing } from "@/components/wallpaper/wallpaper-listing";
 import { isForeignLocale, languageAlternates, localeContent } from "@/lib/i18n";
-import { buildMetadata, localizedPageJsonLd } from "@/lib/seo";
+import { buildMetadata, listingPage, localizedPageJsonLd } from "@/lib/seo";
 
-export const instant = false;
 
-export async function generateMetadata({ params }: PageProps<"/[lang]/wallpapers">): Promise<Metadata> {
+export async function generateMetadata({ params, searchParams }: PageProps<"/[lang]/wallpapers">): Promise<Metadata> {
   const { lang } = await params;
   if (!isForeignLocale(lang)) return {};
-  const { taxonomy, ogLocale } = localeContent(lang);
+  const { taxonomy, ogLocale, listing } = localeContent(lang);
   return buildMetadata({
+    page: await listingPage(searchParams),
+    pageLabel: listing.pageTitle,
     title: taxonomy.wallpapersHub.title,
     absoluteTitle: true,
     description: taxonomy.wallpapersHub.description,

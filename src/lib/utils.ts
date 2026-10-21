@@ -119,19 +119,29 @@ function hasPhrase(haystack: string, phrase: string): boolean {
 const TITLE_BUDGET = 60;
 
 /**
- * Builds a wallpaper's <title> without repeating words it already contains. The title template
- * already ends in "| iPhone Duo Wallpapers", so blindly appending the device family and resolution
- * produced "Neon Cyberpunk City Dual iPhone Wallpaper iPhone Duo Wallpaper — HD 1495x1052", which
- * reads as keyword stuffing and gets truncated in search results.
+ * "Moonlit Halloween Window iPhone Duo Wallpaper" → "Moonlit Halloween Window": the wallpaper's own
+ * name, without the words every title on the site already repeats.
  */
-export function wallpaperPageTitle(title: string, family: string, width: number, height: number): string {
-  let base = hasPhrase(title, "wallpaper") ? title : `${title} Wallpaper`;
-  if (!hasPhrase(base, "iPhone")) base = `${base} for ${family}`;
-  // People do search resolutions ("1320x2868"), but it is only worth the space when the file is big
-  // enough to be a selling point and the title still has room for it.
-  const resolution = ` ${width}×${height}`;
-  if (Math.max(width, height) >= 1920 && base.length + resolution.length <= TITLE_BUDGET) base += resolution;
-  return base;
+export function wallpaperName(title: string): string {
+  const name = title
+    .replace(/\s+[–—|-]\s+(iphone\s+)?(duo\s+)?(iphone\s+)?wallpaper.*$/i, "")
+    .replace(/\s+(dual\s+|duo\s+)?(iphone\s+)?(duo\s+|dual\s+)?(iphone\s+)?wallpaper(\s+for\s+iphone(\s+duo)?)?$/i, "")
+    .trim();
+  return name || title;
+}
+
+/**
+ * `{Name} iPhone Duo Wallpaper 4K`, falling back to shorter forms to stay within what Google shows.
+ * "4K" only when the wallpaper really has a file 3840 px or more on the long edge.
+ */
+export function wallpaperPageTitle(title: string, is4k: boolean): string {
+  const name = wallpaperName(title);
+  const candidates = [
+    `${name} iPhone Duo Wallpaper${is4k ? " 4K" : ""}`,
+    `${name} iPhone Duo Wallpaper`,
+    `${name} Duo Wallpaper`,
+  ];
+  return candidates.find((candidate) => candidate.length <= TITLE_BUDGET) ?? name;
 }
 
 /**

@@ -14,7 +14,6 @@ import { fill } from "@/lib/i18n/en";
 import { buildMetadata, localizedArticleJsonLd } from "@/lib/seo";
 import { formatDate, readingMinutes, slugify } from "@/lib/utils";
 
-export const instant = false;
 
 export function generateStaticParams() {
   return FOREIGN_LOCALES.flatMap((lang) => localeContent(lang).guides.map((guide) => ({ lang, slug: guide.slug })));

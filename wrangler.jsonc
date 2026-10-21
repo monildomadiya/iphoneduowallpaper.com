@@ -1,0 +1,45 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "iphoneduowallpaper",
+  "account_id": "9ea9f7f0dd667999f251ce12b766c775",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-10-21",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "workers_dev": true,
+  "routes": [
+    { "pattern": "iphoneduowallpaper.com/*", "zone_name": "iphoneduowallpaper.com" },
+    { "pattern": "www.iphoneduowallpaper.com/*", "zone_name": "iphoneduowallpaper.com" }
+  ],
+  "minify": true,
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "services": [
+    { "binding": "WORKER_SELF_REFERENCE", "service": "iphoneduowallpaper" }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "NEXT_INC_CACHE_R2_BUCKET",
+      "bucket_name": "iphoneduowallpaper-next-cache"
+    }
+  ],
+  "durable_objects": {
+    "bindings": [
+      { "name": "NEXT_CACHE_DO_QUEUE", "class_name": "DOQueueHandler" },
+      { "name": "NEXT_TAG_CACHE_DO_SHARDED", "class_name": "DOShardedTagCache" }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["DOQueueHandler", "DOShardedTagCache"]
+    }
+  ],
+  "vars": {
+    "NEXT_PUBLIC_SITE_URL": "https://iphoneduowallpaper.com",
+    "NEXT_PUBLIC_R2_PUBLIC_URL": "https://images.iphoneduowallpaper.com",
+    "R2_BUCKET": "iphoneduowallpaper"
+  },
+  "observability": { "enabled": true }
+}

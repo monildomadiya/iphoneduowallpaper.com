@@ -4,6 +4,7 @@ export const TR_LISTING: ListingStrings = {
   countOne: "{n} duvar kağıdı",
   countMany: "{n} duvar kağıdı",
   page: " · Sayfa {p}/{t}",
+  pageTitle: "Sayfa {n}",
   latest: "En yeniler",
   popular: "En çok indirilenler",
   sortLabel: "Duvar kağıtlarını sırala",
@@ -48,8 +49,8 @@ export const TR_TAXONOMY: TaxonomyStrings = {
   },
   categoryEyebrow: "Kategori",
   categories: {
-    "anime-4k": {
-      name: "Anime 4K",
+    anime: {
+      name: "Anime",
       h1: "Anime duvar kağıtları",
       title: "iPhone Duo Anime Duvar Kağıtları — Karanlık ve Sinematik",
       description:

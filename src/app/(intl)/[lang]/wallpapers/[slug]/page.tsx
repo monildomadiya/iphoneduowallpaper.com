@@ -1,10 +1,11 @@
-import { Check, CircleAlert, Download, Expand, Flag, Info, WandSparkles } from "lucide-react";
+import { Check, CircleAlert, Flag, Info, WandSparkles } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AdSlot } from "@/components/ads/ad-slot";
 import { Breadcrumbs, JsonLd, SectionHeading } from "@/components/ui/primitives";
-import { ShareButton, ViewTracker } from "@/components/wallpaper/client-actions";
+import { ViewTracker } from "@/components/wallpaper/client-actions";
+import { DownloadPanel, NativeFitList } from "@/components/wallpaper/download-panel";
 import { WallpaperGrid } from "@/components/wallpaper/wallpaper-card";
 import { WallpaperPreview } from "@/components/wallpaper/wallpaper-preview";
 import { getSiteSettings } from "@/lib/data/settings";
@@ -17,11 +18,11 @@ import { categoryCopy, categoryHref, deviceCopy, deviceHref } from "@/lib/i18n/t
 import { translatedWallpaperSlugs, wallpaperTranslation } from "@/lib/i18n/wallpapers";
 import { buildMetadata, wallpaperJsonLd } from "@/lib/seo";
 import { mockupDate } from "@/lib/site";
+import type { WallpaperDetail } from "@/lib/types";
 import { absoluteUrl, cn, formatBytes, formatDate, imageUrl, qualityLabel, screenFit, truncate } from "@/lib/utils";
 import { screenFitDetail } from "@/lib/wallpaper-copy";
 
 // Renders on the server before responding so untranslated slugs return a real 404 status.
-export const instant = false;
 
 export function generateStaticParams() {
   return FOREIGN_LOCALES.flatMap((lang) => translatedWallpaperSlugs(lang).slice(0, 12).map((slug) => ({ lang, slug })));
@@ -29,10 +30,22 @@ export function generateStaticParams() {
 
 const MAX_TITLE = 60;
 
-function pageTitle(title: string, suffix: string, shortSuffix: string) {
-  if (title.length + suffix.length <= MAX_TITLE) return `${title}${suffix}`;
-  if (title.length + shortSuffix.length <= MAX_TITLE) return `${title}${shortSuffix}`;
-  return title;
+/** "{title} — Fondo de Pantalla iPhone Duo 4K", shortened until it fits; 4K only with a 4K file. */
+function pageTitle(title: string, suffix: string, shortSuffix: string, is4k: boolean) {
+  const candidates = [
+    ...(is4k ? [`${title}${suffix} 4K`, `${title}${shortSuffix} 4K`] : []),
+    `${title}${suffix}`,
+    `${title}${shortSuffix}`,
+  ];
+  return candidates.find((candidate) => candidate.length <= MAX_TITLE) ?? title;
+}
+
+/** The per-screen crops the preview mockups show, once they are built. */
+function previewSources(wallpaper: { variants: WallpaperDetail["variants"] }) {
+  const files = wallpaper.variants?.files;
+  if (!files) return undefined;
+  const url = (key?: string) => (key ? imageUrl(key) : undefined);
+  return { "duo-outer": url(files.outer?.preview), "duo-inner": url(files.inner?.preview), pro: url(files["pro-max"]?.preview) };
 }
 
 async function load(lang: string, slug: string) {
@@ -50,16 +63,16 @@ export async function generateMetadata({ params }: PageProps<"/[lang]/wallpapers
   const { translation, wallpaper, content } = found;
   const t = content.wallpaper;
   return buildMetadata({
-    title: pageTitle(translation.title, t.suffix, t.shortSuffix),
+    title: pageTitle(translation.title, t.suffix, t.shortSuffix, Boolean(wallpaper.variants?.files["4k"])),
     absoluteTitle: true,
     description: truncate(translation.description, 155),
     path: `/${found.lang}/wallpapers/${wallpaper.slug}`,
     languages: languageAlternates(`/wallpapers/${wallpaper.slug}`),
     locale: content.ogLocale,
     image: {
-      url: imageUrl(wallpaper.preview_key),
-      width: 1080,
-      height: Math.round((1080 * wallpaper.height) / wallpaper.width),
+      url: imageUrl(wallpaper.variants?.files.inner?.preview ?? wallpaper.preview_key),
+      width: wallpaper.variants ? 1335 : 1080,
+      height: wallpaper.variants ? 939 : Math.round((1080 * wallpaper.height) / wallpaper.width),
       alt: `${translation.title} — ${t.kicker}`,
     },
   });
@@ -95,13 +108,23 @@ export default async function LocalizedWallpaperPage({ params }: PageProps<"/[la
   const categoryName = wallpaper.category
     ? (categoryCopy(locale, wallpaper.category.slug)?.name ?? t.categories[wallpaper.category.slug] ?? wallpaper.category.name)
     : null;
+  const { variants } = wallpaper;
+  const master = variants?.files["4k"];
+  const deviceName = (device: string, fallback: string) => deviceCopy(locale, device)?.name ?? t.devices[device] ?? fallback;
   const details = [
     {
       label: t.labels.resolution,
-      value: `${wallpaper.width} × ${wallpaper.height} px (${qualityLabel(wallpaper.width, wallpaper.height)})`,
+      value: master
+        ? `${master.width} × ${master.height} px (${
+            variants.upscaled ? fill(t.files.upscaled, { q: "4K", w: wallpaper.width, h: wallpaper.height }) : "4K"
+          })`
+        : `${wallpaper.width} × ${wallpaper.height} px (${qualityLabel(wallpaper.width, wallpaper.height)})`,
     },
     { label: t.labels.orientation, value: localizedOrientation(wallpaper.width, wallpaper.height, t) },
-    { label: t.labels.file, value: `${formatLabel(wallpaper.mime_type)} · ${formatBytes(wallpaper.file_size)}` },
+    {
+      label: t.labels.file,
+      value: master ? `JPG · ${formatBytes(master.bytes)}` : `${formatLabel(wallpaper.mime_type)} · ${formatBytes(wallpaper.file_size)}`,
+    },
     { label: t.labels.published, value: formatDate(wallpaper.published_at ?? wallpaper.created_at, undefined, locale) },
     { label: t.labels.downloads, value: wallpaper.downloads.toLocaleString(locale) },
     { label: t.labels.source, value: t.source[wallpaper.source_type] },
@@ -139,6 +162,7 @@ export default async function LocalizedWallpaperPage({ params }: PageProps<"/[la
           <div className="lg:sticky lg:top-20 lg:self-start">
             <WallpaperPreview
               src={imageUrl(wallpaper.preview_key)}
+              sources={previewSources(wallpaper)}
               alt={`${translation.title} — ${t.kicker}, ${wallpaper.width}×${wallpaper.height}`}
               color={wallpaper.dominant_color}
               width={wallpaper.width}
@@ -159,31 +183,22 @@ export default async function LocalizedWallpaperPage({ params }: PageProps<"/[la
             </p>
             <h1 className="headline-page mt-2 text-balance">{translation.title}</h1>
             <p className="mt-3 text-[17px] text-fg-2">
-              {wallpaper.width} × {wallpaper.height} · {formatBytes(wallpaper.file_size)} · {downloads}
+              {master ? `4K · ${master.width} × ${master.height}` : `${wallpaper.width} × ${wallpaper.height}`} · {downloads}
             </p>
             <p className="mt-5 text-[17px] leading-7 text-fg-2">{translation.description}</p>
 
-            <div className="mt-8 flex flex-wrap gap-3">
-              <a href={`/api/download/${wallpaper.id}`} rel="nofollow" className="btn-primary h-12 min-w-[220px] flex-1">
-                <Download className="size-[18px]" />
-                {t.download}
-                <span className="font-normal opacity-80">· {formatBytes(wallpaper.file_size)}</span>
-              </a>
-              <a
-                href={`/api/download/${wallpaper.id}?mode=view`}
-                rel="nofollow noopener"
-                target="_blank"
-                className="btn-secondary h-12"
-              >
-                <Expand className="size-[18px]" />
-                {t.viewFull}
-              </a>
-              <ShareButton
-                title={translation.title}
-                path={path}
-                labels={{ share: t.share, copied: t.copied, copyFailed: t.copyFailed, aria: t.share }}
-              />
-            </div>
+            <DownloadPanel
+              wallpaper={wallpaper}
+              title={translation.title}
+              path={path}
+              labels={{
+                download: t.download,
+                viewFull: t.viewFull,
+                share: { share: t.share, copied: t.copied, copyFailed: t.copyFailed, aria: t.share },
+                files: t.files,
+                deviceName,
+              }}
+            />
             <Link
               href={`/${locale}/maker?wallpaper=${wallpaper.slug}`}
               rel="nofollow"
@@ -211,30 +226,39 @@ export default async function LocalizedWallpaperPage({ params }: PageProps<"/[la
             {devices.length ? (
               <section className="mt-8 rounded-[24px] bg-surface p-5 md:p-6">
                 <h2 className="text-[19px] font-semibold tracking-tight">{t.fit}</h2>
-                <ul className="mt-3 divide-y divide-line">
-                  {devices.map((device) => {
-                    const fit = screenFit(wallpaper.width, wallpaper.height, device.width, device.height);
-                    const style = FIT_STYLES[fit.level];
-                    const Icon = style.icon;
-                    return (
-                      <li key={device.id} className="flex items-center justify-between gap-4 py-3">
-                        <div className="min-w-0">
-                          <Link href={deviceHref(device.slug, locale)} className="block truncate text-[15px] font-medium hover:text-link">
-                            {deviceCopy(locale, device.slug)?.name ?? t.devices[device.slug] ?? device.name}
-                          </Link>
-                          <p className="text-[13px] text-fg-3">
-                            {device.width} × {device.height} px ·{" "}
-                            {localizedFitNote(screenFitDetail(wallpaper.width, wallpaper.height, device), t, locale)}
-                          </p>
-                        </div>
-                        <span className={cn("inline-flex shrink-0 items-center gap-1 text-[13px] font-medium", style.className)}>
-                          <Icon className="size-4" />
-                          {t.levels[fit.level]}
-                        </span>
-                      </li>
-                    );
-                  })}
-                </ul>
+                {variants ? (
+                  <NativeFitList
+                    variants={variants}
+                    files={t.files}
+                    deviceName={deviceName}
+                    deviceHref={(device) => deviceHref(device, locale)}
+                  />
+                ) : (
+                  <ul className="mt-3 divide-y divide-line">
+                    {devices.map((device) => {
+                      const fit = screenFit(wallpaper.width, wallpaper.height, device.width, device.height);
+                      const style = FIT_STYLES[fit.level];
+                      const Icon = style.icon;
+                      return (
+                        <li key={device.id} className="flex items-center justify-between gap-4 py-3">
+                          <div className="min-w-0">
+                            <Link href={deviceHref(device.slug, locale)} className="block truncate text-[15px] font-medium hover:text-link">
+                              {deviceName(device.slug, device.name)}
+                            </Link>
+                            <p className="text-[13px] text-fg-3">
+                              {device.width} × {device.height} px ·{" "}
+                              {localizedFitNote(screenFitDetail(wallpaper.width, wallpaper.height, device), t, locale)}
+                            </p>
+                          </div>
+                          <span className={cn("inline-flex shrink-0 items-center gap-1 text-[13px] font-medium", style.className)}>
+                            <Icon className="size-4" />
+                            {t.levels[fit.level]}
+                          </span>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
               </section>
             ) : null}
 

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Suspense } from "react";
 import { PostCard } from "@/components/site/tiles";
 import { EmptyState, JsonLd, PageHeader, Pagination } from "@/components/ui/primitives";
@@ -60,6 +61,11 @@ export default function BlogPage({ searchParams }: PageProps<"/blog">) {
         description="Everything you need to make your iPhone Duo look its best — from exact screen sizes to Lock Screen customization."
       />
       <section className="container-apple">
+        <aside className="mb-8 rounded-[24px] border border-line bg-surface p-6">
+          <h2 className="text-xl font-semibold">Check your wallpaper before you download</h2>
+          <p className="mt-2 max-w-2xl text-fg-2">Estimate cropping and enlargement, compare original and screen-size files, and solve common download problems.</p>
+          <Link href="/wallpaper-help" className="link-apple mt-4 inline-block">Open the fit calculator &amp; download guide</Link>
+        </aside>
         <Suspense
           fallback={
             <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3" aria-hidden="true">

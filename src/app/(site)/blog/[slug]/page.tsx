@@ -17,7 +17,6 @@ import { categoryGuide } from "@/lib/site";
 import { formatDate, imageUrl, readingMinutes, slugify, stripMarkdown, truncate } from "@/lib/utils";
 
 // Renders on the server before responding so unknown slugs return a real 404 status (better for SEO).
-export const instant = false;
 
 export async function generateStaticParams() {
   const slugs = await getPrerenderPostSlugs();

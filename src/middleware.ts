@@ -1,7 +1,9 @@
 import type { NextRequest } from "next/server";
 import { updateSession } from "@/lib/supabase/proxy";
 
-export async function proxy(request: NextRequest) {
+// Next.js prefers proxy.ts, but OpenNext currently requires Edge Middleware.
+// Keep session refresh and the admin guard enabled on both hosting targets.
+export async function middleware(request: NextRequest) {
   return updateSession(request);
 }
 

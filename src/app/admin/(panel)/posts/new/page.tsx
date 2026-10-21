@@ -4,7 +4,6 @@ import { AdminHeader } from "@/components/admin/ui";
 import { requireAdmin } from "@/lib/auth";
 
 // Admin screens read the session cookie, so they are allowed to block.
-export const instant = false;
 
 export const metadata: Metadata = { title: "New article" };
 

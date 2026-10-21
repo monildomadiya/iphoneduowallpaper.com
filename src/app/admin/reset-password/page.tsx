@@ -5,7 +5,6 @@ import { AuthShell } from "@/components/admin/auth-shell";
 import { getCurrentAdmin } from "@/lib/auth";
 
 // Admin screens read the session cookie, so they are allowed to block.
-export const instant = false;
 
 export const metadata: Metadata = { title: "Choose a new password" };
 

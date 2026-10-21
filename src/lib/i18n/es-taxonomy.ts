@@ -4,6 +4,7 @@ export const ES_LISTING: ListingStrings = {
   countOne: "{n} fondo",
   countMany: "{n} fondos",
   page: " · Página {p} de {t}",
+  pageTitle: "Página {n}",
   latest: "Recientes",
   popular: "Más descargados",
   sortLabel: "Ordenar fondos",
@@ -48,8 +49,8 @@ export const ES_TAXONOMY: TaxonomyStrings = {
   },
   categoryEyebrow: "Categoría",
   categories: {
-    "anime-4k": {
-      name: "Anime 4K",
+    anime: {
+      name: "Anime",
       h1: "Fondos de anime",
       title: "Fondos de Anime para iPhone Duo — Oscuros y Cinematográficos",
       description:

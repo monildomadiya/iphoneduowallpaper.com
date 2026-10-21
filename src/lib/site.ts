@@ -33,6 +33,7 @@ export const FOOTER_NAV: { title: string; links: { href: string; label: string }
     links: [
       { href: "/wallpapers", label: "All Wallpapers" },
       { href: "/wallpapers?sort=popular", label: "Most Downloaded" },
+      { href: "/wallpapers/all", label: "A–Z Wallpaper Index" },
       { href: "/categories", label: "Categories" },
       { href: "/maker", label: "Wallpaper Maker" },
       { href: "/search", label: "Search" },
@@ -50,6 +51,7 @@ export const FOOTER_NAV: { title: string; links: { href: string; label: string }
   {
     title: "Resources",
     links: [
+      { href: "/wallpaper-help", label: "Wallpaper Fit & Download Help" },
       { href: "/blog", label: "Guides & Tips" },
       { href: "/blog/official-iphone-duo-wallpaper", label: "Official iPhone Duo Wallpaper" },
       { href: "/blog/iphone-duo-wallpaper-sizes-explained", label: "Wallpaper Sizes" },
@@ -75,7 +77,7 @@ type GuideLink = { href: string; label: string };
 
 /** The guide that goes deepest on each category, linked from the category and its wallpapers. */
 const CATEGORY_GUIDES: Record<string, GuideLink> = {
-  "anime-4k": {
+  anime: {
     href: "/blog/anime-wallpapers-iphone-lock-screen",
     label: "How to pick anime art that works on a Lock Screen",
   },
@@ -127,18 +129,26 @@ export function wallpaperGuide(categorySlug: string | null | undefined, tags: st
 }
 
 /**
- * Search Console shows "iphone duo wallpaper" bringing most impressions and "iPhone 18 Duo" as the
- * next way people name the phone — and no searches at all for the iPhone 18 Pro angle the title used
- * to lead with. The site name already is the main phrase. "4K" stays out until the library has 4K
- * files: every wallpaper is about 1495 × 1052, and a title that promises more than the download sends
- * people straight back to the results.
+ * "iphone duo wallpaper 4k" is the query that brings the most clicks, and "4K" the modifier that
+ * converts best — but only once the files are 4K (see `isLibrary4k`); a title that promises more
+ * than the download sends people straight back to the results.
  */
-export function homeTitle(siteName: string): string {
-  return `${siteName} HD — Free iPhone 18 Duo Downloads`;
+export function homeTitle(siteName: string, is4k = false): string {
+  return is4k ? "iPhone Duo Wallpapers 4K — Free Inner & Outer Display Downloads" : `${siteName} HD — Free iPhone 18 Duo Downloads`;
 }
 
 export const HOME_DESCRIPTION =
   "Download free HD iPhone Duo wallpapers for the 7.6-inch inner and 5.4-inch outer displays of the foldable iPhone 18 Duo. No app, no sign-up.";
+
+export const HOME_DESCRIPTION_4K =
+  "Free 4K iPhone Duo (iPhone 18 Duo / iPhone Fold) wallpapers in native sizes: 1398×2034 outer and 2670×1878 inner display. Ready-made pairs, no sign-up.";
+
+/** The screen sizes people search for, shown under the home page heading. */
+export const SIZE_STRIP = [
+  { label: "Outer", size: "1398 × 2034" },
+  { label: "Inner", size: "2670 × 1878" },
+  { label: "iPhone 18 Pro Max", size: "1320 × 2868" },
+];
 
 /** duowallpaper.org ranks a maker page; people search "iphone duo wallpaper maker" and "make iphone duo wallpaper". */
 export const MAKER_TITLE = "iPhone Duo Wallpaper Maker — Free Outer & Inner Crops";
@@ -178,6 +188,17 @@ export const MAKER_FAQ = [
       "Save both files to Photos, then touch and hold the Lock Screen, tap +, choose Photos and pick the file for that screen. Our guide to setting a wallpaper on iPhone walks through every step.",
   },
 ];
+
+const FAQ_4K_HD =
+  "Not yet — the library is HD for now. Every wallpaper is published at its original resolution, and its page shows the exact pixel size with a quality label (4K is only for files 3840 pixels or more on the long edge) and a fit check for each screen, so you can see how sharp it will be on the 7.6-inch inner display (2670 × 1878) before you download.";
+
+const FAQ_4K_YES =
+  "Yes. Every wallpaper has a 4K master (3840 pixels on the long edge) and ready-made files at the exact native sizes: 1398 × 2034 for the outer display, 2670 × 1878 for the inner display, plus iPhone 18 Pro and Pro Max. Most masters were enlarged from the original artwork with an AI upscaler; each page says so in its details.";
+
+/** The home FAQ, with the 4K answer that matches the library. */
+export function homeFaq(is4k: boolean) {
+  return HOME_FAQ.map((faq) => (faq.question.includes("4K") ? { ...faq, answer: is4k ? FAQ_4K_YES : FAQ_4K_HD } : faq));
+}
 
 export const HOME_FAQ = [
   {

@@ -5,7 +5,6 @@ import { Breadcrumbs, JsonLd, PageHeader } from "@/components/ui/primitives";
 import { guideCard, isForeignLocale, localeContent, localizedPath } from "@/lib/i18n";
 import { buildMetadata, localizedPageJsonLd } from "@/lib/seo";
 
-export const instant = false;
 
 export async function generateMetadata({ params }: PageProps<"/[lang]/blog">): Promise<Metadata> {
   const { lang } = await params;

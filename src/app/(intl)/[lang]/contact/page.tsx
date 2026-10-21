@@ -9,7 +9,6 @@ import { isForeignLocale, languageAlternates, localeContent } from "@/lib/i18n";
 import { fill } from "@/lib/i18n/en";
 import { buildMetadata, localizedPageJsonLd } from "@/lib/seo";
 
-export const instant = false;
 
 export async function generateMetadata({ params }: PageProps<"/[lang]/contact">): Promise<Metadata> {
   const { lang } = await params;

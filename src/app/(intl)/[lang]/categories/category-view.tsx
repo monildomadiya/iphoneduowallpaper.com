@@ -7,11 +7,11 @@ import { WallpaperListing } from "@/components/wallpaper/wallpaper-listing";
 import { localeContent } from "@/lib/i18n";
 import { categoryCopy, categoryHref } from "@/lib/i18n/taxonomy";
 import type { CategoryCopy, ForeignLocale } from "@/lib/i18n/types";
-import { localizedPageJsonLd } from "@/lib/seo";
+import { listingJsonLd } from "@/lib/listing-jsonld";
 import type { Category } from "@/lib/types";
 
 /** A translated category page: the Dark page and every database category share it. */
-export function LocalizedCategoryView({
+export async function LocalizedCategoryView({
   locale,
   slug,
   copy,
@@ -32,10 +32,22 @@ export function LocalizedCategoryView({
 }) {
   const { taxonomy, chrome } = localeContent(locale);
   const path = `/${locale}/categories/${slug}`;
+  const jsonLd = await listingJsonLd({
+    name: copy.title,
+    description: copy.description,
+    path,
+    breadcrumb: [
+      { name: taxonomy.categoriesHub.eyebrow, path: `/${locale}/categories` },
+      { name: copy.name, path },
+    ],
+    query: { categoryId, ids },
+    locale,
+    home: { name: chrome.homeLabel, path: chrome.homeHref },
+  });
 
   return (
     <>
-      <JsonLd data={localizedPageJsonLd({ name: copy.title, description: copy.description, path, inLanguage: locale })} />
+      <JsonLd data={jsonLd} />
       <div className="container-apple pt-6">
         <Breadcrumbs
           items={[

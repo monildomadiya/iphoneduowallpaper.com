@@ -7,24 +7,25 @@ import { DeviceFrame, bestVariantFor } from "@/components/wallpaper/device-frame
 import { WallpaperListing } from "@/components/wallpaper/wallpaper-listing";
 import { getDeviceBySlug, getDevices } from "@/lib/data/taxonomy";
 import { languageAlternates } from "@/lib/i18n";
-import { buildMetadata, faqJsonLd } from "@/lib/seo";
+import { listingJsonLd } from "@/lib/listing-jsonld";
+import { buildMetadata, faqJsonLd, listingPage } from "@/lib/seo";
 import { deviceFaq } from "@/lib/site";
 import { aspectRatioLabel, imageUrl, orientationLabel } from "@/lib/utils";
 
 // Renders on the server before responding so unknown slugs return a real 404 status (better for SEO).
-export const instant = false;
 
 export async function generateStaticParams() {
   const devices = await getDevices();
   return devices.length ? devices.map((device) => ({ slug: device.slug })) : [{ slug: "__placeholder__" }];
 }
 
-export async function generateMetadata({ params }: PageProps<"/devices/[slug]">): Promise<Metadata> {
+export async function generateMetadata({ params, searchParams }: PageProps<"/devices/[slug]">): Promise<Metadata> {
   const { slug } = await params;
   const device = await getDeviceBySlug(slug);
   if (!device) return { title: "Device not found", robots: { index: false, follow: true } };
 
   return buildMetadata({
+    page: await listingPage(searchParams),
     // "1320x2868" is how people type resolutions into search.
     title: device.seo_title || `${device.name} Wallpapers ${device.width}x${device.height} — Free HD`,
     description:
@@ -50,6 +51,17 @@ export default async function DevicePage({ params, searchParams }: PageProps<"/d
     { label: "Orientation", value: orientationLabel(device.width, device.height) },
   ];
   const faqs = deviceFaq(device);
+  const path = `/devices/${device.slug}`;
+  const jsonLd = await listingJsonLd({
+    name: `${device.name} Wallpapers`,
+    description: device.description ?? `Wallpapers for the ${device.width} × ${device.height} ${device.name} screen.`,
+    path,
+    breadcrumb: [
+      { name: "Devices", path: "/devices" },
+      { name: device.name, path },
+    ],
+    query: { deviceId: device.id },
+  });
 
   return (
     <>
@@ -103,7 +115,7 @@ export default async function DevicePage({ params, searchParams }: PageProps<"/d
           <FaqList faqs={faqs} />
         </div>
       </section>
-      <JsonLd data={faqJsonLd(faqs)} />
+      <JsonLd data={[jsonLd, faqJsonLd(faqs)]} />
     </>
   );
 }

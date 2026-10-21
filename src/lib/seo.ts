@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { getSiteSettings } from "@/lib/data/settings";
 import { siteUrl } from "@/lib/env";
 import type { Post, SiteSettings, WallpaperDetail } from "@/lib/types";
-import { absoluteUrl, imageUrl, stripMarkdown, truncate } from "@/lib/utils";
+import { absoluteUrl, clampPage, imageUrl, stripMarkdown, truncate } from "@/lib/utils";
 import { wallpaperOverview } from "@/lib/wallpaper-copy";
 
 const MAX_TITLE = 60;
@@ -24,9 +24,42 @@ interface MetadataInput {
   languages?: Record<string, string>;
   /** Open Graph locale of a translated page; en_US otherwise. */
   locale?: string;
+  /** Page of a paginated listing. Page 2+ is its own page: own canonical, title and hreflang. */
+  page?: number;
+  /** How the page number reads in this language, with {n} for the number: "Page {n}" by default. */
+  pageLabel?: string;
 }
 
-export async function buildMetadata(input: MetadataInput): Promise<Metadata> {
+/** Reads `?page=` the way the listing does, for metadata that has to match it. */
+export async function listingPage(searchParams: Promise<Record<string, string | string[] | undefined>>): Promise<number> {
+  const value = (await searchParams).page;
+  return clampPage(Array.isArray(value) ? value[0] : value);
+}
+
+/**
+ * Page 2+ of a listing used to canonicalise to page 1, which told Google to drop it — and with it
+ * the only links to most wallpapers. Each page now stands on its own; `?sort=` is left out, since
+ * a sorted page lists the same wallpapers as the default order.
+ */
+function paginate(input: MetadataInput): MetadataInput {
+  const page = input.page ?? 1;
+  if (page <= 1) return input;
+  const label = (input.pageLabel ?? "Page {n}").replace("{n}", String(page));
+  const withPage = (url: string) => `${url}${url.includes("?") ? "&" : "?"}page=${page}`;
+  return {
+    ...input,
+    // The tail after the last dash ("— Free HD Downloads") is what gives way to the page number.
+    title: `${input.title.replace(/\s+[—–]\s+[^—–]*$/, "")} — ${label}`,
+    description: `${label}: ${input.description}`,
+    path: withPage(input.path),
+    languages: input.languages
+      ? Object.fromEntries(Object.entries(input.languages).map(([lang, url]) => [lang, withPage(url)]))
+      : undefined,
+  };
+}
+
+export async function buildMetadata(rawInput: MetadataInput): Promise<Metadata> {
+  const input = paginate(rawInput);
   const settings = await getSiteSettings();
   const url = absoluteUrl(input.path);
   // Google cuts snippets at roughly 160 characters; anything past that never shows.
@@ -140,19 +173,25 @@ export function breadcrumbJsonLd(items: { name: string; path: string }[]): JsonL
   };
 }
 
+/**
+ * The wallpaper as a licensable image: the 4K master when there is one (the largest file, and the
+ * one "View full size" opens), with the license fields Google Images needs for its "Licensable" badge.
+ */
 export function wallpaperJsonLd(wallpaper: WallpaperDetail, settings: SiteSettings): JsonLd {
   const credit = wallpaper.credit_name || settings.site_name;
+  const master = wallpaper.variants?.files["4k"];
+  const image = master ?? { key: wallpaper.original_key, width: wallpaper.width, height: wallpaper.height };
   return {
     "@context": "https://schema.org",
     "@type": "ImageObject",
     name: wallpaper.title,
     description: wallpaper.description || wallpaperOverview(wallpaper)[0],
-    contentUrl: imageUrl(wallpaper.original_key),
+    contentUrl: imageUrl(image.key),
     thumbnailUrl: imageUrl(wallpaper.thumb_key),
     url: absoluteUrl(`/wallpapers/${wallpaper.slug}`),
-    width: { "@type": "QuantitativeValue", value: wallpaper.width, unitCode: "E37" },
-    height: { "@type": "QuantitativeValue", value: wallpaper.height, unitCode: "E37" },
-    encodingFormat: wallpaper.mime_type,
+    width: { "@type": "QuantitativeValue", value: image.width, unitCode: "E37" },
+    height: { "@type": "QuantitativeValue", value: image.height, unitCode: "E37" },
+    encodingFormat: master ? "image/jpeg" : wallpaper.mime_type,
     uploadDate: wallpaper.published_at ?? wallpaper.created_at,
     keywords: wallpaper.tags.join(", ") || undefined,
     creditText: credit,
@@ -290,7 +329,11 @@ export function collectionPageJsonLd(input: {
   description: string;
   path: string;
   breadcrumb: { name: string; path: string }[];
-  items?: { name: string; path: string }[];
+  items?: { name: string; path: string; image?: string }[];
+  /** Translated pages: their language and their name for the home page. */
+  inLanguage?: string;
+  homeName?: string;
+  homePath?: string;
 }): JsonLd {
   const items = input.items ?? [];
   return {
@@ -300,9 +343,9 @@ export function collectionPageJsonLd(input: {
     name: input.name,
     description: input.description,
     url: absoluteUrl(input.path),
-    inLanguage: "en-US",
+    inLanguage: input.inLanguage ?? "en-US",
     isPartOf: { "@id": WEBSITE_ID },
-    breadcrumb: breadcrumbJsonLd([{ name: "Home", path: "/" }, ...input.breadcrumb]),
+    breadcrumb: breadcrumbJsonLd([{ name: input.homeName ?? "Home", path: input.homePath ?? "/" }, ...input.breadcrumb]),
     ...(items.length
       ? {
           mainEntity: {
@@ -313,6 +356,7 @@ export function collectionPageJsonLd(input: {
               position: index + 1,
               url: absoluteUrl(item.path),
               name: item.name,
+              ...(item.image ? { image: item.image } : {}),
             })),
           },
         }

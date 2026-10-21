@@ -8,7 +8,6 @@ import { categoryCopy, categoryHref } from "@/lib/i18n/taxonomy";
 import { buildMetadata, collectionPageJsonLd } from "@/lib/seo";
 import { stockedFirst } from "@/lib/utils";
 
-export const instant = false;
 
 export async function generateMetadata({ params }: PageProps<"/[lang]/categories">): Promise<Metadata> {
   const { lang } = await params;

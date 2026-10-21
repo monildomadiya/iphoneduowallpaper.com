@@ -4,10 +4,10 @@ A fast, Apple-inspired wallpaper website for **iPhone Duo** (outer 1398 × 2034 
 
 | Layer | Technology |
 | --- | --- |
-| Web app | Next.js 16 (App Router, Cache Components, Server Actions), React 19, Tailwind CSS 4 |
+| Web app | Next.js 16 (App Router, Data Cache, Server Actions), React 19, Tailwind CSS 4 |
 | Database & auth | Supabase (Postgres + Row Level Security + Auth) |
 | Image storage & CDN | Cloudflare R2 (direct browser uploads via presigned URLs) |
-| Hosting | Render (Node web service) |
+| Hosting | Cloudflare Workers (OpenNext), or Render (Node web service) |
 
 ---
 
@@ -69,7 +69,21 @@ Open <http://localhost:3000> and sign in at <http://localhost:3000/admin>.
 
 Useful scripts: `npm run build`, `npm run start`, `npm run lint`, `npm run typecheck`.
 
-## 4. Deploy to Render
+## 4. Deploy to Cloudflare Workers
+
+See [`cloudflare/README.md`](cloudflare/README.md) for Workers setup, GitHub build settings,
+runtime secrets, the required database migration, and free-plan constraints.
+
+```bash
+npm run build:cloudflare
+npm run preview
+npm run deploy
+```
+
+Workers builds generate device crops on the workstation with `npm run variants -- build --stale`.
+Native Sharp processing remains automatic when using Node hosting.
+
+### Alternative: deploy to Render
 
 1. Push this project to a GitHub repository.
 2. In Render choose **New → Blueprint** and select the repository ([`render.yaml`](render.yaml) is included), or create a **Web Service** manually:
@@ -135,11 +149,11 @@ src/
     sitemap.ts, robots.ts, manifest.ts, opengraph-image.tsx
   components/        site, wallpaper, admin and ads components
   lib/
-    data/            cached public queries ("use cache" + tags)
+    data/            public queries cached with unstable_cache + mutation tags
     admin/           admin queries, slug helpers, browser image pipeline
     supabase/        public, server (session), service and proxy clients
     r2.ts            presigned uploads/downloads for Cloudflare R2
-  proxy.ts           refreshes the Supabase session and protects /admin
+  middleware.ts      refreshes the Supabase session and protects /admin (OpenNext-compatible Edge Middleware)
 supabase/            SQL schema (tables, RLS, views, functions) and seed data
 cloudflare/          R2 CORS policy
 scripts/             create-admin
@@ -148,7 +162,7 @@ android/             native Kotlin + Compose admin app
 
 ## How caching works
 
-Public data is cached with Next.js Cache Components (`"use cache"`, `cacheLife`, `cacheTag`). Every admin change calls `updateTag(...)`, so visitors see updates on their next page view, while untouched pages are served from cache in milliseconds.
+Public database results use the Next.js Data Cache (`unstable_cache`) with a 60-second revalidation period and tags. Every admin change expires its tags, so visitors see updated content on their next page view. Cache Components is disabled because its timer-based rendering can hang dynamic requests on Workers.
 
 ## Troubleshooting
 

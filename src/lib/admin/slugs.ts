@@ -2,6 +2,8 @@ import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { slugify } from "@/lib/utils";
 
+const RESERVED_WALLPAPER_SLUGS = new Set(["all"]);
+
 /** Returns a slug that is not used by another row: "aurora", "aurora-2", "aurora-3"… */
 export async function uniqueSlug(
   supabase: SupabaseClient,
@@ -9,7 +11,9 @@ export async function uniqueSlug(
   source: string,
   excludeId?: string,
 ): Promise<string> {
-  const base = slugify(source) || `item-${Date.now().toString(36)}`;
+  const slug = slugify(source) || `item-${Date.now().toString(36)}`;
+  // Static pages that share the /wallpapers/ prefix; a wallpaper can't take their address.
+  const base = table === "wallpapers" && RESERVED_WALLPAPER_SLUGS.has(slug) ? `${slug}-wallpaper` : slug;
   const { data, error } = await supabase.from(table).select("id,slug").like("slug", `${base}%`).limit(500);
   if (error) throw error;
 

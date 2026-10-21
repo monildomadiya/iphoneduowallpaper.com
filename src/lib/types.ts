@@ -1,3 +1,5 @@
+import type { WallpaperVariants } from "@/lib/variants/types";
+
 export type PublishStatus = "draft" | "published";
 export type SourceType = "original" | "ai" | "licensed" | "public_domain";
 export type WallpaperSort = "latest" | "popular";
@@ -99,6 +101,12 @@ export interface WallpaperDetail extends WallpaperCardData {
   created_at: string;
   updated_at: string;
   devices: DeviceSummary[];
+  /** Where the subject sits, 0–1 from the left and top; every device crop is centred on it. */
+  focal_x: number;
+  focal_y: number;
+  /** Per-device files; null until `scripts/build-variants.mjs` or the admin panel has built them. */
+  variants: WallpaperVariants | null;
+  lock_screen_friendly: boolean;
 }
 
 export interface WallpaperAdminRow extends WallpaperDetail {

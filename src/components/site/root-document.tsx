@@ -4,11 +4,12 @@ import { Toaster } from "sonner";
 import { getSiteSettings } from "@/lib/data/settings";
 import { siteUrl } from "@/lib/env";
 import { HOME_DESCRIPTION, homeTitle } from "@/lib/site";
-import "./globals.css";
+import "@/app/globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 
-export async function generateMetadata(): Promise<Metadata> {
+/** Site-wide defaults every page builds on: the title template, the base URL, the AdSense account. */
+export async function rootMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings();
   const description = HOME_DESCRIPTION;
 
@@ -38,7 +39,7 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export const viewport: Viewport = {
+export const rootViewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
@@ -46,9 +47,14 @@ export const viewport: Viewport = {
   colorScheme: "light",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+/**
+ * The <html> element. English, Spanish, Turkish and the admin panel each have a root layout of
+ * their own so every page states its real language: a single shared root said lang="en" on /es
+ * and /tr too, and it can't read the language without making every page render per request.
+ */
+export function RootDocument({ lang, children }: { lang: string; children: React.ReactNode }) {
   return (
-    <html lang="en" className={inter.variable} data-scroll-behavior="smooth">
+    <html lang={lang} className={inter.variable} data-scroll-behavior="smooth">
       <body className="min-h-dvh">
         {children}
         <Toaster position="top-center" richColors closeButton />

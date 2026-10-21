@@ -68,9 +68,12 @@ export function WallpaperPreview({
   color,
   width,
   height,
+  sources,
   labels: t = EN_LABELS,
 }: {
   src: string;
+  /** A file cut to each screen's exact shape; the mockup shows it in place of the full image. */
+  sources?: Partial<Record<DeviceVariant, string>>;
   alt: string;
   color: string;
   width: number;
@@ -98,7 +101,7 @@ export function WallpaperPreview({
         <DeviceFrame
           key={variant}
           variant={variant}
-          src={src}
+          src={sources?.[variant] ?? src}
           alt={alt}
           color={color}
           mode={mode}

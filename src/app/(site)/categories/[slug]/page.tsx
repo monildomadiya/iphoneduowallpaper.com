@@ -3,28 +3,29 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AdSlot } from "@/components/ads/ad-slot";
-import { Breadcrumbs, PageHeader } from "@/components/ui/primitives";
+import { Breadcrumbs, JsonLd, PageHeader } from "@/components/ui/primitives";
 import { WallpaperListing } from "@/components/wallpaper/wallpaper-listing";
 import { getCategories, getCategoryBySlug, getDarkCategory } from "@/lib/data/taxonomy";
 import { languageAlternates } from "@/lib/i18n";
-import { buildMetadata } from "@/lib/seo";
+import { listingJsonLd } from "@/lib/listing-jsonld";
+import { buildMetadata, listingPage } from "@/lib/seo";
 import { categoryGuide } from "@/lib/site";
 import { imageUrl, stockedFirst } from "@/lib/utils";
 
 // Renders on the server before responding so unknown slugs return a real 404 status (better for SEO).
-export const instant = false;
 
 export async function generateStaticParams() {
   const categories = await getCategories();
   return categories.length ? categories.map((category) => ({ slug: category.slug })) : [{ slug: "__placeholder__" }];
 }
 
-export async function generateMetadata({ params }: PageProps<"/categories/[slug]">): Promise<Metadata> {
+export async function generateMetadata({ params, searchParams }: PageProps<"/categories/[slug]">): Promise<Metadata> {
   const { slug } = await params;
   const category = await getCategoryBySlug(slug);
   if (!category) return { title: "Category not found", robots: { index: false, follow: true } };
 
   return buildMetadata({
+    page: await listingPage(searchParams),
     title: category.seo_title || `${category.name} Wallpapers for iPhone Duo — Free HD Downloads`,
     description:
       category.seo_description ||
@@ -46,9 +47,21 @@ export default async function CategoryPage({ params, searchParams }: PageProps<"
   // Lateral links are only worth following when there is something on the other end.
   const others = stockedFirst([dark, ...categories.filter((item) => item.id !== category.id)]).slice(0, 8);
   const guide = categoryGuide(category.slug);
+  const path = `/categories/${category.slug}`;
+  const jsonLd = await listingJsonLd({
+    name: `${category.name} Wallpapers`,
+    description: category.description ?? `${category.name} wallpapers for iPhone Duo.`,
+    path,
+    breadcrumb: [
+      { name: "Categories", path: "/categories" },
+      { name: category.name, path },
+    ],
+    query: { categoryId: category.id },
+  });
 
   return (
     <>
+      <JsonLd data={jsonLd} />
       <div className="container-apple pt-6">
         <Breadcrumbs
           items={[

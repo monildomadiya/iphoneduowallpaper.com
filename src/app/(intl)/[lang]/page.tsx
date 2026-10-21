@@ -9,24 +9,24 @@ import { JsonLd, SectionHeading } from "@/components/ui/primitives";
 import { DeviceFrame } from "@/components/wallpaper/device-frame";
 import { WallpaperCard, WallpaperGrid } from "@/components/wallpaper/wallpaper-card";
 import { getCategories, getDarkCategory } from "@/lib/data/taxonomy";
-import { listWallpapers } from "@/lib/data/wallpapers";
+import { isLibrary4k, listWallpapers } from "@/lib/data/wallpapers";
 import { guideCard, isForeignLocale, languageAlternates, localeContent, localizedPath } from "@/lib/i18n";
 import { fill } from "@/lib/i18n/en";
 import { wallpaperHref } from "@/lib/i18n/wallpapers";
 import { buildMetadata, faqJsonLd, localizedPageJsonLd } from "@/lib/seo";
-import { mockupDate } from "@/lib/site";
+import { SIZE_STRIP, mockupDate } from "@/lib/site";
 import { formatNumber, imageUrl, stockedFirst } from "@/lib/utils";
 
-export const instant = false;
 
 export async function generateMetadata({ params }: PageProps<"/[lang]">): Promise<Metadata> {
   const { lang } = await params;
   if (!isForeignLocale(lang)) return {};
   const { home, ogLocale } = localeContent(lang);
+  const is4k = await isLibrary4k();
   return buildMetadata({
-    title: home.title,
+    title: is4k ? home.fourK.title : home.title,
     absoluteTitle: true,
-    description: home.description,
+    description: is4k ? home.fourK.description : home.description,
     path: localizedPath(lang, "/"),
     languages: languageAlternates("/"),
     locale: ogLocale,
@@ -37,14 +37,22 @@ export default async function LocalizedHomePage({ params }: PageProps<"/[lang]">
   const { lang } = await params;
   if (!isForeignLocale(lang)) notFound();
   const content = localeContent(lang);
-  const { home } = content;
-
-  const [featured, latest, categories, dark] = await Promise.all([
+  const [featured, latest, categories, dark, is4k] = await Promise.all([
     listWallpapers({ featured: true, perPage: 12 }),
-    listWallpapers({ perPage: 15 }),
+    listWallpapers({ perPage: 24 }),
     getCategories(),
     getDarkCategory(),
+    isLibrary4k(),
   ]);
+  // Once the library is 4K, its 4K wording replaces the HD lines field by field.
+  const home = is4k
+    ? {
+        ...content.home,
+        ...content.home.fourK,
+        stats: { ...content.home.stats, fullResolution: content.home.fourK.fullResolution },
+        faq: content.home.faq.map((faq) => (faq.question.includes("4K") ? { ...faq, answer: content.home.fourK.faqAnswer } : faq)),
+      }
+    : content.home;
   const showcase = featured.items.length ? featured.items : latest.items;
   const outer = showcase.find((item) => item.height > item.width) ?? showcase[0] ?? null;
   const inner = showcase.find((item) => item.width >= item.height && item.id !== outer?.id) ?? outer;
@@ -85,6 +93,21 @@ export default async function LocalizedHomePage({ params }: PageProps<"/[lang]">
           <p className="mx-auto mt-5 max-w-2xl text-pretty text-[19px] leading-7 text-fg-2 md:text-[23px] md:leading-8">
             {home.intro}
           </p>
+          <ul className="mx-auto mt-5 flex max-w-2xl flex-wrap items-center justify-center gap-x-2 gap-y-1 text-[14px] text-fg-2">
+            {SIZE_STRIP.map((item, index) => (
+              <li key={item.label} className="flex items-center gap-2">
+                {index ? <span aria-hidden="true" className="text-fg-3">·</span> : null}
+                <span>
+                  {item.label === "Outer"
+                    ? content.wallpaper.preview.outer
+                    : item.label === "Inner"
+                      ? content.wallpaper.preview.inner
+                      : item.label}{" "}
+                  <span className="font-semibold tabular-nums text-fg">{item.size}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-4">
             <Link href={`/${lang}/wallpapers`} className="btn-primary">
               {home.browse}

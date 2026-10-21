@@ -14,7 +14,6 @@ import { buildMetadata, faqJsonLd, webApplicationJsonLd } from "@/lib/seo";
 import { mockupDate } from "@/lib/site";
 import { imageUrl } from "@/lib/utils";
 
-export const instant = false;
 
 export async function generateMetadata({ params }: PageProps<"/[lang]/maker">): Promise<Metadata> {
   const { lang } = await params;

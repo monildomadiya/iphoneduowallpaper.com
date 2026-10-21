@@ -8,7 +8,6 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { clampPage } from "@/lib/utils";
 
 // Admin screens read the session cookie, so they are allowed to block.
-export const instant = false;
 
 export const metadata: Metadata = { title: "Messages" };
 

@@ -7,7 +7,6 @@ import { getCurrentAdmin } from "@/lib/auth";
 import { isSupabaseConfigured } from "@/lib/env";
 
 // Admin screens read the session cookie, so they are allowed to block.
-export const instant = false;
 
 export const metadata: Metadata = { title: "Sign in" };
 
