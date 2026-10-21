@@ -2,13 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { DuoMaker } from "@/components/maker/duo-maker";
+import { StaticMaker } from "@/components/maker/static-maker";
 import { FaqList } from "@/components/site/tiles";
 import { Breadcrumbs, JsonLd, PageHeader, SectionHeading } from "@/components/ui/primitives";
-import { getWallpaperBySlug } from "@/lib/data/wallpapers";
 import { languageAlternates } from "@/lib/i18n";
 import { buildMetadata, faqJsonLd, webApplicationJsonLd } from "@/lib/seo";
 import { MAKER_DESCRIPTION, MAKER_FAQ, MAKER_TITLE } from "@/lib/site";
-import { imageUrl } from "@/lib/utils";
 
 export async function generateMetadata(): Promise<Metadata> {
   return buildMetadata({
@@ -38,20 +37,7 @@ const STEPS = [
   },
 ];
 
-async function MakerWithWallpaper({ searchParams }: { searchParams: PageProps<"/maker">["searchParams"] }) {
-  const { wallpaper: slug } = await searchParams;
-  const wallpaper = typeof slug === "string" ? await getWallpaperBySlug(slug) : null;
-  return (
-    <DuoMaker
-      key={wallpaper?.id ?? "blank"}
-      wallpaper={
-        wallpaper ? { url: imageUrl(wallpaper.original_key), slug: wallpaper.slug, title: wallpaper.title } : null
-      }
-    />
-  );
-}
-
-export default function MakerPage({ searchParams }: PageProps<"/maker">) {
+export default function MakerPage() {
   return (
     <>
       <JsonLd
@@ -71,7 +57,7 @@ export default function MakerPage({ searchParams }: PageProps<"/maker">) {
 
       <section className="container-apple" aria-label="Wallpaper maker">
         <Suspense fallback={<DuoMaker wallpaper={null} />}>
-          <MakerWithWallpaper searchParams={searchParams} />
+          <StaticMaker />
         </Suspense>
       </section>
 

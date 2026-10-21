@@ -1,4 +1,5 @@
 import { getSiteSettings } from "@/lib/data/settings";
+export const dynamic = "force-static";
 
 /** Serves /ads.txt from Admin → Ads. Falls back to the standard Google line for the publisher ID. */
 export async function GET() {

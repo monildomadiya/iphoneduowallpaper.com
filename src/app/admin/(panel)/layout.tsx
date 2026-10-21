@@ -16,6 +16,11 @@ export default async function AdminPanelLayout({ children }: LayoutProps<"/admin
       <div className="admin-shell min-h-dvh bg-surface/50 lg:flex">
         <AdminSidebar admin={{ email: admin.email, displayName: admin.displayName, role: admin.role }} counts={counts} />
         <main className="mx-auto w-full min-w-0 max-w-6xl flex-1 px-4 pt-5 pb-[calc(var(--tabbar-h)+2rem)] sm:pt-8 md:px-8 md:pt-10 lg:pb-10">
+          {process.env.NEXT_PUBLIC_PUBLIC_MODE === "static" ? (
+            <p role="note" className="mb-5 rounded-xl border border-line bg-elevated px-4 py-3 text-sm text-fg-2">
+              Changes are saved here. Publish a new site build to update the public pages, search catalogue and ads settings.
+            </p>
+          ) : null}
           {children}
         </main>
       </div>

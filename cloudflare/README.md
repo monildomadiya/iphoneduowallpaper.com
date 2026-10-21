@@ -1,5 +1,31 @@
 # Cloudflare Workers deployment
 
+## Public pages are static on Workers Free
+
+The public site now serves build-time HTML and React navigation responses from Workers Static
+Assets through `cloudflare/worker.ts`. Public page requests, including pagination/sorting, never
+call NextServer or trigger ISR regeneration. Unknown public URLs get a static 404. Admin, auth,
+API requests and form submissions still use the protected OpenNext application.
+
+The owner selected this mode after Worker logs confirmed that background ISR rendering also
+exceeded the free 10 ms CPU limit. Public content is therefore a deployment snapshot: after
+editing/uploading/deleting wallpapers, guides, categories, contact details or ad settings, run
+`npm run deploy` to build and publish the updated site. Gallery counts and search results update
+with that deployment. The admin panel shows a reminder. Existing image-processing requirements
+still apply; generate new device variants before building the public snapshot.
+
+Search uses `/public-catalog.json` in the browser. The maker also uses that published catalogue
+to open an existing artwork; uploaded personal photos remain in the browser. The catalogue
+contains only published artwork fields and uses the public Supabase client at build time.
+
+`scripts/build-public-snapshots.mjs` packages the successful prerendered HTML/RSC/metadata files,
+preserves configured redirects, and refuses to publish if any sitemap URL lacks a successful
+static snapshot. `X-Public-Rendering: static` identifies responses from this path. New content
+does not appear until the next deployment. No paid plan is required or enabled by this setup.
+
+The sections below describe the retained OpenNext backend and the initial ISR investigation;
+their cache invalidation settings apply to that backend, not to the published public snapshots.
+
 This app needs OpenNext: admin authentication, Server Actions, downloads and database queries
 cannot be deployed as a static export. `wrangler.jsonc` serves assets, binds an R2 cache bucket,
 and uses SQLite Durable Objects for revalidation and tag invalidation.

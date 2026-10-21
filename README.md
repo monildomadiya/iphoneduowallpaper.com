@@ -9,6 +9,11 @@ A fast, Apple-inspired wallpaper website for **iPhone Duo** (outer 1398 × 2034 
 | Image storage & CDN | Cloudflare R2 (direct browser uploads via presigned URLs) |
 | Hosting | Cloudflare Workers (OpenNext), or Render (Node web service) |
 
+**Workers Free production mode:** public HTML, navigation data, search and maker data are published
+as static snapshots to avoid Error 1102. After saving content or ad settings in admin, run
+`npm run deploy` to rebuild and publish the public site. Admin/auth/API operations remain dynamic.
+See [Cloudflare setup](cloudflare/README.md).
+
 ---
 
 ## Features
@@ -162,7 +167,7 @@ android/             native Kotlin + Compose admin app
 
 ## How caching works
 
-Public database results use the Next.js Data Cache (`unstable_cache`) with a 60-second revalidation period and tags. Every admin change expires its tags, so visitors see updated content on their next page view. Cache Components is disabled because its timer-based rendering can hang dynamic requests on Workers.
+The OpenNext backend uses the Next.js Data Cache (`unstable_cache`) with a 60-second revalidation period and mutation tags. On Workers Free, public page requests bypass that renderer and serve deployment snapshots. Admin edits are saved to the database; publish a new build to update public content. Cache Components is disabled because its timer-based rendering can hang dynamic requests on Workers.
 
 ## Troubleshooting
 

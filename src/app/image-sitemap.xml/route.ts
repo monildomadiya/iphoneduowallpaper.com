@@ -1,5 +1,6 @@
 import { getWallpaperSitemapEntries } from "@/lib/data/wallpapers";
 import { absoluteUrl, imageUrl } from "@/lib/utils";
+export const dynamic = "force-static";
 
 const escape = (value: string) =>
   value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");

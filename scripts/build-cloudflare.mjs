@@ -18,8 +18,12 @@ const result = spawnSync(
       // Override the localhost value commonly kept in .env.local during a production build.
       NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL || "https://iphoneduowallpaper.com",
       NEXT_PUBLIC_VARIANTS_MODE: "workstation",
+      NEXT_PUBLIC_PUBLIC_MODE: "static",
     },
   },
 );
 if (result.error) throw result.error;
-process.exit(result.status ?? 1);
+if (result.status !== 0) process.exit(result.status ?? 1);
+const snapshots = spawnSync(process.execPath, ["scripts/build-public-snapshots.mjs"], { stdio: "inherit", env: process.env });
+if (snapshots.error) throw snapshots.error;
+process.exit(snapshots.status ?? 1);

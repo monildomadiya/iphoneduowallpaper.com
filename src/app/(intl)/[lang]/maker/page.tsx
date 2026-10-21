@@ -2,17 +2,14 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { DuoMaker } from "@/components/maker/duo-maker";
+import { StaticMaker } from "@/components/maker/static-maker";
 import { Markdown } from "@/components/site/markdown";
 import { FaqList } from "@/components/site/tiles";
 import { Breadcrumbs, JsonLd, PageHeader, SectionHeading } from "@/components/ui/primitives";
-import { getWallpaperBySlug } from "@/lib/data/wallpapers";
 import { isForeignLocale, languageAlternates, localeContent, localizedPath } from "@/lib/i18n";
 import { fill } from "@/lib/i18n/en";
-import type { ForeignLocale } from "@/lib/i18n/types";
-import { wallpaperTranslation } from "@/lib/i18n/wallpapers";
 import { buildMetadata, faqJsonLd, webApplicationJsonLd } from "@/lib/seo";
 import { mockupDate } from "@/lib/site";
-import { imageUrl } from "@/lib/utils";
 
 
 export async function generateMetadata({ params }: PageProps<"/[lang]/maker">): Promise<Metadata> {
@@ -28,35 +25,7 @@ export async function generateMetadata({ params }: PageProps<"/[lang]/maker">): 
   });
 }
 
-async function MakerWithWallpaper({
-  locale,
-  searchParams,
-}: {
-  locale: ForeignLocale;
-  searchParams: PageProps<"/[lang]/maker">["searchParams"];
-}) {
-  const { wallpaper: slug } = await searchParams;
-  const wallpaper = typeof slug === "string" ? await getWallpaperBySlug(slug) : null;
-  const strings = localeContent(locale).maker.ui;
-  return (
-    <DuoMaker
-      key={wallpaper?.id ?? "blank"}
-      strings={strings}
-      date={mockupDate(locale)}
-      wallpaper={
-        wallpaper
-          ? {
-              url: imageUrl(wallpaper.original_key),
-              slug: wallpaper.slug,
-              title: wallpaperTranslation(locale, wallpaper.slug)?.title ?? wallpaper.title,
-            }
-          : null
-      }
-    />
-  );
-}
-
-export default async function LocalizedMakerPage({ params, searchParams }: PageProps<"/[lang]/maker">) {
+export default async function LocalizedMakerPage({ params }: PageProps<"/[lang]/maker">) {
   const { lang } = await params;
   if (!isForeignLocale(lang)) notFound();
   const { maker, chrome } = localeContent(lang);
@@ -77,7 +46,7 @@ export default async function LocalizedMakerPage({ params, searchParams }: PageP
 
       <section className="container-apple" aria-label={maker.h1}>
         <Suspense fallback={<DuoMaker wallpaper={null} strings={maker.ui} date={mockupDate(lang)} />}>
-          <MakerWithWallpaper locale={lang} searchParams={searchParams} />
+          <StaticMaker strings={maker.ui} date={mockupDate(lang)} />
         </Suspense>
       </section>
 
