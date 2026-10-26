@@ -1,0 +1,9 @@
+[Unit]
+Description=Deploy hook request for iphoneduowallpaper.com
+
+[Service]
+ExecStart=/usr/local/bin/iphoneduowallpaper-deploy-hook
+StandardInput=socket
+StandardOutput=socket
+StandardError=journal
+RuntimeMaxSec=15

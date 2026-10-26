@@ -1,0 +1,10 @@
+[Unit]
+Description=Deploy hook for iphoneduowallpaper.com (reached through nginx /__deploy)
+
+[Socket]
+ListenStream=127.0.0.1:9187
+Accept=yes
+MaxConnections=4
+
+[Install]
+WantedBy=sockets.target

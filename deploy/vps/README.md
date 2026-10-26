@@ -161,26 +161,31 @@ deployments with `systemctl stop iphoneduowallpaper-deploy.timer`.
 ### Deploy immediately from GitHub Actions
 
 [`.github/workflows/deploy.yml`](../../.github/workflows/deploy.yml) runs on every
-push to `main`. It connects over SSH with a key that the server locks to a single
-forced command, [`deploy-trigger.sh`](deploy-trigger.sh), which runs the deployer
-above, prints its log into the Actions run, and fails the run if the pushed commit
-could not be released. The timer stays on as a fallback. One-time setup, as root
-on the VPS:
+push to `main`. It sends `POST https://iphoneduowallpaper.com/__deploy` straight to
+the VPS (bypassing Cloudflare), then polls `/__deploy/live` until the pushed commit
+is live, or fails when `/__deploy/failed` names it. The workflow needs no secrets:
+the hook only asks the server to look at GitHub `main` again, so a caller can make
+it fetch the public repository but never choose what is released. nginx allows
+POST only and rate-limits it to 6 requests a minute per IP. The timer stays on to
+pick up a push that arrives while another build is running.
+
+The hook is a systemd socket on `127.0.0.1:9187`
+([`deploy-hook.sh`](deploy-hook.sh), [socket](iphoneduowallpaper-deploy-hook.socket),
+[service](iphoneduowallpaper-deploy-hook@.service)) exposed by the nginx snippet
+[`nginx-deploy-hook.conf`](nginx-deploy-hook.conf). Install, as root, with the files
+from this directory in `/tmp`:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/monildomadiya/iphoneduowallpaper.com/main/deploy/vps/deploy-trigger.sh -o /tmp/deploy-trigger.sh
-install -m 755 /tmp/deploy-trigger.sh /usr/local/bin/iphoneduowallpaper-deploy-trigger
-ssh-keygen -t ed25519 -N "" -C github-actions-deploy -f /root/github-deploy-key
-install -d -m 700 /root/.ssh && echo "command=\"/usr/local/bin/iphoneduowallpaper-deploy-trigger\",restrict $(cat /root/github-deploy-key.pub)" >> /root/.ssh/authorized_keys
+install -m 755 /tmp/deploy-hook.sh /usr/local/bin/iphoneduowallpaper-deploy-hook
+install -m 644 /tmp/iphoneduowallpaper-deploy-hook.socket "/tmp/iphoneduowallpaper-deploy-hook@.service" /etc/systemd/system/
+install -m 644 /tmp/nginx-deploy-hook.conf /etc/nginx/snippets/iphoneduowallpaper-deploy-hook.conf
+echo 'limit_req_zone $binary_remote_addr zone=iphoneduowallpaper_deploy:1m rate=6r/m;' > /etc/nginx/conf.d/iphoneduowallpaper-deploy.conf
+# In the iphoneduowallpaper.com HTTPS server block, after client_max_body_size:
+#   include /etc/nginx/snippets/iphoneduowallpaper-deploy-hook.conf;
+nginx -t && systemctl reload nginx
+systemctl daemon-reload && systemctl enable --now iphoneduowallpaper-deploy-hook.socket
 ```
 
-In GitHub → Settings → Secrets and variables → Actions, add two repository secrets:
-
-- `VPS_SSH_KEY`: the full output of `cat /root/github-deploy-key` (then delete
-  that file from the server with `rm /root/github-deploy-key`).
-- `VPS_HOST_KEY`: the output of `cut -d' ' -f1,2 /etc/ssh/ssh_host_ed25519_key.pub`.
-
-Optional repository variables: `VPS_HOST` (default `107.172.39.165`) and
-`VPS_SSH_PORT` (default `22`). Re-run a deployment from the Actions tab with
-**Run workflow**. To revoke access, remove the `github-actions-deploy` line from
-`/root/.ssh/authorized_keys`.
+Installed on the VPS on 2026-10-26; the nginx site file from before the change is
+saved as `/root/nginx-iphoneduowallpaper.before-deploy-hook`. Re-run a deployment
+from GitHub → Actions → Deploy to VPS → **Run workflow**.
