@@ -12,12 +12,16 @@ SERVICE=iphoneduowallpaper
 NODE_BIN=/opt/node24/bin
 KEEP_RELEASES=4
 MIRROR=$BASE/repo.git
+APP_HOME=$BASE/.deploy-home
 
 exec 9>"$BASE/.deploy.lock"
 flock -n 9 || exit 0
 
+# The application user may not own $BASE itself; give it the two directories it writes outside a release.
+install -d -o "$APP_USER" -g "$APP_USER" "$MIRROR" "$APP_HOME"
+
 as_app() {
-  runuser -u "$APP_USER" -- env PATH="$NODE_BIN:/usr/local/bin:/usr/bin:/bin" HOME="$BASE" NEXT_TELEMETRY_DISABLED=1 "$@"
+  runuser -u "$APP_USER" -- env PATH="$NODE_BIN:/usr/local/bin:/usr/bin:/bin" HOME="$APP_HOME" NEXT_TELEMETRY_DISABLED=1 "$@"
 }
 
 healthy() {
@@ -28,7 +32,7 @@ healthy() {
   return 1
 }
 
-[ -d "$MIRROR" ] || as_app git clone --bare --quiet "$REPO_URL" "$MIRROR"
+[ -f "$MIRROR/HEAD" ] || as_app git clone --bare --quiet "$REPO_URL" "$MIRROR"
 as_app git --git-dir="$MIRROR" fetch --quiet --prune "$REPO_URL" "+refs/heads/$BRANCH:refs/heads/$BRANCH"
 target=$(as_app git --git-dir="$MIRROR" rev-parse "refs/heads/$BRANCH")
 
@@ -40,7 +44,7 @@ previous=$(readlink -f "$BASE/current")
 release="$BASE/releases/$(date -u +%Y%m%d-%H%M%S)-${target:0:7}"
 echo "Deploying ${target:0:7} into $release (live: $previous)"
 
-as_app mkdir -p "$release"
+install -d -o "$APP_USER" -g "$APP_USER" "$release"
 as_app sh -c 'git --git-dir="$1" archive "$2" | tar -x -C "$3"' sh "$MIRROR" "$target" "$release"
 install -o "$APP_USER" -g "$APP_USER" -m 600 "$previous/.env.local" "$release/.env.local"
 
