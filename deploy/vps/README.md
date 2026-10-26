@@ -157,3 +157,30 @@ systemctl daemon-reload && systemctl enable --now iphoneduowallpaper-deploy.time
 Follow a deployment with `journalctl -u iphoneduowallpaper-deploy -f`. Run one
 immediately with `systemctl start iphoneduowallpaper-deploy`. Pause automatic
 deployments with `systemctl stop iphoneduowallpaper-deploy.timer`.
+
+### Deploy immediately from GitHub Actions
+
+[`.github/workflows/deploy.yml`](../../.github/workflows/deploy.yml) runs on every
+push to `main`. It connects over SSH with a key that the server locks to a single
+forced command, [`deploy-trigger.sh`](deploy-trigger.sh), which runs the deployer
+above, prints its log into the Actions run, and fails the run if the pushed commit
+could not be released. The timer stays on as a fallback. One-time setup, as root
+on the VPS:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/monildomadiya/iphoneduowallpaper.com/main/deploy/vps/deploy-trigger.sh -o /tmp/deploy-trigger.sh
+install -m 755 /tmp/deploy-trigger.sh /usr/local/bin/iphoneduowallpaper-deploy-trigger
+ssh-keygen -t ed25519 -N "" -C github-actions-deploy -f /root/github-deploy-key
+install -d -m 700 /root/.ssh && echo "command=\"/usr/local/bin/iphoneduowallpaper-deploy-trigger\",restrict $(cat /root/github-deploy-key.pub)" >> /root/.ssh/authorized_keys
+```
+
+In GitHub → Settings → Secrets and variables → Actions, add two repository secrets:
+
+- `VPS_SSH_KEY`: the full output of `cat /root/github-deploy-key` (then delete
+  that file from the server with `rm /root/github-deploy-key`).
+- `VPS_HOST_KEY`: the output of `cut -d' ' -f1,2 /etc/ssh/ssh_host_ed25519_key.pub`.
+
+Optional repository variables: `VPS_HOST` (default `107.172.39.165`) and
+`VPS_SSH_PORT` (default `22`). Re-run a deployment from the Actions tab with
+**Run workflow**. To revoke access, remove the `github-actions-deploy` line from
+`/root/.ssh/authorized_keys`.
