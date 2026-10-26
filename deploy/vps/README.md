@@ -131,3 +131,29 @@ is required for moving the website runtime.
 The initial `20261023` release predates the SEO URL correction. Correct its
 environment and rebuild it with the production URL guard before using it as
 a future production release; its original static pages contain localhost URLs.
+
+## Automatic deployment from GitHub
+
+Pushing to `main` on GitHub releases the site without manual steps. On the VPS,
+`iphoneduowallpaper-deploy.timer` runs [`auto-deploy.sh`](auto-deploy.sh) every
+2 minutes. When `main` has a new commit it builds a new release beside the live
+one (copying the live `.env.local`), switches `current`, restarts the service and
+checks `/api/health`. A failed build leaves the live site untouched; a failed
+health check restores the previous release. That commit is then skipped until
+the next push. The four newest releases are kept for manual rollback.
+
+The repository is public, so the server needs no GitHub credentials. Install or
+update the deployer as root (the script is copied out of the repository so a
+push cannot change it):
+
+```bash
+command -v git >/dev/null || apt-get install -y git
+cd /tmp && for f in auto-deploy.sh iphoneduowallpaper-deploy.service iphoneduowallpaper-deploy.timer; do curl -fsSLO "https://raw.githubusercontent.com/monildomadiya/iphoneduowallpaper.com/main/deploy/vps/$f"; done
+install -m 755 auto-deploy.sh /usr/local/bin/iphoneduowallpaper-deploy
+install -m 644 iphoneduowallpaper-deploy.service iphoneduowallpaper-deploy.timer /etc/systemd/system/
+systemctl daemon-reload && systemctl enable --now iphoneduowallpaper-deploy.timer
+```
+
+Follow a deployment with `journalctl -u iphoneduowallpaper-deploy -f`. Run one
+immediately with `systemctl start iphoneduowallpaper-deploy`. Pause automatic
+deployments with `systemctl stop iphoneduowallpaper-deploy.timer`.

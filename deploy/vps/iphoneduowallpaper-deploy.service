@@ -1,0 +1,11 @@
+[Unit]
+Description=Deploy iphoneduowallpaper.com when GitHub main changes
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/iphoneduowallpaper-deploy
+# npm ci plus a production build; the live site keeps serving the old release meanwhile.
+TimeoutStartSec=30min
+Nice=10
