@@ -1,3 +1,5 @@
+import { ResourceLinks } from "@/components/site/resource-links";
+import { ICON_GUIDE, READABILITY_HELP, MAKER_HELP } from "@/lib/guide-links";
 import type { Metadata } from "next";
 import { CategoryTiles } from "@/components/site/tiles";
 import { EmptyState, JsonLd, PageHeader } from "@/components/ui/primitives";
@@ -49,6 +51,7 @@ export default async function CategoriesPage() {
           <EmptyState title="Categories are coming soon" description="We are organizing the library. Check back shortly." />
         )}
       </section>
+      <div className="container-apple"><ResourceLinks title="Find a style that works behind your apps" links={[ICON_GUIDE, READABILITY_HELP, MAKER_HELP]} /></div>
     </>
   );
 }

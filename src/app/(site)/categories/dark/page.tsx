@@ -1,3 +1,5 @@
+import { ResourceLinks } from "@/components/site/resource-links";
+import { READABILITY_HELP, ICON_GUIDE } from "@/lib/guide-links";
 import { ChevronRight } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -105,6 +107,7 @@ export default async function DarkCategoryPage({ searchParams }: PageProps<"/cat
           </div>
         </div>
       </section>
+      <div className="container-apple"><ResourceLinks title="Keep text clear on a dark background" links={[READABILITY_HELP, ICON_GUIDE]} /></div>
     </>
   );
 }

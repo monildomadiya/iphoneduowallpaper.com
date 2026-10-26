@@ -1,3 +1,5 @@
+import { ResourceLinks } from "@/components/site/resource-links";
+import { FIT_HELP, RESOLUTION_GUIDE, MAKER_HELP } from "@/lib/guide-links";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { DeviceTiles } from "@/components/site/tiles";
@@ -87,6 +89,7 @@ export default async function DevicesPage() {
           <EmptyState title="Device list coming soon" description="We are adding screen specs for every supported iPhone." />
         )}
       </section>
+      <div className="container-apple"><ResourceLinks title="Check your image against the screen" links={[FIT_HELP, RESOLUTION_GUIDE, MAKER_HELP]} /></div>
     </>
   );
 }

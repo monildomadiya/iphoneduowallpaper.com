@@ -52,6 +52,7 @@ export const FOOTER_NAV: { title: string; links: { href: string; label: string }
     title: "Resources",
     links: [
       { href: "/wallpaper-help", label: "Wallpaper Fit & Download Help" },
+      { href: "/wallpaper-readability", label: "Wallpaper Readability Lab" },
       { href: "/blog", label: "Guides & Tips" },
       { href: "/blog/official-iphone-duo-wallpaper", label: "Official iPhone Duo Wallpaper" },
       { href: "/blog/iphone-duo-wallpaper-sizes-explained", label: "Wallpaper Sizes" },
@@ -77,7 +78,7 @@ type GuideLink = { href: string; label: string };
 
 /** The guide that goes deepest on each category, linked from the category and its wallpapers. */
 const CATEGORY_GUIDES: Record<string, GuideLink> = {
-  anime: {
+  "anime-4k": {
     href: "/blog/anime-wallpapers-iphone-lock-screen",
     label: "How to pick anime art that works on a Lock Screen",
   },
@@ -134,11 +135,11 @@ export function wallpaperGuide(categorySlug: string | null | undefined, tags: st
  * than the download sends people straight back to the results.
  */
 export function homeTitle(siteName: string, is4k = false): string {
-  return is4k ? "iPhone Duo Wallpapers 4K — Free Inner & Outer Display Downloads" : `${siteName} HD — Free iPhone 18 Duo Downloads`;
+  return is4k ? "iPhone Duo Wallpapers 4K — Free Inner & Outer Display Downloads" : `${siteName} — Free Cover & Inner Downloads`;
 }
 
 export const HOME_DESCRIPTION =
-  "Download free HD iPhone Duo wallpapers for the 7.6-inch inner and 5.4-inch outer displays of the foldable iPhone 18 Duo. No app, no sign-up.";
+  "Free iPhone Duo wallpapers for cover and inner screens. Check real file dimensions, compare crops, and download originals or available screen pairs. No sign-up.";
 
 export const HOME_DESCRIPTION_4K =
   "Free 4K iPhone Duo (iPhone 18 Duo / iPhone Fold) wallpapers in native sizes: 1398×2034 outer and 2670×1878 inner display. Ready-made pairs, no sign-up.";

@@ -1,3 +1,5 @@
+import { ResourceLinks } from "@/components/site/resource-links";
+import { FIT_HELP, READABILITY_HELP, SETUP_GUIDE } from "@/lib/guide-links";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -61,6 +63,7 @@ export default function MakerPage() {
         </Suspense>
       </section>
 
+      <div className="container-apple"><ResourceLinks title="Check your crop before applying it" links={[FIT_HELP, READABILITY_HELP, SETUP_GUIDE]} /></div>
       <section className="container-apple mt-24">
         <SectionHeading title="How it works." subtitle="Four steps, both screens." />
         <ol className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">

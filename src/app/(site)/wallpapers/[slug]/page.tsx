@@ -197,6 +197,7 @@ export default async function WallpaperPage({ params }: PageProps<"/wallpapers/[
             </p>
             <p className="mt-3 text-[13px] leading-5 text-fg-2">
               Unsure which file to save? <Link href="/wallpaper-help" className="link-apple">Check cropping, image quality and download help.</Link>
+              {" "}Clock hard to see? <Link href="/wallpaper-readability" className="link-apple">Compare text contrast in the readability lab.</Link>
             </p>
 
             <section className="mt-10">

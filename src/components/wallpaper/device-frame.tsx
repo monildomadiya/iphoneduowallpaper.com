@@ -175,6 +175,8 @@ export function DeviceFrame({
                 <img
                   src={src}
                   alt={alt}
+                  width={spec.width}
+                  height={spec.height}
                   loading={priority ? "eager" : "lazy"}
                   fetchPriority={priority ? "high" : "auto"}
                   decoding="async"

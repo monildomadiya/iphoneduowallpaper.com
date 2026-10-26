@@ -1,3 +1,6 @@
+import { ResourceLinks } from "@/components/site/resource-links";
+import { READABILITY_HELP, FIT_HELP } from "@/lib/guide-links";
+import { CATEGORY_ADVICE } from "@/lib/category-advice";
 import { ChevronRight } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -47,6 +50,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps<"
   // Lateral links are only worth following when there is something on the other end.
   const others = stockedFirst([dark, ...categories.filter((item) => item.id !== category.id)]).slice(0, 8);
   const guide = categoryGuide(category.slug);
+  const advice = CATEGORY_ADVICE[category.slug];
   const path = `/categories/${category.slug}`;
   const jsonLd = await listingJsonLd({
     name: `${category.name} Wallpapers`,
@@ -107,6 +111,16 @@ export default async function CategoryPage({ params, searchParams }: PageProps<"
           emptyTitle={`No ${category.name.toLowerCase()} wallpapers yet`}
         />
       </section>
+      {advice ? (
+        <section className="container-apple mt-16">
+          <div className="prose-apple max-w-3xl">
+            <h2>{advice.title}</h2>
+            {advice.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+            <p>Use the <Link href="/maker">wallpaper maker</Link> to reposition the crop from your own image. Then use the checks below to compare fit and text contrast before applying it.</p>
+          </div>
+        </section>
+      ) : null}
+      <div className="container-apple"><ResourceLinks title="Check a design before you use it" links={[READABILITY_HELP, FIT_HELP]} /></div>
     </>
   );
 }

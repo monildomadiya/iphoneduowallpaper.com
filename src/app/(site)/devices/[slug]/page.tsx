@@ -1,3 +1,5 @@
+import { ResourceLinks } from "@/components/site/resource-links";
+import { SIZE_GUIDE, FIT_HELP, BLUR_GUIDE } from "@/lib/guide-links";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { AdSlot } from "@/components/ads/ad-slot";
@@ -115,6 +117,7 @@ export default async function DevicePage({ params, searchParams }: PageProps<"/d
           <FaqList faqs={faqs} />
         </div>
       </section>
+      <div className="container-apple"><ResourceLinks title="Make the most of this screen" links={[SIZE_GUIDE, FIT_HELP, BLUR_GUIDE]} /></div>
       <JsonLd data={[jsonLd, faqJsonLd(faqs)]} />
     </>
   );

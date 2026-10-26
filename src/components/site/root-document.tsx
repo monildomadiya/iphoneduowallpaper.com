@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import { Toaster } from "sonner";
 import { getSiteSettings } from "@/lib/data/settings";
-import { siteUrl } from "@/lib/env";
+import { r2PublicUrl, siteUrl } from "@/lib/env";
 import { HOME_DESCRIPTION, homeTitle } from "@/lib/site";
 import "@/app/globals.css";
 
@@ -56,6 +56,9 @@ export function RootDocument({ lang, children }: { lang: string; children: React
   return (
     <html lang={lang} className={inter.variable} data-scroll-behavior="smooth">
       <body className="min-h-dvh">
+        {/* Every public page shows wallpapers from the R2 domain; React hoists this into <head> so the
+            connection opens while the HTML is still parsing. */}
+        {r2PublicUrl ? <link rel="preconnect" href={r2PublicUrl} /> : null}
         {children}
         <Toaster position="top-center" richColors closeButton />
       </body>

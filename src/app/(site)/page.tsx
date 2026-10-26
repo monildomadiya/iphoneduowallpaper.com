@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { AdSlot } from "@/components/ads/ad-slot";
 import { CategoryTiles, DeviceTiles, FaqList, PostCard } from "@/components/site/tiles";
+import { ScreenDownloadGuide } from "@/components/site/screen-download-guide";
 import { JsonLd, SectionHeading } from "@/components/ui/primitives";
 import { DeviceFrame } from "@/components/wallpaper/device-frame";
 import { WallpaperCard, WallpaperGrid } from "@/components/wallpaper/wallpaper-card";
@@ -117,9 +118,11 @@ export default async function HomePage() {
             >
               <DeviceFrame
                 variant="duo-outer"
-                src={hero.outer ? imageUrl(hero.outer.preview_key) : null}
+                // The portrait thumbnail fits the tall cover screen and is the file the featured row
+                // below already shows, so it costs no extra download; the landscape preview was ~3× heavier.
+                src={hero.outer ? imageUrl(hero.outer.thumb_key) : null}
                 color={hero.outer?.dominant_color}
-                alt=""
+                alt={hero.outer ? `${hero.outer.title} — cover-screen crop preview` : ""}
                 priority
                 artwork={0}
               />
@@ -133,7 +136,7 @@ export default async function HomePage() {
                 variant="duo-inner"
                 src={hero.inner ? imageUrl(hero.inner.preview_key) : null}
                 color={hero.inner?.dominant_color}
-                alt=""
+                alt={hero.inner ? `${hero.inner.title} — inner-screen crop preview` : ""}
                 priority
                 artwork={2}
               />
@@ -147,7 +150,7 @@ export default async function HomePage() {
               { icon: Layers, label: hasWallpapers ? `${formatNumber(latest.total)} wallpapers` : "Growing library" },
               { icon: Sparkles, label: is4k ? "4K, native sizes" : "Full resolution" },
               { icon: Download, label: "Free, no sign-up" },
-              { icon: ShieldCheck, label: "Original & licensed" },
+              { icon: ShieldCheck, label: "File details shown" },
             ].map(({ icon: Icon, label }) => (
               <li key={label} className="flex flex-col items-center gap-2 text-[15px] font-medium text-fg-2">
                 <Icon className="size-6 text-fg" strokeWidth={1.6} />
@@ -184,14 +187,16 @@ export default async function HomePage() {
             <SectionHeading title="Featured." subtitle="Hand-picked for launch." href="/wallpapers" />
           </div>
           <ul className="no-scrollbar container-apple flex snap-x snap-mandatory gap-5 overflow-x-auto pb-4">
-            {featured.items.map((wallpaper, index) => (
+            {featured.items.map((wallpaper) => (
               <li key={wallpaper.id} className="w-[46%] shrink-0 snap-start sm:w-[30%] lg:w-[19%]">
-                <WallpaperCard wallpaper={wallpaper} sizes="large" priority={index < 2} />
+                <WallpaperCard wallpaper={wallpaper} sizes="large" />
               </li>
             ))}
           </ul>
         </section>
       ) : null}
+
+      <ScreenDownloadGuide />
 
       {/* ------------------------------------------------------------ Devices */}
       {devices.length ? (
@@ -308,6 +313,14 @@ export default async function HomePage() {
           <Link href="/wallpaper-help" className="link-apple mt-5 inline-block">Check your image with the fit calculator</Link>
         </div>
       </section>
+      <section className="container-apple mt-24">
+        <div className="rounded-[28px] border border-line bg-surface p-7 sm:p-10">
+          <SectionHeading title="Can you read the clock?" subtitle="Test the background before you set it." />
+          <p className="max-w-2xl text-[17px] leading-7 text-fg-2">A high-resolution image can still hide your clock or app labels. Try your photo in our readability lab: compare light and dark text, inspect the area behind the digits and export a dimmer companion. Your photo stays in your browser.</p>
+          <Link href="/wallpaper-readability" className="btn-secondary mt-6 inline-flex">Open the readability lab</Link>
+        </div>
+      </section>
+
       <section className="container-apple mt-24">
         <SectionHeading title="Questions?" subtitle="We have answers." />
         <FaqList faqs={faqs} />

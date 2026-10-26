@@ -1,0 +1,29 @@
+[Unit]
+Description=iPhone Duo Wallpaper Next.js server
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=iphoneduowallpaper
+Group=iphoneduowallpaper
+WorkingDirectory=/srv/iphoneduowallpaper/current
+Environment=NODE_ENV=production
+Environment=NEXT_TELEMETRY_DISABLED=1
+# Next.js loads .env.local from WorkingDirectory. Keep it private (mode 600).
+# Node 24 is installed separately from the VPS's existing system Node.
+# Keep this literal hostname aligned with nginx and NextURL's loopback normalization.
+ExecStart=/opt/node24/bin/node node_modules/next/dist/bin/next start --hostname localhost --port 3000
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=30
+KillSignal=SIGTERM
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/srv/iphoneduowallpaper
+
+[Install]
+WantedBy=multi-user.target

@@ -45,6 +45,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       : []),
     { url: absoluteUrl("/maker"), changeFrequency: "monthly", priority: 0.8 },
     { url: absoluteUrl("/wallpaper-help"), lastModified: "2026-10-21", changeFrequency: "monthly", priority: 0.7 },
+    { url: absoluteUrl("/wallpaper-readability"), lastModified: "2026-10-23", changeFrequency: "monthly", priority: 0.7 },
     { url: absoluteUrl("/about"), changeFrequency: "yearly", priority: 0.4 },
     { url: absoluteUrl("/contact"), changeFrequency: "yearly", priority: 0.3 },
     { url: absoluteUrl("/privacy-policy"), changeFrequency: "yearly", priority: 0.2 },

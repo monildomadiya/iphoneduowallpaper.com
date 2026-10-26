@@ -1,3 +1,5 @@
+import { ResourceLinks } from "@/components/site/resource-links";
+import { SIZE_GUIDE, BLUR_GUIDE, SAVE_GUIDE, RESOLUTION_GUIDE } from "@/lib/guide-links";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Breadcrumbs, PageHeader } from "@/components/ui/primitives";
@@ -41,6 +43,7 @@ export default function WallpaperHelpPage() {
         <p>The original is the source file supplied to the library. An enlarged master has more output pixels, but those extra pixels do not establish that more detail was captured. A screen crop has a specific shape and dimensions, so it can fit without stretching. These labels describe different properties; none alone guarantees that an image will look sharp.</p>
         <p>On this site, a 4K master uses 3840 pixels on its longer edge where that download is available. Read any enlargement disclosure beside the file. If a source is 1495 × 1052, changing its DPI or PPI tag to 300 does not turn it into a 3840-pixel image.</p>
         <h2 id="composition">Choose a composition for the way you use your phone</h2>
+        <p>Clock digits or app labels disappear into the image? Try the <Link href="/wallpaper-readability">Wallpaper Readability Lab</Link> to compare light and dark text on your own photo, check the background beneath the clock and export a dimmer companion.</p>
         <ul>
           <li><strong>For a busy Lock Screen:</strong> choose a quieter upper region so the clock has a consistent background. Test the actual clock color; a dark image with a bright light behind the digits can still be hard to read.</li>
           <li><strong>For a Home Screen full of icons:</strong> broad color areas are easier to work with than detailed lettering or faces behind app labels. Try a simpler companion image rather than forcing one crop to do every job.</li>
@@ -57,6 +60,8 @@ export default function WallpaperHelpPage() {
         <h2>Still need a different image?</h2>
         <p>Browse <Link href="/categories/dark">dark and AMOLED designs</Link> for subdued backgrounds, compare other <Link href="/categories">wallpaper categories</Link>, or <Link href="/maker">crop your own photo</Link>. If a file is broken, <Link href="/contact">contact us</Link> with the artwork’s page link, chosen download and the error you saw. Please do not send passwords or private photos.</p>
       </article>
+      <ResourceLinks title="Go deeper on fit and downloads" links={[SIZE_GUIDE, BLUR_GUIDE, SAVE_GUIDE, RESOLUTION_GUIDE]} />
+
     </div>
   </>;
 }

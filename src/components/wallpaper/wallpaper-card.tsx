@@ -38,8 +38,9 @@ export function WallpaperCard({ wallpaper, priority = false, className, sizes = 
               ? `${title} — ${t.kicker}, ${wallpaper.width}×${wallpaper.height}`
               : wallpaperAlt(wallpaper.title, wallpaper.width, wallpaper.height, wallpaper.category?.name)
           }
-          width={480}
-          height={Math.round((480 * wallpaper.height) / wallpaper.width)}
+          // Thumbnails are 540 × 960 crops (9:16), whatever the shape of the original.
+          width={540}
+          height={960}
           loading={priority ? "eager" : "lazy"}
           fetchPriority={priority ? "high" : "auto"}
           decoding="async"

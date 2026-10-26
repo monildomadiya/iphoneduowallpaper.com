@@ -1,3 +1,5 @@
+import { ResourceLinks } from "@/components/site/resource-links";
+import { resourcesForGuide } from "@/lib/guide-links";
 /* eslint-disable @next/next/no-img-element -- cover images are pre-optimized files served from Cloudflare R2 */
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -123,6 +125,7 @@ export default async function PostPage({ params }: PageProps<"/blog/[slug]">) {
             </nav>
           ) : null}
           <Markdown content={post.content} />
+          <ResourceLinks title="Put this guide into practice" links={resourcesForGuide(post.slug)} />
           <p className="mt-12 border-t border-line pt-6 text-[14px] text-fg-3">
             Last updated {formatDate(post.updated_at)}. Written and checked by the {settings.site_name}{" "}
             <Link href="/about#editorial-team" className="link-apple">

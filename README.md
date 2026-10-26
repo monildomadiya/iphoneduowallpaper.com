@@ -1,15 +1,22 @@
 # iPhoneDuoWallpaper.com
 
-A fast, Apple-inspired wallpaper website for **iPhone Duo** (outer 1398 × 2034 and inner 2670 × 1878 displays), iPhone 18 Pro and iPhone 18 Pro Max — with a professional admin panel and everything needed for a Google AdSense application.
+A fast, Apple-inspired wallpaper website for **iPhone Duo** (outer 1398 × 2034 and inner 2670 × 1878 displays), iPhone 18 Pro and iPhone 18 Pro Max — with a wallpaper library, practical photo tools and a professional admin panel.
 
 | Layer | Technology |
 | --- | --- |
 | Web app | Next.js 16 (App Router, Data Cache, Server Actions), React 19, Tailwind CSS 4 |
 | Database & auth | Supabase (Postgres + Row Level Security + Auth) |
 | Image storage & CDN | Cloudflare R2 (direct browser uploads via presigned URLs) |
-| Hosting | Cloudflare Workers (OpenNext), or Render (Node web service) |
+| Hosting | Cloudflare Workers (OpenNext), Render, or a Node.js VPS |
 
-**Workers Free production mode:** public HTML, navigation data, search and maker data are published
+For the VPS migration to `107.172.39.165`, see [deployment templates and cutover steps](deploy/vps/README.md).
+
+**VPS production:** the application runs under systemd behind nginx on `107.172.39.165`.
+Cloudflare continues to provide DNS/proxy and R2 images. Follow the
+[VPS release procedure](deploy/vps/README.md) for deployments. `npm run deploy`
+still targets the alternative Cloudflare Worker and can restore its routes.
+
+**Alternative Workers Free mode:** public HTML, navigation data, search and maker data are published
 as static snapshots to avoid Error 1102. After saving content or ad settings in admin, run
 `npm run deploy` to rebuild and publish the public site. Admin/auth/API operations remain dynamic.
 See [Cloudflare setup](cloudflare/README.md).
@@ -20,6 +27,7 @@ See [Cloudflare setup](cloudflare/README.md).
 
 **Public website**
 
+- Wallpaper Readability Lab (`/wallpaper-readability`): local photo contrast comparison for clock/app-label regions, adjustable dimming and PNG export, with a detailed original guide and reproducible contrast calculations. Run `node scripts/check-wallpaper-readability.mjs` for the maths checks.
 - Apple-style light design, fully responsive across phone, tablet and desktop, with frosted-glass navigation and CSS device mockups of iPhone Duo (folded and unfolded) and iPhone 18 Pro Max
 - Wallpaper pages with a live preview switcher (Duo Outer / Duo Inner / 18 Pro Max × Lock Screen / Home Screen), a “Screen fit” check for every device, one-tap download, “View full size” and share
 - Categories, curated collections, device pages, full-text search, sorting and pagination

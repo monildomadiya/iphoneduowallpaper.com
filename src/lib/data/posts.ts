@@ -2,6 +2,7 @@ import "server-only";
 import { cachedPublicQuery } from "@/lib/data/cache";
 import { getPublicSupabase } from "@/lib/supabase/public";
 import type { Paginated, Post, PostCardData } from "@/lib/types";
+import { guideTopicScore } from "@/lib/guide-links";
 import { isValidSlug } from "@/lib/utils";
 const CARD_COLUMNS = "id,title,slug,excerpt,cover_key,tags,author_name,published_at,updated_at";
 const DETAIL_COLUMNS = `${CARD_COLUMNS},content,seo_title,seo_description,status,created_at`;
@@ -57,13 +58,13 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
  * Guides on the same topic, ranked by shared tags and then by date. "Keep reading" used to show
  * the three newest posts everywhere, so a guide only ever linked to whatever was published last.
  */
-export async function getRelatedPosts(post: Pick<Post, "id" | "tags">, limit = 3): Promise<PostCardData[]> {
+export async function getRelatedPosts(post: Pick<Post, "id" | "slug" | "tags">, limit = 3): Promise<PostCardData[]> {
     const { items } = await listPosts(1, 50);
-    const tags = new Set(post.tags.map((tag) => tag.toLowerCase()));
+    const tags = new Set(post.tags.map((tag) => tag.toLowerCase()).filter((tag) => !["guides", "how-to", "iphone duo"].includes(tag)));
     return items
         .filter((item) => item.id !== post.id)
-        .map((item, index) => ({ item, index, shared: item.tags.filter((tag) => tags.has(tag.toLowerCase())).length }))
-        .sort((a, b) => b.shared - a.shared || a.index - b.index)
+        .map((item, index) => ({ item, index, topic: guideTopicScore(post.slug, item.slug), shared: item.tags.filter((tag) => tags.has(tag.toLowerCase())).length }))
+        .sort((a, b) => b.topic - a.topic || b.shared - a.shared || a.index - b.index)
         .slice(0, limit)
         .map(({ item }) => item);
 }
