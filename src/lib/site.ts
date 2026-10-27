@@ -132,14 +132,16 @@ export function wallpaperGuide(categorySlug: string | null | undefined, tags: st
 /**
  * "iphone duo wallpaper 4k" is the query that brings the most clicks, and "4K" the modifier that
  * converts best — but only once the files are 4K (see `isLibrary4k`); a title that promises more
- * than the download sends people straight back to the results.
+ * than the download sends people straight back to the results. Until then keep "HD" and
+ * "iPhone 18 Duo": the home page grew to most of the site's clicks on this title, and both words
+ * are in the queries that send them ("iphone duo wallpaper hd", "iphone 18 duo wallpaper").
  */
 export function homeTitle(siteName: string, is4k = false): string {
-  return is4k ? "iPhone Duo Wallpapers 4K — Free Inner & Outer Display Downloads" : `${siteName} — Free Cover & Inner Downloads`;
+  return is4k ? "iPhone Duo Wallpapers 4K — Free Inner & Outer Display Downloads" : `${siteName} HD — Free iPhone 18 Duo Downloads`;
 }
 
 export const HOME_DESCRIPTION =
-  "Free iPhone Duo wallpapers for cover and inner screens. Check real file dimensions, compare crops, and download originals or available screen pairs. No sign-up.";
+  "Download free HD iPhone Duo wallpapers for the 7.6-inch inner and 5.4-inch outer displays of the foldable iPhone 18 Duo. No app, no sign-up.";
 
 export const HOME_DESCRIPTION_4K =
   "Free 4K iPhone Duo (iPhone 18 Duo / iPhone Fold) wallpapers in native sizes: 1398×2034 outer and 2670×1878 inner display. Ready-made pairs, no sign-up.";
