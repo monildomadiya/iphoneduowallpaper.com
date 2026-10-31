@@ -1,6 +1,8 @@
-// Point two guides' search titles at the questions people actually type (Search Console, Oct 2026).
+// Point guides' search titles at the questions people actually type (Search Console, Oct 2026).
 // "why is my wallpaper blurry on iphone" and its variants sit at position 9–11 with no clicks; the
-// image-resolution guide ranks 22–33 for "how to check image resolution on iphone". Slugs stay.
+// image-resolution guide ranks 22–33 for "how to check image resolution on iphone"; the official
+// wallpaper guide shows at 7.4 for "iphone duo wallpaper 4k" (210 impressions, 1% CTR) without
+// saying 4K in its title — it answers whether the files are 4K, so the title asks that. Slugs stay.
 import { createClient } from "@supabase/supabase-js";
 import { mkdirSync, writeFileSync } from "node:fs";
 
@@ -17,6 +19,9 @@ const replacements = {
   },
   "how-to-check-image-resolution-ppi-iphone": {
     seo_title: "How to Check Image Resolution on iPhone (Pixels & PPI)",
+  },
+  "official-iphone-duo-wallpaper": {
+    seo_title: "Official iPhone Duo Wallpaper: Is It 4K? Sizes & Download",
   },
 };
 
