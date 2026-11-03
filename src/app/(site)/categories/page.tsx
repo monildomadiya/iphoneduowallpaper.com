@@ -2,8 +2,8 @@ import { ResourceLinks } from "@/components/site/resource-links";
 import { ICON_GUIDE, READABILITY_HELP, MAKER_HELP } from "@/lib/guide-links";
 import type { Metadata } from "next";
 import { CategoryTiles } from "@/components/site/tiles";
-import { EmptyState, JsonLd, PageHeader } from "@/components/ui/primitives";
-import { getCategories, getDarkCategory } from "@/lib/data/taxonomy";
+import { EmptyState, JsonLd, PageHeader, SectionHeading } from "@/components/ui/primitives";
+import { getCategories, getDarkCategory, getThemeCategories } from "@/lib/data/taxonomy";
 import { languageAlternates } from "@/lib/i18n";
 import { buildMetadata, collectionPageJsonLd } from "@/lib/seo";
 import { stockedFirst } from "@/lib/utils";
@@ -22,7 +22,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function CategoriesPage() {
-  const [stored, dark] = await Promise.all([getCategories(), getDarkCategory()]);
+  const [stored, dark, themes] = await Promise.all([getCategories(), getDarkCategory(), getThemeCategories()]);
   // Dark lists wallpapers from every category, so it goes first.
   const categories = stockedFirst([dark, ...stored]);
 
@@ -34,7 +34,7 @@ export default async function CategoriesPage() {
           description: DESCRIPTION,
           path: "/categories",
           breadcrumb: [{ name: "Categories", path: "/categories" }],
-          items: categories
+          items: [...categories, ...themes]
             .filter((item) => item.wallpaper_count > 0)
             .map((item) => ({ name: `${item.name} Wallpapers`, path: `/categories/${item.slug}` })),
         })}
@@ -51,6 +51,12 @@ export default async function CategoriesPage() {
           <EmptyState title="Categories are coming soon" description="We are organizing the library. Check back shortly." />
         )}
       </section>
+      {themes.length ? (
+        <section className="container-apple mt-24">
+          <SectionHeading title="Popular styles." subtitle="Looks people search for, gathered from every category." />
+          <CategoryTiles categories={themes} />
+        </section>
+      ) : null}
       <div className="container-apple"><ResourceLinks title="Find a style that works behind your apps" links={[ICON_GUIDE, READABILITY_HELP, MAKER_HELP]} /></div>
     </>
   );

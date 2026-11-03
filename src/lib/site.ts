@@ -32,6 +32,7 @@ export const FOOTER_NAV: { title: string; links: { href: string; label: string }
     title: "Explore",
     links: [
       { href: "/wallpapers", label: "All Wallpapers" },
+      { href: "/wallpapers/best", label: "Best iPhone Duo Wallpapers" },
       { href: "/wallpapers?sort=popular", label: "Most Downloaded" },
       { href: "/wallpapers/all", label: "A–Z Wallpaper Index" },
       { href: "/categories", label: "Categories" },
@@ -113,10 +114,11 @@ const AMOLED_GUIDE: GuideLink = {
  */
 export const DARK_CATEGORY = {
   slug: "dark",
-  name: "Dark & AMOLED",
-  title: "Dark & AMOLED iPhone Duo Wallpapers — Free HD",
+  name: "Dark & Black AMOLED",
+  // Trends: "black wallpaper" is searched about 2.5× as often as "dark wallpaper", so the page names both.
+  title: "Dark & Black AMOLED iPhone Duo Wallpapers — Free HD",
   description:
-    "Dark and true-black AMOLED wallpapers for iPhone Duo — anime, cars, abstract and night landscapes that let the clock glow and look their best on OLED.",
+    "Dark, black and true-black AMOLED wallpapers for iPhone Duo — anime, cars, abstract and night landscapes that let the clock glow and look their best on OLED.",
   guide: AMOLED_GUIDE,
 } as const;
 

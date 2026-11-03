@@ -8,23 +8,25 @@ import { notFound } from "next/navigation";
 import { AdSlot } from "@/components/ads/ad-slot";
 import { Breadcrumbs, JsonLd, PageHeader } from "@/components/ui/primitives";
 import { WallpaperListing } from "@/components/wallpaper/wallpaper-listing";
-import { getCategories, getCategoryBySlug, getDarkCategory } from "@/lib/data/taxonomy";
+import { getCategories, getCategoryBySlug, getDarkCategory, getThemeCategories } from "@/lib/data/taxonomy";
+import { getThemeWallpapers } from "@/lib/data/wallpapers";
 import { languageAlternates } from "@/lib/i18n";
 import { listingJsonLd } from "@/lib/listing-jsonld";
 import { buildMetadata, listingPage } from "@/lib/seo";
 import { categoryGuide } from "@/lib/site";
+import { themeBySlug } from "@/lib/themes";
 import { imageUrl, stockedFirst } from "@/lib/utils";
 
 // Renders on the server before responding so unknown slugs return a real 404 status (better for SEO).
 
 export async function generateStaticParams() {
-  const categories = await getCategories();
-  return categories.length ? categories.map((category) => ({ slug: category.slug })) : [{ slug: "__placeholder__" }];
+  const [categories, themes] = await Promise.all([getCategories(), getThemeCategories()]);
+  return categories.length ? [...categories, ...themes].map((category) => ({ slug: category.slug })) : [{ slug: "__placeholder__" }];
 }
 
 export async function generateMetadata({ params, searchParams }: PageProps<"/categories/[slug]">): Promise<Metadata> {
   const { slug } = await params;
-  const category = await getCategoryBySlug(slug);
+  const category = (await getCategoryBySlug(slug)) ?? (await getThemeCategories()).find((item) => item.slug === slug);
   if (!category) return { title: "Category not found", robots: { index: false, follow: true } };
 
   return buildMetadata({
@@ -44,13 +46,23 @@ export async function generateMetadata({ params, searchParams }: PageProps<"/cat
 
 export default async function CategoryPage({ params, searchParams }: PageProps<"/categories/[slug]">) {
   const { slug } = await params;
-  const [category, categories, dark] = await Promise.all([getCategoryBySlug(slug), getCategories(), getDarkCategory()]);
+  const [stored, categories, dark, themes, themeWallpapers] = await Promise.all([
+    getCategoryBySlug(slug),
+    getCategories(),
+    getDarkCategory(),
+    getThemeCategories(),
+    getThemeWallpapers(),
+  ]);
+  const category = stored ?? themes.find((item) => item.slug === slug);
   if (!category) notFound();
+  // A theme gathers wallpapers from every category, so it lists by id, as the Dark page does.
+  const theme = stored ? undefined : themeBySlug(slug);
+  const listing = theme ? { ids: themeWallpapers[theme.slug].ids } : { categoryId: category.id };
 
   // Lateral links are only worth following when there is something on the other end.
-  const others = stockedFirst([dark, ...categories.filter((item) => item.id !== category.id)]).slice(0, 8);
-  const guide = categoryGuide(category.slug);
-  const advice = CATEGORY_ADVICE[category.slug];
+  const others = stockedFirst([dark, ...categories, ...themes].filter((item) => item.id !== category.id)).slice(0, theme ? 12 : 8);
+  const guide = theme?.guide ?? categoryGuide(category.slug);
+  const advice = theme ? { title: theme.heading, paragraphs: theme.paragraphs } : CATEGORY_ADVICE[category.slug];
   const path = `/categories/${category.slug}`;
   const jsonLd = await listingJsonLd({
     name: `${category.name} Wallpapers`,
@@ -60,7 +72,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps<"
       { name: "Categories", path: "/categories" },
       { name: category.name, path },
     ],
-    query: { categoryId: category.id },
+    query: listing,
   });
 
   return (
@@ -107,7 +119,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps<"
         <WallpaperListing
           basePath={`/categories/${category.slug}`}
           searchParams={searchParams}
-          categoryId={category.id}
+          {...listing}
           emptyTitle={`No ${category.name.toLowerCase()} wallpapers yet`}
         />
       </section>

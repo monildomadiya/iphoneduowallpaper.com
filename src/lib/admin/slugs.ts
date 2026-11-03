@@ -2,7 +2,7 @@ import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { slugify } from "@/lib/utils";
 
-const RESERVED_WALLPAPER_SLUGS = new Set(["all"]);
+const RESERVED_WALLPAPER_SLUGS = new Set(["all", "best"]);
 
 /** Returns a slug that is not used by another row: "aurora", "aurora-2", "aurora-3"… */
 export async function uniqueSlug(

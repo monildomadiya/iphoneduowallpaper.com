@@ -1,20 +1,21 @@
 import type { MetadataRoute } from "next";
 import { getPostSitemapEntries } from "@/lib/data/posts";
-import { getCategories, getDarkCategory, getDevices } from "@/lib/data/taxonomy";
+import { getCategories, getDarkCategory, getDevices, getThemeCategories } from "@/lib/data/taxonomy";
 import { getWallpaperSitemapEntries } from "@/lib/data/wallpapers";
 import { FOREIGN_LOCALES, languageAlternates, localizedPath, translatedEnglishPaths } from "@/lib/i18n";
 import { wallpaperTranslation } from "@/lib/i18n/wallpapers";
 import { absoluteUrl, imageUrl } from "@/lib/utils";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [wallpapers, posts, stored, dark, devices] = await Promise.all([
+  const [wallpapers, posts, stored, dark, themes, devices] = await Promise.all([
     getWallpaperSitemapEntries(),
     getPostSitemapEntries(),
     getCategories(),
     getDarkCategory(),
+    getThemeCategories(),
     getDevices(),
   ]);
-  const categories = [...stored, dark];
+  const categories = [...stored, dark, ...themes];
   const populatedCategories = new Set(categories.filter((item) => item.wallpaper_count > 0).map((item) => item.slug));
   const populatedDevices = new Set(devices.filter((item) => item.wallpaper_count > 0).map((item) => item.slug));
   // Translation dictionaries can contain a renamed slug before the database does.
@@ -32,6 +33,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: MetadataRoute.Sitemap = [
     { url: absoluteUrl("/"), lastModified: libraryUpdated, changeFrequency: "daily", priority: 1 },
     { url: absoluteUrl("/wallpapers"), lastModified: libraryUpdated, changeFrequency: "daily", priority: 0.9 },
+    { url: absoluteUrl("/wallpapers/best"), lastModified: libraryUpdated, changeFrequency: "weekly", priority: 0.9 },
     { url: absoluteUrl("/wallpapers/all"), lastModified: libraryUpdated, changeFrequency: "daily", priority: 0.6 },
     // A hub with nothing in it is noindex, so it stays out of the sitemap until it has something.
     ...(categories.length
@@ -81,7 +83,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...categories.filter(hasWallpapers).map((item) =>
       withLanguages({
         url: absoluteUrl(`/categories/${item.slug}`),
-        // Dark has no row of its own, so it is dated by the newest wallpaper like the other hubs.
+        // Dark and the themes have no row of their own, so they are dated by the newest wallpaper like the other hubs.
         lastModified: item.updated_at || libraryUpdated,
         changeFrequency: "weekly" as const,
         priority: 0.7,

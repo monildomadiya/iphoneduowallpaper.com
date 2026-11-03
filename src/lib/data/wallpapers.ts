@@ -1,6 +1,7 @@
 import "server-only";
 import { cachedPublicQuery } from "@/lib/data/cache";
 import { getPublicSupabase } from "@/lib/supabase/public";
+import { matchesTheme, WALLPAPER_THEMES } from "@/lib/themes";
 import type { DeviceSummary, Paginated, WallpaperCardData, WallpaperDetail, WallpaperSort, } from "@/lib/types";
 import { isDarkWallpaper, isValidSlug } from "@/lib/utils";
 import type { WallpaperVariants } from "@/lib/variants/types";
@@ -318,6 +319,32 @@ export async function getDarkWallpapers(): Promise<{
         const cover = [...dark].sort((a, b) => Number(b.downloads ?? 0) - Number(a.downloads ?? 0))[0];
         return { ids: dark.map((row) => row.id as string), cover_thumb_key: (cover?.thumb_key as string | undefined) ?? null };
     }, "getDarkWallpapers", [], ["wallpapers"]);
+}
+/** Each theme's published wallpapers, newest first, with its most downloaded one as the cover. */
+export async function getThemeWallpapers(): Promise<Record<string, {
+    ids: string[];
+    cover_thumb_key: string | null;
+}>> {
+    return cachedPublicQuery(async () => {
+        const supabase = getPublicSupabase();
+        if (!supabase) {
+            return {};
+        }
+        const { data, error } = await supabase
+            .from("wallpapers")
+            .select("id,title,tags,thumb_key,downloads")
+            .eq("status", "published")
+            .order("published_at", { ascending: false, nullsFirst: false });
+        if (error) {
+            console.error("[data:themes]", error.message);
+            return {};
+        }
+        return Object.fromEntries(WALLPAPER_THEMES.map((theme) => {
+            const rows = (data ?? []).filter((row) => matchesTheme(theme, row.title as string, (row.tags as string[] | null) ?? []));
+            const cover = [...rows].sort((a, b) => Number(b.downloads ?? 0) - Number(a.downloads ?? 0))[0];
+            return [theme.slug, { ids: rows.map((row) => row.id as string), cover_thumb_key: (cover?.thumb_key as string | undefined) ?? null }];
+        }));
+    }, "getThemeWallpapers", [], ["wallpapers"]);
 }
 /** id, slug and category of every published wallpaper — what translated search matches against. */
 export async function getSearchRows(): Promise<{

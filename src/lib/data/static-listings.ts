@@ -1,6 +1,6 @@
 import "server-only";
 import { notFound } from "next/navigation";
-import { getCategories, getDarkCategory, getDevices } from "@/lib/data/taxonomy";
+import { getCategories, getDarkCategory, getDevices, getThemeCategories } from "@/lib/data/taxonomy";
 import { listWallpapers } from "@/lib/data/wallpapers";
 import { listPosts } from "@/lib/data/posts";
 import { categoryCopy, deviceCopy } from "@/lib/i18n/taxonomy";
@@ -13,8 +13,8 @@ export function staticListing(parts: string[]) {
 }
 
 export async function staticListingParams(locale?: ForeignLocale) {
-  const [categories, dark, devices, library, posts] = await Promise.all([
-    getCategories(), getDarkCategory(), getDevices(), listWallpapers({ perPage: 1 }), listPosts(1, 12),
+  const [categories, dark, themes, devices, library, posts] = await Promise.all([
+    getCategories(), getDarkCategory(), getThemeCategories(), getDevices(), listWallpapers({ perPage: 1 }), listPosts(1, 12),
   ]);
   if (!library.total || !categories.length || !devices.length) throw new Error("Cannot pre-render listings without the published library and taxonomy.");
   const result: { parts: string[] }[] = [];
@@ -25,7 +25,7 @@ export async function staticListingParams(locale?: ForeignLocale) {
     }
   }
   add("wallpapers", "all", library.total);
-  for (const category of [...categories, dark]) {
+  for (const category of [...categories, dark, ...themes]) {
     if (!locale || categoryCopy(locale, category.slug)) add("category", category.slug, category.wallpaper_count);
   }
   for (const device of devices) {

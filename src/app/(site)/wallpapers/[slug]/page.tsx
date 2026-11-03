@@ -9,11 +9,12 @@ import { DownloadPanel, EN_FILE_STRINGS, NativeFitList } from "@/components/wall
 import { WallpaperGrid } from "@/components/wallpaper/wallpaper-card";
 import { WallpaperPreview } from "@/components/wallpaper/wallpaper-preview";
 import { getSiteSettings } from "@/lib/data/settings";
-import { getDevices } from "@/lib/data/taxonomy";
+import { getCategories, getDarkCategory, getDevices, getThemeCategories } from "@/lib/data/taxonomy";
 import { getPrerenderWallpaperSlugs, getRelatedWallpapers, getWallpaperBySlug } from "@/lib/data/wallpapers";
 import { languageAlternates } from "@/lib/i18n";
 import { buildMetadata, wallpaperJsonLd } from "@/lib/seo";
 import { wallpaperGuide } from "@/lib/site";
+import { tagLink } from "@/lib/themes";
 import { SOURCE_TYPE_LABELS, type WallpaperDetail } from "@/lib/types";
 import {
   cn,
@@ -93,11 +94,15 @@ export default async function WallpaperPage({ params }: PageProps<"/wallpapers/[
   const wallpaper = await getWallpaperBySlug(slug);
   if (!wallpaper) notFound();
 
-  const [settings, devices, related] = await Promise.all([
+  const [settings, devices, related, categories, dark, themes] = await Promise.all([
     getSiteSettings(),
     getDevices(),
     getRelatedWallpapers(wallpaper.id, wallpaper.category_id, 10),
+    getCategories(),
+    getDarkCategory(),
+    getThemeCategories(),
   ]);
+  const stockedSlugs = new Set([...categories, dark, ...themes].filter((item) => item.wallpaper_count > 0).map((item) => item.slug));
 
   const path = `/wallpapers/${wallpaper.slug}`;
   const overview = wallpaperOverview(wallpaper);
@@ -295,7 +300,7 @@ export default async function WallpaperPage({ params }: PageProps<"/wallpapers/[
                 {wallpaper.tags.map((tag) => (
                   <Link
                     key={tag}
-                    href={`/search?q=${encodeURIComponent(tag)}`}
+                    {...tagLink(tag, stockedSlugs)}
                     className="rounded-full border border-line px-3.5 py-1.5 text-[13px] text-fg-2 transition hover:border-line-strong hover:text-fg"
                   >
                     #{tag}

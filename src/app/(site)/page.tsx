@@ -9,7 +9,7 @@ import { DeviceFrame } from "@/components/wallpaper/device-frame";
 import { WallpaperCard, WallpaperGrid } from "@/components/wallpaper/wallpaper-card";
 import { listPosts } from "@/lib/data/posts";
 import { getSiteSettings } from "@/lib/data/settings";
-import { getCategories, getDarkCategory, getDevices } from "@/lib/data/taxonomy";
+import { getCategories, getDarkCategory, getDevices, getThemeCategories } from "@/lib/data/taxonomy";
 import { isLibrary4k, listWallpapers } from "@/lib/data/wallpapers";
 import { languageAlternates } from "@/lib/i18n";
 import { buildMetadata, faqJsonLd, organizationJsonLd, websiteJsonLd } from "@/lib/seo";
@@ -38,7 +38,7 @@ function pickHeroWallpapers(items: WallpaperCardData[]) {
 }
 
 export default async function HomePage() {
-  const [settings, featured, latest, popular, categories, dark, devices, posts, is4k] = await Promise.all([
+  const [settings, featured, latest, popular, categories, dark, themes, devices, posts, is4k] = await Promise.all([
     getSiteSettings(),
     listWallpapers({ featured: true, perPage: 12 }),
     // The home page is where nearly all search clicks land; the more wallpapers it links, the more
@@ -47,6 +47,7 @@ export default async function HomePage() {
     listWallpapers({ sort: "popular", perPage: 12 }),
     getCategories(),
     getDarkCategory(),
+    getThemeCategories(),
     getDevices(),
     listPosts(1, 3),
     isLibrary4k(),
@@ -226,10 +227,30 @@ export default async function HomePage() {
         </section>
       ) : null}
 
+      {/* ------------------------------------------------------------ Styles */}
+      {/* The home page gets nearly all search clicks, so these links are what lets the style pages rank. */}
+      {themes.length ? (
+        <section className="container-apple mt-16">
+          <h2 className="text-[19px] font-semibold tracking-tight">Popular styles</h2>
+          <ul className="mt-4 flex flex-wrap gap-2">
+            {themes.map((theme) => (
+              <li key={theme.id}>
+                <Link
+                  href={`/categories/${theme.slug}`}
+                  className="block rounded-full bg-surface px-4 py-2 text-[14px] font-medium text-fg-2 transition hover:bg-surface-hover hover:text-fg"
+                >
+                  {theme.name} wallpapers
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
       {/* ------------------------------------------------------------ Popular */}
       {popular.items.length && popular.items.some((item) => item.downloads > 0) ? (
         <section className="container-apple mt-24">
-          <SectionHeading title="Popular." subtitle="The most downloaded right now." href="/wallpapers?sort=popular" />
+          <SectionHeading title="Popular." subtitle="The most downloaded right now." href="/wallpapers/best" linkLabel="Best wallpapers" />
           <WallpaperGrid wallpapers={popular.items} />
         </section>
       ) : null}

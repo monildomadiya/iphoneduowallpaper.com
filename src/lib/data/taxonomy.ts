@@ -1,9 +1,10 @@
 import "server-only";
 import { cachedPublicQuery } from "@/lib/data/cache";
-import { getDarkWallpapers } from "@/lib/data/wallpapers";
+import { getDarkWallpapers, getThemeWallpapers } from "@/lib/data/wallpapers";
 import { getPublicSupabase } from "@/lib/supabase/public";
 import type { Category, Device } from "@/lib/types";
 import { DARK_CATEGORY } from "@/lib/site";
+import { MIN_THEME_WALLPAPERS, WALLPAPER_THEMES } from "@/lib/themes";
 import { isValidSlug } from "@/lib/utils";
 const BASE_COLUMNS = "id,name,slug,description,cover_key,seo_title,seo_description,sort_order,is_active,created_at,updated_at";
 const DEVICE_COLUMNS = "id,name,slug,family,screen_label,width,height,diagonal_in,ppi,description,seo_title,seo_description,sort_order,is_active,created_at,updated_at";
@@ -69,6 +70,29 @@ export async function getDeviceBySlug(slug: string): Promise<Device | null> {
     if (!isValidSlug(slug))
         return null;
     return (await getDevices()).find((item) => item.slug === slug) ?? null;
+}
+/**
+ * Themes with enough wallpapers to publish, shaped like categories so they can sit among the tiles,
+ * links and sitemap entries. A real category with the same slug keeps its address.
+ */
+export async function getThemeCategories(): Promise<Category[]> {
+    const [stored, themes] = await Promise.all([getCategories(), getThemeWallpapers()]);
+    const taken = new Set(stored.map((item) => item.slug));
+    return WALLPAPER_THEMES.filter((theme) => !taken.has(theme.slug) && (themes[theme.slug]?.ids.length ?? 0) >= MIN_THEME_WALLPAPERS).map((theme, index) => ({
+        id: `virtual:${theme.slug}`,
+        name: theme.name,
+        slug: theme.slug,
+        description: theme.description,
+        cover_key: null,
+        seo_title: theme.title,
+        seo_description: theme.description,
+        sort_order: index + 1,
+        is_active: true,
+        created_at: "",
+        updated_at: "",
+        wallpaper_count: themes[theme.slug].ids.length,
+        cover_thumb_key: themes[theme.slug].cover_thumb_key,
+    }));
 }
 /** The Dark page shaped like a category, so it can sit among the category tiles and links. */
 export async function getDarkCategory(): Promise<Category> {
