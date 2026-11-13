@@ -1,6 +1,6 @@
 /** Map public listing query strings onto cacheable route parameters. No cookies or user data. */
 export function listingRewrite(url: URL): string | null {
-  const match = /^(\/(?:es|tr))?\/(wallpapers|categories\/([a-z0-9-]+)|devices\/([a-z0-9-]+)|blog)\/?$/.exec(url.pathname);
+  const match = /^(\/(?:es|tr|zh|ko|de))?\/(wallpapers|categories\/([a-z0-9-]+)|devices\/([a-z0-9-]+)|blog)\/?$/.exec(url.pathname);
   if (!match) return null;
   const prefix = match[1] ?? "";
   const section = match[2];

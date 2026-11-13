@@ -12,7 +12,7 @@ import { listWallpapers } from "@/lib/data/wallpapers";
 import { FOREIGN_LOCALES, guideCard, isForeignLocale, languageAlternates, localeContent, localizedPath } from "@/lib/i18n";
 import { fill } from "@/lib/i18n/en";
 import { buildMetadata, localizedArticleJsonLd } from "@/lib/seo";
-import { formatDate, readingMinutes, slugify } from "@/lib/utils";
+import { formatDate, headingId, readingMinutes } from "@/lib/utils";
 
 
 export function generateStaticParams() {
@@ -47,7 +47,7 @@ export async function generateMetadata({ params }: PageProps<"/[lang]/blog/[slug
 function tableOfContents(markdown: string) {
   return [...markdown.matchAll(/^##\s+(.+?)\s*#*\s*$/gm)].map(([, heading]) => {
     const text = heading.replace(/\[([^\]]+)]\([^)]*\)/g, "$1").replace(/[*_`]/g, "").trim();
-    return { id: slugify(text), text };
+    return { id: headingId(text), text };
   });
 }
 

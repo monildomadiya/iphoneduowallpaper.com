@@ -11,15 +11,16 @@ export interface NotFoundVariant {
 }
 
 /** Pages whose English original might exist when the translation doesn't. */
-const ENGLISH_TWIN = /^\/(?:es|tr)(\/(?:wallpapers|categories|devices|blog)\/[a-z0-9-]+)$/;
+const ENGLISH_TWIN = /^\/(?:es|tr|zh|ko|de)(\/(?:wallpapers|categories|devices|blog)\/[a-z0-9-]+)$/;
 
 /**
- * not-found.tsx gets no params, so the 404 inside /es and /tr reads the language from the address.
- * Both languages' words arrive as props; the only request is a HEAD check for the English page.
+ * not-found.tsx gets no params, so the 404 inside a translated section reads the language from the
+ * address. Every language's words arrive as props; the only request is a HEAD check for the English page.
  */
 export function LocalizedNotFound({ variants }: { variants: Record<ForeignLocale, NotFoundVariant> }) {
   const pathname = usePathname() ?? "";
-  const locale: ForeignLocale = pathname.startsWith("/tr") ? "tr" : "es";
+  const first = pathname.split("/")[1];
+  const locale = (Object.keys(variants).includes(first) ? first : "es") as ForeignLocale;
   const { strings, date } = variants[locale];
   const twin = ENGLISH_TWIN.exec(pathname)?.[1];
   // Only offer the English page once it is known to exist, so the link never leads to another 404.

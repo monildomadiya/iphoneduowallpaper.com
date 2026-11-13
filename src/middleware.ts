@@ -16,5 +16,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin", "/admin/:path*", "/auth/:path*", "/wallpapers", "/categories/:slug", "/devices/:slug", "/blog", "/:lang(es|tr)/wallpapers", "/:lang(es|tr)/categories/:slug", "/:lang(es|tr)/devices/:slug"],
+  matcher: ["/admin", "/admin/:path*", "/auth/:path*", "/wallpapers", "/categories/:slug", "/devices/:slug", "/blog", "/:lang(es|tr|zh|ko|de)/wallpapers", "/:lang(es|tr|zh|ko|de)/categories/:slug", "/:lang(es|tr|zh|ko|de)/devices/:slug"],
 };

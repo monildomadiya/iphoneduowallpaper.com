@@ -3,6 +3,7 @@ import { getPostSitemapEntries } from "@/lib/data/posts";
 import { getCategories, getDarkCategory, getDevices, getThemeCategories } from "@/lib/data/taxonomy";
 import { getWallpaperSitemapEntries } from "@/lib/data/wallpapers";
 import { FOREIGN_LOCALES, languageAlternates, localizedPath, translatedEnglishPaths } from "@/lib/i18n";
+import type { ForeignLocale } from "@/lib/i18n/types";
 import { wallpaperTranslation } from "@/lib/i18n/wallpapers";
 import { absoluteUrl, imageUrl } from "@/lib/utils";
 
@@ -20,7 +21,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const populatedDevices = new Set(devices.filter((item) => item.wallpaper_count > 0).map((item) => item.slug));
   // Translation dictionaries can contain a renamed slug before the database does.
   // Only advertise taxonomy URLs backed by an active, populated category or device.
-  const translatedPaths = translatedEnglishPaths().filter((path) => {
+  const translatedPaths = (locale: ForeignLocale) => translatedEnglishPaths(locale).filter((path) => {
     if (path.startsWith("/categories/")) return populatedCategories.has(path.slice("/categories/".length));
     if (path.startsWith("/devices/")) return populatedDevices.has(path.slice("/devices/".length));
     return true;
@@ -64,7 +65,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     return languages ? { ...entry, alternates: { languages } } : entry;
   };
   const translatedPages: MetadataRoute.Sitemap = FOREIGN_LOCALES.flatMap((locale) => [
-    ...translatedPaths.map((path) => ({
+    ...translatedPaths(locale).map((path) => ({
       url: absoluteUrl(localizedPath(locale, path)),
       lastModified: libraryUpdated,
       changeFrequency: "weekly" as const,

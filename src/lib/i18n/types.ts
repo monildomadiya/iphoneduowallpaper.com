@@ -1,5 +1,5 @@
-/** The languages the site has pages in. English lives at the root; the others under /es and /tr. */
-export type Locale = "en" | "es" | "tr";
+/** The languages the site has pages in. English lives at the root; the others under /es, /tr, /zh, /ko and /de. */
+export type Locale = "en" | "es" | "tr" | "zh" | "ko" | "de";
 export type ForeignLocale = Exclude<Locale, "en">;
 
 export type NavIcon = "wallpapers" | "categories" | "devices" | "maker" | "guides";

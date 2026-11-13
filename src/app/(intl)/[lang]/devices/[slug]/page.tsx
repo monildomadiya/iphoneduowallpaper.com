@@ -8,12 +8,12 @@ import { WallpaperListing } from "@/components/wallpaper/wallpaper-listing";
 import { getDeviceBySlug } from "@/lib/data/taxonomy";
 import { FOREIGN_LOCALES, isForeignLocale, languageAlternates, localeContent } from "@/lib/i18n";
 import { fill } from "@/lib/i18n/en";
-import { deviceCopy, localizedDeviceFaq } from "@/lib/i18n/taxonomy";
+import { deviceCopy, localizedDeviceFaq, localizedRatio } from "@/lib/i18n/taxonomy";
 import { localizedOrientation } from "@/lib/i18n/wallpaper-copy";
 import { listingJsonLd } from "@/lib/listing-jsonld";
 import { buildMetadata, faqJsonLd, listingPage } from "@/lib/seo";
 import { mockupDate } from "@/lib/site";
-import { aspectRatioLabel, imageUrl } from "@/lib/utils";
+import { imageUrl } from "@/lib/utils";
 
 // Renders on the server before responding so untranslated devices return a real 404 status.
 
@@ -65,7 +65,7 @@ export default async function LocalizedDevicePage({ params, searchParams }: Page
       value: device.diagonal_in ? fill(taxonomy.specs.inch, { n: device.diagonal_in.toLocaleString(locale) }) : "—",
     },
     { label: taxonomy.specs.resolution, value: `${device.width} × ${device.height} px` },
-    { label: taxonomy.specs.ratio, value: aspectRatioLabel(device.width, device.height).replace(".", ",") },
+    { label: taxonomy.specs.ratio, value: localizedRatio(device.width, device.height, locale) },
     { label: taxonomy.specs.density, value: device.ppi ? `${device.ppi} ppi` : "—" },
     { label: taxonomy.specs.orientation, value: localizedOrientation(device.width, device.height, wallpaper) },
   ];

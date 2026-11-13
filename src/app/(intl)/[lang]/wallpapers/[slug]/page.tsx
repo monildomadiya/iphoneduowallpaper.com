@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AdSlot } from "@/components/ads/ad-slot";
+import { SupportCard } from "@/components/site/support";
+import { SupportPrompt } from "@/components/site/support-prompt";
 import { Breadcrumbs, JsonLd, SectionHeading } from "@/components/ui/primitives";
 import { ViewTracker } from "@/components/wallpaper/client-actions";
 import { DownloadPanel, NativeFitList } from "@/components/wallpaper/download-panel";
@@ -18,6 +20,7 @@ import { categoryCopy, categoryHref, deviceCopy, deviceHref } from "@/lib/i18n/t
 import { translatedWallpaperSlugs, wallpaperTranslation } from "@/lib/i18n/wallpapers";
 import { buildMetadata, wallpaperJsonLd } from "@/lib/seo";
 import { mockupDate } from "@/lib/site";
+import { supportStrings } from "@/lib/support";
 import type { WallpaperDetail } from "@/lib/types";
 import { absoluteUrl, cn, formatBytes, formatDate, imageUrl, qualityLabel, screenFit, truncate } from "@/lib/utils";
 import { screenFitDetail } from "@/lib/wallpaper-copy";
@@ -145,6 +148,7 @@ export default async function LocalizedWallpaperPage({ params }: PageProps<"/[la
         }}
       />
       <ViewTracker id={wallpaper.id} />
+      <SupportPrompt strings={supportStrings(locale)} />
 
       <div className="container-apple pt-6">
         <Breadcrumbs
@@ -217,6 +221,8 @@ export default async function LocalizedWallpaperPage({ params }: PageProps<"/[la
                 .
               </span>
             </p>
+
+            <SupportCard locale={locale} className="mt-8" />
 
             <section className="mt-10">
               <h2 className="text-[19px] font-semibold tracking-tight">{t.about}</h2>

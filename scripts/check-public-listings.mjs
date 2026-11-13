@@ -10,6 +10,9 @@ const cases = [
   ["/devices/iphone-duo-inner-display?page=2", "en"],
   ["/es/categories/dark", "es"],
   ["/tr/wallpapers?page=2", "tr"],
+  ["/zh/categories/dark", "zh"],
+  ["/ko/wallpapers?page=2", "ko"],
+  ["/de/devices/iphone-duo-inner-display", "de"],
   ["/blog?page=2", "en"],
 ];
 for (const [path, lang] of cases) {

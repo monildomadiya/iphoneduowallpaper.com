@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import { DuoMaker } from "@/components/maker/duo-maker";
 import { StaticMaker } from "@/components/maker/static-maker";
 import { Markdown } from "@/components/site/markdown";
+import { SupportCard } from "@/components/site/support";
 import { FaqList } from "@/components/site/tiles";
 import { Breadcrumbs, JsonLd, PageHeader, SectionHeading } from "@/components/ui/primitives";
 import { isForeignLocale, languageAlternates, localeContent, localizedPath } from "@/lib/i18n";
@@ -49,6 +50,10 @@ export default async function LocalizedMakerPage({ params }: PageProps<"/[lang]/
           <StaticMaker strings={maker.ui} date={mockupDate(lang)} />
         </Suspense>
       </section>
+
+      <div className="container-apple">
+        <SupportCard locale={lang} className="mt-12" />
+      </div>
 
       <section className="container-apple mt-24">
         <SectionHeading title={maker.stepsTitle[0]} subtitle={maker.stepsTitle[1]} />

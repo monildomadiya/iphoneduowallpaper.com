@@ -23,7 +23,6 @@ export const TR: LocaleContent = {
       { href: "/tr/categories", label: "Kategoriler", icon: "categories" },
       { href: "/tr/devices", label: "Cihazlar", icon: "devices" },
       { href: "/tr/maker", label: "Oluşturucu", icon: "maker" },
-      { href: "/tr/blog", label: "Rehberler", icon: "guides" },
     ],
     header: {
       skip: "İçeriğe geç",

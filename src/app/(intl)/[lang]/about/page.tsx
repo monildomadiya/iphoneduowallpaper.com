@@ -2,6 +2,7 @@ import { Layers, Ruler, ShieldCheck, Sparkles } from "lucide-react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Markdown } from "@/components/site/markdown";
+import { SupportCard } from "@/components/site/support";
 import { Breadcrumbs, JsonLd } from "@/components/ui/primitives";
 import { getSiteSettings } from "@/lib/data/settings";
 import { isForeignLocale, languageAlternates, localeContent } from "@/lib/i18n";
@@ -83,6 +84,7 @@ export default async function LocalizedAboutPage({ params }: PageProps<"/[lang]/
               <Markdown content={fill(section.body, values)} />
             </div>
           ))}
+          <SupportCard locale={lang} className="mt-14" />
         </div>
       </section>
     </>

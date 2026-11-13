@@ -136,6 +136,15 @@
     -webkit-text-size-adjust: 100%;
     -webkit-tap-highlight-color: transparent;
   }
+  /* Korean otherwise breaks mid-word; German compounds like "Hintergrundbilder" outrun a phone's width. */
+  html:lang(ko) {
+    word-break: keep-all;
+    overflow-wrap: break-word;
+  }
+  html:lang(de) :is(h1, h2, h3) {
+    hyphens: auto;
+    overflow-wrap: break-word;
+  }
   body {
     background-color: var(--bg);
     color: var(--fg);
@@ -188,6 +197,10 @@
     line-height: 1.02;
     letter-spacing: -0.022em;
     font-weight: 700;
+  }
+  /* Smaller on phones, so "Hintergrundbilder" fits on one line; the same size from 1,375px up. */
+  html:lang(de) .headline-hero {
+    font-size: clamp(1.875rem, 4.6vw + 1rem, 5.5rem);
   }
   .headline-section {
     font-size: clamp(1.75rem, 2.2vw + 1rem, 3rem);

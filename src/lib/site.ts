@@ -24,7 +24,6 @@ export const MAIN_NAV: NavItem[] = [
   { href: "/categories", label: "Categories", icon: "categories" },
   { href: "/devices", label: "Devices", icon: "devices" },
   { href: "/maker", label: "Maker", icon: "maker" },
-  { href: "/blog", label: "Guides", icon: "guides" },
 ];
 
 export const FOOTER_NAV: { title: string; links: { href: string; label: string }[] }[] = [

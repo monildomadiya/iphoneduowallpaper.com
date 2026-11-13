@@ -19,7 +19,9 @@ export function StaticSearch({ locale }: { locale?: ForeignLocale }) {
   const path = locale ? `/${locale}/search` : "/search";
   const { items, error } = usePublicCatalog(Boolean(query));
   const stop = new Set((t?.stopWords ?? []).map(normalizeSearch));
-  const words = normalizeSearch(query).split(" ").filter((word) => word && !stop.has(word));
+  // Chinese and Korean run words together ("沙丘壁纸"), so their stop words come out of the middle too.
+  const glued = [...stop].filter((word) => /[\p{Script=Han}\p{Script=Hangul}]/u.test(word));
+  const words = glued.reduce((text, word) => text.replaceAll(word, " "), normalizeSearch(query)).split(" ").filter((word) => word && !stop.has(word));
   const matches = words.length ? (items ?? []).filter((item) => {
     const translation = locale ? wallpaperTranslation(locale, item.slug) : null;
     const text = normalizeSearch([item.title, item.description, item.category?.name, ...item.tags, translation?.title, translation?.description].join(" "));

@@ -1,9 +1,11 @@
 import { Layers, Ruler, ShieldCheck, Sparkles } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { SupportCard } from "@/components/site/support";
 import { getSiteSettings } from "@/lib/data/settings";
 import { languageAlternates } from "@/lib/i18n";
 import { buildMetadata } from "@/lib/seo";
+import { SUPPORT_URL } from "@/lib/support";
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings();
@@ -117,8 +119,12 @@ export default async function AboutPage() {
           </ul>
           <h2>Independent and free</h2>
           <p>
-            We are not affiliated with Apple Inc. The Site is free to use and supported by clearly labeled advertising.
-            Wallpapers are for personal use on your own devices; see our <Link href="/terms">Terms of Use</Link>.
+            We are not affiliated with Apple Inc. The Site is free to use and supported by clearly labeled advertising
+            and by readers who{" "}
+            <a href={SUPPORT_URL} target="_blank" rel="noopener noreferrer nofollow">
+              buy us a coffee
+            </a>
+            . Wallpapers are for personal use on your own devices; see our <Link href="/terms">Terms of Use</Link>.
           </p>
           <h2>Get in touch</h2>
           <p>
@@ -127,6 +133,7 @@ export default async function AboutPage() {
             work here without permission can reach us through our <Link href="/dmca">copyright page</Link>.
           </p>
         </div>
+        <SupportCard className="mx-auto mt-14 max-w-3xl" />
       </section>
     </>
   );

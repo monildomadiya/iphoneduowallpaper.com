@@ -3,7 +3,9 @@ import { Suspense } from "react";
 import { getCategories } from "@/lib/data/taxonomy";
 import { EN_HEADER, fill } from "@/lib/i18n/en";
 import type { Chrome } from "@/lib/i18n/types";
+import { supportStrings } from "@/lib/support";
 import { LogoMark } from "./logo";
+import { SupportHeaderButton } from "./support";
 import { DesktopNav, HeaderBar, HeaderControls, NavLinks } from "./header-client";
 
 export async function SiteHeader({
@@ -54,7 +56,14 @@ export async function SiteHeader({
           <Suspense fallback={<NavLinks pathname={null} items={chrome?.nav} />}>
             <DesktopNav items={chrome?.nav} />
           </Suspense>
-          <HeaderControls quickLinks={quickLinks} nav={chrome?.nav} strings={strings} searchPath={chrome?.searchPath} />
+          <SupportHeaderButton locale={chrome?.locale} />
+          <HeaderControls
+            quickLinks={quickLinks}
+            nav={chrome?.nav}
+            strings={strings}
+            searchPath={chrome?.searchPath}
+            support={supportStrings(chrome?.locale).short}
+          />
         </HeaderBar>
       </header>
     </>

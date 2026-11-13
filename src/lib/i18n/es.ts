@@ -23,7 +23,6 @@ export const ES: LocaleContent = {
       { href: "/es/categories", label: "Categorías", icon: "categories" },
       { href: "/es/devices", label: "Dispositivos", icon: "devices" },
       { href: "/es/maker", label: "Creador", icon: "maker" },
-      { href: "/es/blog", label: "Guías", icon: "guides" },
     ],
     header: {
       skip: "Saltar al contenido",

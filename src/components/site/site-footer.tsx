@@ -4,6 +4,7 @@ import type { Chrome } from "@/lib/i18n/types";
 import { FOOTER_NAV } from "@/lib/site";
 import type { SiteSettings } from "@/lib/types";
 import { LogoMark } from "./logo";
+import { SupportFooterStrip } from "./support";
 
 function CopyrightYear() {
   return <>{new Date().getFullYear()}</>;
@@ -26,6 +27,9 @@ const LANGUAGES = [
   { href: "/", label: "English", lang: "en" },
   { href: "/es", label: "Español", lang: "es" },
   { href: "/tr", label: "Türkçe", lang: "tr" },
+  { href: "/zh", label: "简体中文", lang: "zh" },
+  { href: "/ko", label: "한국어", lang: "ko" },
+  { href: "/de", label: "Deutsch", lang: "de" },
 ];
 
 export function SiteFooter({ settings, chrome }: { settings: SiteSettings; chrome?: Chrome }) {
@@ -36,6 +40,7 @@ export function SiteFooter({ settings, chrome }: { settings: SiteSettings; chrom
   return (
     <footer className="mt-24 border-t border-line bg-surface text-[12px] leading-5 text-fg-2">
       <div className="container-apple py-10">
+        <SupportFooterStrip locale={current} />
         <p className="border-b border-line pb-5 text-fg-3">
           {fill(chrome?.footer.disclaimer ?? EN_DISCLAIMER, { site: settings.site_name })}
         </p>
@@ -64,7 +69,7 @@ export function SiteFooter({ settings, chrome }: { settings: SiteSettings; chrom
               Copyright © <CopyrightYear /> {settings.site_name}. {chrome?.footer.rights ?? "All rights reserved."}
             </span>
           </div>
-          <nav aria-label={chrome?.footer.languages ?? "Languages"} className="flex items-center gap-3">
+          <nav aria-label={chrome?.footer.languages ?? "Languages"} className="flex flex-wrap items-center gap-x-3 gap-y-1">
             {LANGUAGES.map((language) =>
               language.lang === current ? (
                 <span key={language.lang} lang={language.lang} aria-current="true" className="font-semibold text-fg">

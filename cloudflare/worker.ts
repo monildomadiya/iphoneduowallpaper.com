@@ -44,7 +44,7 @@ const worker = {
     headers.set("X-Public-Rendering", "static");
     headers.set("X-Content-Type-Options", "nosniff");
     headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
-    if (path === "/search" || /^\/(es|tr)\/search$/.test(path)) headers.set("X-Robots-Tag", "noindex, follow");
+    if (path === "/search" || /^\/(es|tr|zh|ko|de)\/search$/.test(path)) headers.set("X-Robots-Tag", "noindex, follow");
     if (path === "/public-catalog.json") headers.set("X-Robots-Tag", "noindex");
     const status = entry ? snapshot.status ?? 200 : 404;
     if (status === 404) headers.set("X-Robots-Tag", "noindex, follow");

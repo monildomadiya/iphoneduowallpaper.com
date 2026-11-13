@@ -1,4 +1,5 @@
 import { ResourceLinks } from "@/components/site/resource-links";
+import { SupportCard } from "@/components/site/support";
 import { FIT_HELP, READABILITY_HELP, SETUP_GUIDE } from "@/lib/guide-links";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -62,6 +63,10 @@ export default function MakerPage() {
           <StaticMaker />
         </Suspense>
       </section>
+
+      <div className="container-apple">
+        <SupportCard className="mt-12" />
+      </div>
 
       <div className="container-apple"><ResourceLinks title="Check your crop before applying it" links={[FIT_HELP, READABILITY_HELP, SETUP_GUIDE]} /></div>
       <section className="container-apple mt-24">

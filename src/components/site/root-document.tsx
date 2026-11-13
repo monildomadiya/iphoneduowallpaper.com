@@ -48,8 +48,8 @@ export const rootViewport: Viewport = {
 };
 
 /**
- * The <html> element. English, Spanish, Turkish and the admin panel each have a root layout of
- * their own so every page states its real language: a single shared root said lang="en" on /es
+ * The <html> element. English, the translated languages and the admin panel each have a root layout
+ * of their own so every page states its real language: a single shared root said lang="en" on /es
  * and /tr too, and it can't read the language without making every page render per request.
  */
 export function RootDocument({ lang, children }: { lang: string; children: React.ReactNode }) {

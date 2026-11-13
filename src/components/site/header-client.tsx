@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, BookOpen, FolderOpen, Images, Search, Smartphone, WandSparkles, X } from "lucide-react";
+import { ArrowRight, BookOpen, Coffee, FolderOpen, Images, Search, Smartphone, WandSparkles, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
@@ -8,6 +8,7 @@ import { createPortal } from "react-dom";
 import { EN_HEADER } from "@/lib/i18n/en";
 import type { HeaderStrings, LinkItem, NavIcon, NavItem } from "@/lib/i18n/types";
 import { MAIN_NAV } from "@/lib/site";
+import { SUPPORT_URL } from "@/lib/support";
 import { cn } from "@/lib/utils";
 
 const NAV_ICONS: Record<NavIcon, { icon: typeof Images; tint: string }> = {
@@ -88,29 +89,21 @@ export function DesktopNav({ items }: { items?: NavItem[] }) {
   return <NavLinks pathname={usePathname()} items={items} />;
 }
 
-const noopSubscribe = () => () => {};
-
-function useShortcutLabel() {
-  return useSyncExternalStore(
-    noopSubscribe,
-    () => (/Mac|iPhone|iPad/.test(navigator.platform) ? "⌘K" : "Ctrl K"),
-    () => "Ctrl K",
-  );
-}
-
 export function HeaderControls({
   quickLinks,
   nav = MAIN_NAV,
   strings: t = EN_HEADER,
   searchPath = "/search",
+  support,
 }: {
   quickLinks: LinkItem[];
   nav?: NavItem[];
   strings?: HeaderStrings;
   searchPath?: string;
+  /** "Buy me a coffee" in the page's language. The header pill is desktop-only, so phones meet it here. */
+  support?: string;
 }) {
   const router = useRouter();
-  const shortcut = useShortcutLabel();
   const [panel, setPanel] = useState<"search" | "menu" | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const close = () => setPanel(null);
@@ -162,20 +155,7 @@ export function HeaderControls({
           aria-label={t.searchLabel}
           aria-expanded={panel === "search"}
           onClick={() => setPanel(panel === "search" ? null : "search")}
-          className="hidden h-10 w-44 shrink-0 items-center gap-2 rounded-full bg-black/[0.045] pl-3.5 pr-2 text-[13px] text-fg-3 transition hover:bg-black/[0.07] lg:flex"
-        >
-          <Search className="size-4" strokeWidth={2} />
-          <span className="flex-1 truncate whitespace-nowrap text-left">{t.search}</span>
-          <kbd className="rounded-md bg-white px-1.5 py-0.5 font-sans text-[11px] font-medium text-fg-2 shadow-[0_1px_1px_rgba(0,0,0,0.08)] ring-1 ring-black/[0.06]">
-            {shortcut}
-          </kbd>
-        </button>
-        <button
-          type="button"
-          aria-label={t.searchLabel}
-          aria-expanded={panel === "search"}
-          onClick={() => setPanel(panel === "search" ? null : "search")}
-          className={cn(iconButton, "lg:hidden")}
+          className={cn(iconButton, "bg-black/[0.045]")}
         >
           <Search className="size-[18px]" strokeWidth={2} />
         </button>
@@ -294,6 +274,21 @@ export function HeaderControls({
                           );
                         })}
                       </ul>
+                      {support ? (
+                        <a
+                          href={SUPPORT_URL}
+                          target="_blank"
+                          rel="noopener noreferrer nofollow"
+                          onClick={close}
+                          className="mt-2 flex items-center gap-3.5 rounded-2xl bg-[#fffae3] p-2.5 text-[17px] font-semibold tracking-tight text-fg transition hover:bg-[#fff6c9]"
+                        >
+                          <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-[#ffdd00] text-[#1d1d1f] shadow-[0_6px_14px_-6px_rgba(190,155,0,0.9)]">
+                            <Coffee className="size-[19px]" strokeWidth={2} />
+                          </span>
+                          <span className="flex-1">{support}</span>
+                          <ArrowRight className="size-4 text-fg-3" />
+                        </a>
+                      ) : null}
                       <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2 border-t border-line px-3 pb-1 pt-4 text-[13px] text-fg-2">
                         {t.menuLinks.map((link) => (
                           <Link key={link.href} href={link.href} onClick={close} className="hover:text-fg">

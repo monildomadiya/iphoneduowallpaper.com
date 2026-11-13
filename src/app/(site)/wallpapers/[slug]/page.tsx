@@ -4,6 +4,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AdSlot } from "@/components/ads/ad-slot";
 import { Breadcrumbs, JsonLd, SectionHeading } from "@/components/ui/primitives";
+import { SupportCard } from "@/components/site/support";
+import { SupportPrompt } from "@/components/site/support-prompt";
 import { ViewTracker } from "@/components/wallpaper/client-actions";
 import { DownloadPanel, EN_FILE_STRINGS, NativeFitList } from "@/components/wallpaper/download-panel";
 import { WallpaperGrid } from "@/components/wallpaper/wallpaper-card";
@@ -14,6 +16,7 @@ import { getPrerenderWallpaperSlugs, getRelatedWallpapers, getWallpaperBySlug } 
 import { languageAlternates } from "@/lib/i18n";
 import { buildMetadata, wallpaperJsonLd } from "@/lib/seo";
 import { wallpaperGuide } from "@/lib/site";
+import { supportStrings } from "@/lib/support";
 import { tagLink } from "@/lib/themes";
 import { SOURCE_TYPE_LABELS, type WallpaperDetail } from "@/lib/types";
 import {
@@ -134,6 +137,7 @@ export default async function WallpaperPage({ params }: PageProps<"/wallpapers/[
     <>
       <JsonLd data={wallpaperJsonLd(wallpaper, settings)} />
       <ViewTracker id={wallpaper.id} />
+      <SupportPrompt strings={supportStrings()} />
 
       <div className="container-apple pt-6">
         <Breadcrumbs
@@ -204,6 +208,8 @@ export default async function WallpaperPage({ params }: PageProps<"/wallpapers/[
               Unsure which file to save? <Link href="/wallpaper-help" className="link-apple">Check cropping, image quality and download help.</Link>
               {" "}Clock hard to see? <Link href="/wallpaper-readability" className="link-apple">Compare text contrast in the readability lab.</Link>
             </p>
+
+            <SupportCard className="mt-8" />
 
             <section className="mt-10">
               <h2 className="text-[19px] font-semibold tracking-tight">About this wallpaper</h2>

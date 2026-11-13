@@ -19,7 +19,7 @@ const RENAMED_CATEGORIES: Record<string, string> = {
   "anime-4k": "anime",
 };
 
-const LOCALE_PREFIXES = ["", "/es", "/tr"];
+const LOCALE_PREFIXES = ["", "/es", "/tr", "/zh", "/ko", "/de"];
 
 /** A content rename must reach the database before its redirect can go live. */
 async function existingRenameTargets(table: "wallpapers" | "categories", targets: string[]) {
@@ -59,7 +59,7 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
   experimental: {
-    // English, Spanish/Turkish and admin have separate root layouts; unmatched URLs need a 404 of their own.
+    // English, the translated languages and admin have separate root layouts; unmatched URLs need a 404 of their own.
     globalNotFound: true,
     serverActions: {
       bodySizeLimit: "2mb",

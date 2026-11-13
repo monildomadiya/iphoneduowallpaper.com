@@ -20,9 +20,9 @@ export function deviceHref(slug: string, locale?: ForeignLocale): string {
   return locale && deviceCopy(locale, slug) ? `/${locale}/devices/${slug}` : `/devices/${slug}`;
 }
 
-/** Decimal comma, as both Spanish and Turkish write it. */
-function localizedRatio(width: number, height: number): string {
-  return aspectRatioLabel(width, height).replace(".", ",");
+/** "2.17:1" with the language's own decimal mark: a comma in Spanish, Turkish and German. */
+export function localizedRatio(width: number, height: number, locale: ForeignLocale): string {
+  return aspectRatioLabel(width, height).replace(".", (1.5).toLocaleString(locale).charAt(1));
 }
 
 /** The same three answers as the English device FAQ, from the device's own numbers. */
@@ -42,7 +42,7 @@ export function localizedDeviceFaq(
     faqName,
     w,
     h,
-    ratio: localizedRatio(w, h),
+    ratio: localizedRatio(w, h, locale),
     mp: ((w * h) / 1_000_000).toLocaleString(locale, { maximumFractionDigits: 1, minimumFractionDigits: 1 }),
     orientation: portrait ? wallpaper.orientation.portrait : wallpaper.orientation.landscape,
   };

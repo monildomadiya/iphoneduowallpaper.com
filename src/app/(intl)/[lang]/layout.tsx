@@ -13,7 +13,7 @@ export function generateStaticParams() {
   return FOREIGN_LOCALES.map((lang) => ({ lang }));
 }
 
-/** Spanish and Turkish pages: a root layout of their own, so <html lang> names the language. */
+/** Translated pages: a root layout of their own, so <html lang> names the language. */
 export default async function LocaleLayout({ children, params }: LayoutProps<"/[lang]">) {
   const { lang } = await params;
   if (!isForeignLocale(lang)) notFound();

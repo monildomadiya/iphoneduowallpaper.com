@@ -18,7 +18,13 @@ export function slugify(input: string): string {
     .replace(/-+$/g, "");
 }
 
-export const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+/** A heading's anchor. `slugify` keeps only a–z and 0–9, which leaves almost nothing of a Chinese or Korean heading. */
+export function headingId(text: string): string {
+  if (!/[\p{Script=Han}\p{Script=Hangul}]/u.test(text)) return slugify(text);
+  return text.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-+|-+$/g, "");
+}
+
+export const SLUG_PATTERN =/^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 export function isValidSlug(slug: string): boolean {
   return slug.length > 0 && slug.length <= 100 && SLUG_PATTERN.test(slug);
@@ -169,7 +175,9 @@ export function screenFit(width: number, height: number, screenW: number, screen
 }
 
 export function readingMinutes(markdown: string): number {
-  const words = markdown.trim().split(/\s+/).filter(Boolean).length;
+  // Chinese has no spaces between words; a word averages about two characters.
+  const han = markdown.match(/\p{Script=Han}/gu)?.length ?? 0;
+  const words = markdown.trim().split(/\s+/).filter(Boolean).length + han / 2;
   return Math.max(1, Math.round(words / 220));
 }
 
