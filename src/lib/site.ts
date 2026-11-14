@@ -93,7 +93,7 @@ type GuideLink = { href: string; label: string };
 
 /** The guide that goes deepest on each category, linked from the category and its wallpapers. */
 const CATEGORY_GUIDES: Record<string, GuideLink> = {
-  "anime-4k": {
+  anime: {
     href: "/blog/anime-wallpapers-iphone-lock-screen",
     label: "How to pick anime art that works on a Lock Screen",
   },

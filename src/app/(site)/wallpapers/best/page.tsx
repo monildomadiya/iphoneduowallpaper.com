@@ -21,7 +21,7 @@ const TOP_COUNT = 20;
 const PICKS_PER_STYLE = 5;
 const MIN_PICKS = 3;
 /** The styles with the most downloads per wallpaper in Nov 2026, so the picks open on what people want. */
-const PICK_ORDER = ["sunset", "desert", "landscape", "car", "dark", "aesthetic", "minimal", "anime-4k"];
+const PICK_ORDER = ["sunset", "desert", "landscape", "car", "dark", "aesthetic", "minimal", "anime"];
 
 export async function generateMetadata(): Promise<Metadata> {
   return buildMetadata({ title: TITLE, description: DESCRIPTION, path: PATH });

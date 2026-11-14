@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { listingRewrite } from "../src/lib/listing-rewrite.ts";
 
 const rewrite = (path) => listingRewrite(new URL(path, "https://example.com"));
-assert.equal(rewrite("/categories/anime-4k"), "/cached-listings/category/anime-4k/latest/1");
+assert.equal(rewrite("/categories/anime"), "/cached-listings/category/anime/latest/1");
 assert.equal(rewrite("/wallpapers?page=2&sort=popular&_rsc=prefetch"), "/cached-listings/wallpapers/all/popular/2");
 assert.equal(rewrite("/es/devices/iphone-duo-inner-display?page=3"), "/es/cached-listings/device/iphone-duo-inner-display/latest/3");
 assert.equal(rewrite("/tr/categories/dark?sort=popular"), "/tr/cached-listings/category/dark/popular/1");

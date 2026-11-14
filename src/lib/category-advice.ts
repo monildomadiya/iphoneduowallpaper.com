@@ -1,10 +1,10 @@
 /** Original selection advice for each collection; no claims about a file's unseen contents. */
 export const CATEGORY_ADVICE: Record<string, { title: string; paragraphs: string[] }> = {
-  "anime-4k": {
+  anime: {
     title: "Keep the character clear of the clock",
     paragraphs: [
       "Start with the face and the silhouette. A close portrait can work on the outer screen but lose its expression when the wider inner crop cuts through the head. A scene with extra sky or space around the character gives you more room to reframe it. Check the top of the preview for hair, eyes or lettering hidden by the clock.",
-      "Strong outlines help a character stand out, but small text and highly detailed backgrounds can compete with app labels. Try a quieter crop for the Home Screen. The collection's URL includes an older 4K label; use the dimensions on each artwork page to judge the actual download, rather than treating the category address as a resolution promise.",
+      "Strong outlines help a character stand out, but small text and highly detailed backgrounds can compete with app labels. Try a quieter crop for the Home Screen, and check the dimensions on each artwork page before you download: a design that looks crisp in the gallery can still need enlarging to fill a screen.",
     ],
   },
   car: {

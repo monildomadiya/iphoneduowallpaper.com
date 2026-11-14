@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 const base = process.argv[2];
 assert.ok(base?.startsWith("http"), "Usage: node scripts/check-public-listings.mjs https://example.com");
 const cases = [
-  ["/categories/anime-4k", "en"],
+  ["/categories/anime", "en"],
   ["/categories/dark?sort=popular", "en"],
   ["/wallpapers?page=2", "en"],
   ["/wallpapers?page=2&sort=popular", "en"],
@@ -31,7 +31,7 @@ for (const [path, lang] of cases) {
   if (path.includes("sort=popular")) assert.match(html, /aria-selected="true"[^>]*>Most downloaded<\/a>/);
   console.log(JSON.stringify({ path, status: response.status, bytes: html.length, canonical }));
 }
-for (const path of ["/categories/anime-4k", "/wallpapers?page=2&sort=popular", "/es/categories/dark"]) {
+for (const path of ["/categories/anime", "/wallpapers?page=2&sort=popular", "/es/categories/dark"]) {
   const response = await fetch(new URL(path, base), { headers: { RSC: "1" }, signal: AbortSignal.timeout(60000) });
   const body = await response.text();
   assert.equal(response.status, 200, `${path}: RSC status`);

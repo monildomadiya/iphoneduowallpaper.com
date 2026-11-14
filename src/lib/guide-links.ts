@@ -30,7 +30,7 @@ export function resourcesForGuide(slug: string): ResourceLink[] {
   if (slug === "amoled-wallpapers-iphone-battery") return [
     { href: "/categories/dark", label: "Browse dark and AMOLED wallpapers", description: "Compare subdued backgrounds from across the library." }, READABILITY_HELP, FIT_HELP,
   ];
-  const category = ({ "anime-wallpapers-iphone-lock-screen": "anime-4k", "minimal-iphone-wallpapers-guide": "minimal", "car-wallpapers-iphone-framing": "car", "ios-style-wallpapers-glass-gradients": "ios-inspired-wallpapers", "official-iphone-duo-wallpaper": "landscape" } as Record<string, string>)[slug];
+  const category = ({ "anime-wallpapers-iphone-lock-screen": "anime", "minimal-iphone-wallpapers-guide": "minimal", "car-wallpapers-iphone-framing": "car", "ios-style-wallpapers-glass-gradients": "ios-inspired-wallpapers", "official-iphone-duo-wallpaper": "landscape" } as Record<string, string>)[slug];
   if (category) return [
     { href: `/categories/${category}`, label: "Try wallpapers in this style", description: "Open a design to inspect its framing and available download sizes." }, READABILITY_HELP, MAKER_HELP,
   ];

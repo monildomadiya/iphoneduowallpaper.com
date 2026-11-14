@@ -135,7 +135,7 @@ export function matchesTheme(theme: WallpaperTheme, title: string, tags: string[
 /** Where a tag leads, first match wins. Pages that aren't stocked are skipped, so a tag never links to a 404. */
 const TAG_PAGES: { pattern: RegExp; slug: string }[] = [
   { pattern: /halloween|pumpkin|spooky/, slug: "halloween-wallpaper" },
-  { pattern: /anime/, slug: "anime-4k" },
+  { pattern: /anime/, slug: "anime" },
   { pattern: /\b(car|cars|automotive)\b/, slug: "car" },
   { pattern: /neon|cyberpunk|synthwave/, slug: "neon" },
   { pattern: /sunset|sunrise|golden hour/, slug: "sunset" },
