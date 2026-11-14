@@ -212,6 +212,13 @@ export interface CategoryCopy {
   title: string;
   description: string;
   guide?: LinkItem;
+  /**
+   * Selection advice in this language, the counterpart of English CATEGORY_ADVICE. Without it a
+   * translated category page is a heading plus a grid of thumbnails — 14 to 60 words of text —
+   * so `/[lang]/categories/[slug]` keeps such a page out of the index until the copy is written,
+   * the same way an empty listing stays out until its first wallpaper.
+   */
+  paragraphs?: string[];
 }
 
 export interface DeviceCopy {

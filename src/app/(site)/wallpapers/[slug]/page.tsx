@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AdSlot } from "@/components/ads/ad-slot";
+import { Markdown } from "@/components/site/markdown";
 import { Breadcrumbs, JsonLd, SectionHeading } from "@/components/ui/primitives";
 import { SupportCard } from "@/components/site/support";
 import { SupportPrompt } from "@/components/site/support-prompt";
@@ -194,30 +195,38 @@ export default async function WallpaperPage({ params }: PageProps<"/wallpapers/[
               <WandSparkles className="size-4" />
               Make outer &amp; inner display files from this wallpaper
             </Link>
+            {/* One line of links, not three sentences: this block is identical on every wallpaper page,
+                and 458 copies of it is what makes the library read as templated. The guides hold the words. */}
             <p className="mt-3 flex items-start gap-1.5 text-[13px] leading-5 text-fg-3">
               <Info className="mt-0.5 size-3.5 shrink-0" />
               <span>
-                On iPhone, downloads are saved to Files → Downloads.{" "}
-                <Link href="/blog/how-to-save-wallpapers-to-iphone-photos" className="link-apple">
-                  Move it to Photos in two taps
-                </Link>
-                .
+                Saved to Files → Downloads.{" "}
+                <Link href="/blog/how-to-save-wallpapers-to-iphone-photos" className="link-apple">Move to Photos</Link>
+                {" · "}
+                <Link href="/wallpaper-help" className="link-apple">Cropping &amp; quality</Link>
+                {" · "}
+                <Link href="/wallpaper-readability" className="link-apple">Clock contrast</Link>
               </span>
-            </p>
-            <p className="mt-3 text-[13px] leading-5 text-fg-2">
-              Unsure which file to save? <Link href="/wallpaper-help" className="link-apple">Check cropping, image quality and download help.</Link>
-              {" "}Clock hard to see? <Link href="/wallpaper-readability" className="link-apple">Compare text contrast in the readability lab.</Link>
             </p>
 
             <SupportCard className="mt-8" />
 
             <section className="mt-10">
               <h2 className="text-[19px] font-semibold tracking-tight">About this wallpaper</h2>
-              {overview.map((paragraph) => (
-                <p key={paragraph} className="mt-3 text-[15px] leading-6 text-fg-2">
-                  {paragraph}
-                </p>
-              ))}
+              {/* Hand-written copy replaces the generated overview rather than joining it: the
+                  generated sentences are built from a template every wallpaper shares, and the
+                  point of writing about one picture is to not repeat them. */}
+              {wallpaper.about ? (
+                <div className="mt-3">
+                  <Markdown content={wallpaper.about} />
+                </div>
+              ) : (
+                overview.map((paragraph) => (
+                  <p key={paragraph} className="mt-3 text-[15px] leading-6 text-fg-2">
+                    {paragraph}
+                  </p>
+                ))
+              )}
               {guide ? (
                 <p className="mt-3 text-[15px] leading-6">
                   <Link href={guide.href} className="link-apple">
@@ -317,24 +326,13 @@ export default async function WallpaperPage({ params }: PageProps<"/wallpapers/[
 
             <AdSlot placement="wallpaper_sidebar" className="mt-10" />
 
-            <details className="group mt-10 border-y border-line py-5">
-              <summary className="flex cursor-pointer list-none items-center justify-between text-[17px] font-semibold [&::-webkit-details-marker]:hidden">
-                How to set this wallpaper
-                <span className="text-fg-3 transition group-open:rotate-45">+</span>
-              </summary>
-              <ol className="mt-4 list-decimal space-y-2 pl-5 text-[15px] leading-6 text-fg-2">
-                <li>Tap Download and save the image to your Photos library.</li>
-                <li>Open Settings → Wallpaper → Add New Wallpaper, then choose Photos.</li>
-                <li>Pick this wallpaper, adjust the framing and tap Add.</li>
-                <li>
-                  Choose Set as Wallpaper Pair.{" "}
-                  <Link href="/blog/how-to-set-wallpaper-on-iphone" className="link-apple">
-                    Read the full guide
-                  </Link>
-                  .
-                </li>
-              </ol>
-            </details>
+            {/* The four steps used to be inlined here, word for word on every wallpaper page. The guide
+                they duplicated is better and stays up to date in one place. */}
+            <p className="mt-10 border-y border-line py-5 text-[15px] leading-6">
+              <Link href="/blog/how-to-set-wallpaper-on-iphone" className="link-apple font-medium">
+                How to set this wallpaper on your Lock and Home Screen
+              </Link>
+            </p>
 
             <p className="mt-6 text-[13px] text-fg-3">
               Free for personal use. See our{" "}

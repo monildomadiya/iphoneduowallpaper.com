@@ -292,7 +292,7 @@ Fertig? [Entdecke weitere Hintergrundbilder](/de/wallpapers), die für beide Dis
     h1: "Anleitungen auf Deutsch.",
     lead: "Alles, was du wissen musst, damit dein Hintergrundbild auf beiden Displays des iPhone Duo scharf aussieht.",
     by: "Von der",
-    team: "{site}-Redaktion",
+    team: "{author}",
     minRead: "{n} Min. Lesezeit",
     toc: "In dieser Anleitung",
     english: "Auf Englisch lesen",

@@ -6,7 +6,7 @@ import type { DeviceSummary, Paginated, WallpaperCardData, WallpaperDetail, Wall
 import { isDarkWallpaper, isValidSlug } from "@/lib/utils";
 import type { WallpaperVariants } from "@/lib/variants/types";
 const CARD_COLUMNS = "id,title,slug,thumb_key,preview_key,width,height,dominant_color,downloads,views,is_featured,published_at,category:categories(name,slug)";
-const DETAIL_COLUMNS = `${CARD_COLUMNS},description,tags,original_key,file_size,mime_type,source_type,credit_name,credit_url,seo_title,seo_description,category_id,created_at,updated_at,focal_x,focal_y,variants,lock_screen_friendly,devices:wallpaper_devices(device:devices(id,name,slug,family,screen_label,width,height,sort_order))`;
+const DETAIL_COLUMNS = `${CARD_COLUMNS},description,about,tags,original_key,file_size,mime_type,source_type,credit_name,credit_url,seo_title,seo_description,category_id,created_at,updated_at,focal_x,focal_y,variants,lock_screen_friendly,devices:wallpaper_devices(device:devices(id,name,slug,family,screen_label,width,height,sort_order))`;
 type Raw = Record<string, unknown>;
 function one<T>(value: unknown): T | null {
     if (Array.isArray(value))
@@ -59,6 +59,7 @@ export function toDetail(row: Raw): WallpaperDetail {
     return {
         ...toCard(row),
         description: (row.description as string | null) ?? null,
+        about: (row.about as string | null) ?? null,
         tags: (row.tags as string[] | null) ?? [],
         original_key: row.original_key as string,
         file_size: Number(row.file_size ?? 0),

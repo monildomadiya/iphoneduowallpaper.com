@@ -296,28 +296,13 @@ export default async function LocalizedWallpaperPage({ params }: PageProps<"/[la
 
             <AdSlot placement="wallpaper_sidebar" className="mt-10" />
 
-            <details className="group mt-10 border-y border-line py-5">
-              <summary className="flex cursor-pointer list-none items-center justify-between text-[17px] font-semibold [&::-webkit-details-marker]:hidden">
+            {/* The same four steps, translated, used to repeat on all 284 localized wallpaper pages.
+                They link to the guide instead — see the English page for the reasoning. */}
+            <p className="mt-10 border-y border-line py-5 text-[15px] leading-6">
+              <Link href="/blog/how-to-set-wallpaper-on-iphone" hrefLang="en" className="link-apple font-medium">
                 {t.howTo}
-                <span className="text-fg-3 transition group-open:rotate-45">+</span>
-              </summary>
-              <ol className="mt-4 list-decimal space-y-2 pl-5 text-[15px] leading-6 text-fg-2">
-                {t.steps.map((step, index) => (
-                  <li key={step}>
-                    {step}
-                    {index === t.steps.length - 1 ? (
-                      <>
-                        {" "}
-                        <Link href="/blog/how-to-set-wallpaper-on-iphone" hrefLang="en" className="link-apple">
-                          {t.guide}
-                        </Link>
-                        .
-                      </>
-                    ) : null}
-                  </li>
-                ))}
-              </ol>
-            </details>
+              </Link>
+            </p>
 
             <p className="mt-6 text-[13px] text-fg-3">
               {t.free}{" "}

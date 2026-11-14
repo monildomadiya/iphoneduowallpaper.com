@@ -9,6 +9,7 @@ import remarkGfm from "remark-gfm";
 import { toast } from "sonner";
 import { deletePosts, savePost } from "@/app/admin/actions/posts";
 import type { Post } from "@/lib/types";
+import { SITE_AUTHOR } from "@/lib/site";
 import { cn, readingMinutes, slugify } from "@/lib/utils";
 import { CoverPicker } from "./cover-picker";
 import { TagInput, useConfirm } from "./client";
@@ -44,7 +45,7 @@ export function PostEditor({ post }: { post: Post | null }) {
   const [content, setContent] = useState(post?.content ?? TEMPLATE);
   const [coverKey, setCoverKey] = useState<string | null>(post?.cover_key ?? null);
   const [tags, setTags] = useState<string[]>(post?.tags ?? []);
-  const [authorName, setAuthorName] = useState(post?.author_name ?? "Editorial Team");
+  const [authorName, setAuthorName] = useState(post?.author_name ?? SITE_AUTHOR);
   const [status, setStatus] = useState<"draft" | "published">(post?.status ?? "draft");
   const [seoTitle, setSeoTitle] = useState(post?.seo_title ?? "");
   const [seoDescription, setSeoDescription] = useState(post?.seo_description ?? "");

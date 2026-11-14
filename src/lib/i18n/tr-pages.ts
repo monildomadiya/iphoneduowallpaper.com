@@ -18,8 +18,8 @@ export const TR_ABOUT: AboutStrings = {
       body: "Bulanık önizlemeler ya da ekran görüntüleri yok. Her sayfada tam çözünürlüğü ve dosya boyutu yazan orijinal dosyayı indirirsiniz.",
     },
     {
-      title: "Sanatçılara saygı",
-      body: "Özgün çalışmalar, bir insan tarafından incelenmiş yapay zekâ destekli tasarımlar, lisanslı görseller ve kamu malı eserler yayınlıyor; gereken her yerde sanatçıların adını veriyoruz.",
+      title: "Görseller nereden geliyor",
+      body: "Buradaki duvar kâğıtlarının neredeyse tamamı, yayınlanmadan önce elle düzenlenip incelenen yapay zekâ destekli çalışmalardır. Her duvar kâğıdı sayfası ayrıntılar bölümünde kaynağını belirtir ve çalışma başkasına aitse sanatçının adını verir.",
     },
     {
       title: "Özenle düzenlendi",
@@ -41,8 +41,8 @@ export const TR_ABOUT: AboutStrings = {
     },
     {
       id: "editorial-team",
-      title: "Editör ekibimiz ve ilkelerimiz",
-      body: `Rehberlerimizi, her duvar kağıdını yayınlanmadan önce inceleyen {site} editör ekibi yazıp düzenliyor. En çok sorulan sorular hakkında yazıyor ve her rehbere aynı ilkeleri uyguluyoruz:
+      title: "Bunları kim yazıyor, nasıl yazıyor",
+      body: `Adım {author}; {site} sitesini tek başıma yürütüyorum. Rehberler, her duvar kâğıdının incelemesi ve e-postalarınıza gelen yanıtlar hep benden: adın arkasında bir editör ekibi yok ve var olmayan bir yazı işlerini ima etmektense bunu söylemeyi tercih ederim. Size söz verebileceğim şey, çalışma biçimim:
 
 - **Net ve pratik.** Dolgu yerine tam ekran boyutları, gerçek menü yolları ve adım adım talimatlar.
 - **Yayından önce kontrol edilir.** Adımları Apple'ın kendi belgeleri ve iOS'un güncel sürümüyle karşılaştırırız. Menü adları iOS sürümleri arasında farklıysa bunu belirtiriz.

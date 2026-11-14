@@ -18,8 +18,8 @@ export const ES_ABOUT: AboutStrings = {
       body: "Nada de vistas previas borrosas ni capturas. Descargas el archivo original, con la resolución exacta y el tamaño del archivo indicados en cada página.",
     },
     {
-      title: "Respeto por los creadores",
-      body: "Publicamos obras originales, diseños creados con ayuda de IA y revisados por una persona, imágenes con licencia y obras de dominio público, y damos crédito a los artistas siempre que corresponde.",
+      title: "De dónde vienen las imágenes",
+      body: "Casi todos los fondos de esta web son obra creada con ayuda de IA, compuesta y revisada a mano antes de publicarse. La página de cada fondo indica su origen en los detalles y da crédito al artista siempre que la obra es de otra persona.",
     },
     {
       title: "Organizados con cuidado",
@@ -41,8 +41,8 @@ export const ES_ABOUT: AboutStrings = {
     },
     {
       id: "editorial-team",
-      title: "Nuestro equipo editorial y nuestros criterios",
-      body: `Nuestras guías las escribe y edita el equipo editorial de {site}, las mismas personas que revisan cada fondo antes de publicarlo. Escribimos sobre las preguntas que más nos hacen y aplicamos los mismos criterios a todas las guías:
+      title: "Quién escribe esto, y cómo",
+      body: `Me llamo {author} y llevo {site} yo solo. Las guías, la revisión de cada fondo y las respuestas a tus correos son míos: no hay un equipo editorial detrás del nombre, y prefiero decirlo a dar a entender una redacción que no existe. Lo que sí puedo prometer es cómo trabajo:
 
 - **Concretas y prácticas.** Tamaños de pantalla exactos, rutas de menú reales e instrucciones paso a paso, sin relleno.
 - **Revisadas antes de publicarse.** Comparamos los pasos con la documentación de Apple y con la versión actual de iOS. Cuando los nombres de los menús cambian entre versiones de iOS, lo decimos.

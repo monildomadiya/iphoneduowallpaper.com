@@ -18,6 +18,7 @@ import type { WallpaperAdminRow } from "@/lib/types";
 import { cn, formatBytes, formatCompact, formatDate, imageUrl, slugify, wallpaperPageTitle } from "@/lib/utils";
 import { Switch, TagInput, useConfirm } from "./client";
 import { FocalPicker } from "./focal-picker";
+import { RichTextEditor } from "./rich-text-editor";
 import { Card, Field, StatusBadge, buttonClass, inputClass } from "./ui";
 import {
   CategorySelect,
@@ -47,6 +48,7 @@ export function WallpaperEditor({
   const [title, setTitle] = useState(wallpaper.title);
   const [slug, setSlug] = useState(wallpaper.slug);
   const [description, setDescription] = useState(wallpaper.description ?? "");
+  const [about, setAbout] = useState(wallpaper.about ?? "");
   const [categoryId, setCategoryId] = useState<string | null>(wallpaper.category_id);
   const [deviceIds, setDeviceIds] = useState(wallpaper.devices.map((device) => device.id));
   const [tags, setTags] = useState(wallpaper.tags);
@@ -74,6 +76,7 @@ export function WallpaperEditor({
         title,
         slug,
         description,
+        about,
         categoryId,
         deviceIds,
         tags,
@@ -289,6 +292,25 @@ export function WallpaperEditor({
             </Field>
             <Switch label="Featured" description="Highlight on the home page" checked={isFeatured} onChange={setIsFeatured} />
           </div>
+        </Card>
+
+        <Card
+          title="About this wallpaper"
+          description="Shown on the wallpaper page under its own heading. Everything else on that page is generated and repeats across the library — this is the part that is only about this picture, so it is worth the time."
+        >
+          <RichTextEditor
+            id="about"
+            value={about}
+            onChange={setAbout}
+            rows={18}
+            placeholder={
+              "What is in the picture, and what it feels like.\n\n" +
+              "## Where the subject sits\n\n" +
+              "Say what the outer crop keeps and what the inner one shows, and whether the top is calm enough for the clock.\n\n" +
+              "## Who it suits\n\n" +
+              "A Lock Screen, a Home Screen behind app labels, a dark or a light clock."
+            }
+          />
         </Card>
 
         <Card

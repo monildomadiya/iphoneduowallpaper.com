@@ -305,7 +305,7 @@ Bitti mi? İki ekran için yapılmış [diğer duvar kağıtlarına göz atın](
     h1: "Türkçe rehberler.",
     lead: "Duvar kağıdınızın iPhone Duo'nun iki ekranında da net görünmesi için bilmeniz gereken her şey.",
     by: "Yazan:",
-    team: "{site} editör ekibi",
+    team: "{author}",
     minRead: "{n} dk okuma",
     toc: "Bu rehberde",
     english: "İngilizce oku",

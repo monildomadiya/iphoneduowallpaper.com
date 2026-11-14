@@ -3,8 +3,10 @@ import { getPostSitemapEntries } from "@/lib/data/posts";
 import { getCategories, getDarkCategory, getDevices, getThemeCategories } from "@/lib/data/taxonomy";
 import { getWallpaperSitemapEntries } from "@/lib/data/wallpapers";
 import { FOREIGN_LOCALES, languageAlternates, localizedPath, translatedEnglishPaths } from "@/lib/i18n";
+import { categoryCopy } from "@/lib/i18n/taxonomy";
 import type { ForeignLocale } from "@/lib/i18n/types";
 import { wallpaperTranslation } from "@/lib/i18n/wallpapers";
+import { DARK_CATEGORY } from "@/lib/site";
 import { absoluteUrl, imageUrl } from "@/lib/utils";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -22,7 +24,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Translation dictionaries can contain a renamed slug before the database does.
   // Only advertise taxonomy URLs backed by an active, populated category or device.
   const translatedPaths = (locale: ForeignLocale) => translatedEnglishPaths(locale).filter((path) => {
-    if (path.startsWith("/categories/")) return populatedCategories.has(path.slice("/categories/".length));
+    if (path.startsWith("/categories/")) {
+      const slug = path.slice("/categories/".length);
+      if (!populatedCategories.has(slug)) return false;
+      // Mirrors the noIndex rule on /[lang]/categories/[slug], so the sitemap never advertises a
+      // URL that answers noindex. The Dark page carries its own `darkWhy` copy; every other
+      // translated listing waits for `paragraphs` in that language.
+      return slug === DARK_CATEGORY.slug || Boolean(categoryCopy(locale, slug)?.paragraphs?.length);
+    }
     if (path.startsWith("/devices/")) return populatedDevices.has(path.slice("/devices/".length));
     return true;
   });

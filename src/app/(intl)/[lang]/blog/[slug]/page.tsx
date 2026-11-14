@@ -12,6 +12,7 @@ import { listWallpapers } from "@/lib/data/wallpapers";
 import { FOREIGN_LOCALES, guideCard, isForeignLocale, languageAlternates, localeContent, localizedPath } from "@/lib/i18n";
 import { fill } from "@/lib/i18n/en";
 import { buildMetadata, localizedArticleJsonLd } from "@/lib/seo";
+import { SITE_AUTHOR } from "@/lib/site";
 import { formatDate, headingId, readingMinutes } from "@/lib/utils";
 
 
@@ -68,7 +69,7 @@ export default async function LocalizedGuidePage({ params }: PageProps<"/[lang]/
   });
   const toc = tableOfContents(guide.content);
   const others = content.guides.filter((item) => item.slug !== guide.slug);
-  const author = fill(blog.team, { site: settings.site_name });
+  const author = fill(blog.team, { site: settings.site_name, author: SITE_AUTHOR });
 
   return (
     <>

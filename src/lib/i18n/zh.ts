@@ -292,7 +292,7 @@ export const ZH: LocaleContent = {
     h1: "中文指南。",
     lead: "让壁纸在 iPhone Duo 两块屏幕上都清晰好看，你需要知道的都在这里。",
     by: "作者：",
-    team: "{site} 编辑团队",
+    team: "{author}",
     minRead: "阅读约 {n} 分钟",
     toc: "本指南内容",
     english: "阅读英文版",

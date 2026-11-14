@@ -15,7 +15,7 @@ import { getCategories } from "@/lib/data/taxonomy";
 import { listWallpapers } from "@/lib/data/wallpapers";
 import { languageAlternates } from "@/lib/i18n";
 import { articleJsonLd, buildMetadata } from "@/lib/seo";
-import { categoryGuide } from "@/lib/site";
+import { categoryGuide, postAuthor } from "@/lib/site";
 import { formatDate, imageUrl, readingMinutes, slugify, stripMarkdown, truncate } from "@/lib/utils";
 
 // Renders on the server before responding so unknown slugs return a real 404 status (better for SEO).
@@ -93,7 +93,7 @@ export default async function PostPage({ params }: PageProps<"/blog/[slug]">) {
           <p className="mt-6 text-[14px] text-fg-3">
             By{" "}
             <Link href="/about#editorial-team" rel="author" className="hover:text-fg hover:underline">
-              {post.author_name}
+              {postAuthor(post.author_name)}
             </Link>{" "}
             · <time dateTime={post.published_at ?? undefined}>{formatDate(post.published_at)}</time> ·{" "}
             {readingMinutes(post.content)} min read
@@ -127,13 +127,13 @@ export default async function PostPage({ params }: PageProps<"/blog/[slug]">) {
           <Markdown content={post.content} />
           <ResourceLinks title="Put this guide into practice" links={resourcesForGuide(post.slug)} />
           <p className="mt-12 border-t border-line pt-6 text-[14px] text-fg-3">
-            Last updated {formatDate(post.updated_at)}. Written and checked by the {settings.site_name}{" "}
+            Last updated {formatDate(post.updated_at)}. Written and checked by{" "}
             <Link href="/about#editorial-team" className="link-apple">
-              editorial team
+              {postAuthor(post.author_name)}
             </Link>
             . Spotted something out of date?{" "}
             <Link href="/contact" className="link-apple">
-              Let us know
+              Let me know
             </Link>
             .
           </p>

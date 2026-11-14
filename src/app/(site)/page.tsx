@@ -15,7 +15,7 @@ import { languageAlternates } from "@/lib/i18n";
 import { buildMetadata, faqJsonLd, organizationJsonLd, websiteJsonLd } from "@/lib/seo";
 import { HOME_DESCRIPTION, HOME_DESCRIPTION_4K, SIZE_STRIP, homeFaq, homeTitle } from "@/lib/site";
 import type { WallpaperCardData } from "@/lib/types";
-import { formatNumber, imageUrl, stockedFirst } from "@/lib/utils";
+import { aspectRatioLabel, formatDate, formatNumber, imageUrl, orientationLabel, stockedFirst } from "@/lib/utils";
 
 export async function generateMetadata(): Promise<Metadata> {
   const [settings, is4k] = await Promise.all([getSiteSettings(), isLibrary4k()]);
@@ -57,6 +57,9 @@ export default async function HomePage() {
   const showcase = featured.items.length ? featured.items : latest.items;
   const hero = pickHeroWallpapers(showcase);
   const hasWallpapers = latest.total > 0;
+  // When the library last grew. A page with no date on it reads as undated to a search or answer
+  // engine, and freshness is one of the few signals a wallpaper library can honestly show.
+  const libraryUpdated = latest.items.map((item) => item.published_at).filter(Boolean).sort().at(-1) ?? null;
 
   return (
     <>
@@ -83,11 +86,16 @@ export default async function HomePage() {
           <h1 className="headline-hero mx-auto mt-6 max-w-4xl text-balance">
             iPhone Duo Wallpapers{is4k ? " in 4K" : ""}
           </h1>
+          {/* The definition comes first on purpose. It names the phone, the two names people also
+              search it by and both screen shapes in one sentence — the passage an AI answer can lift
+              whole. It used to sit ~1,500 words down the page, where almost nothing gets quoted. */}
           <p className="mx-auto mt-5 max-w-2xl text-pretty text-[19px] leading-7 text-fg-2 md:text-[23px] md:leading-8">
-            <span className="text-gradient-duo font-semibold">Unfolded.</span> {settings.tagline}{" "}
+            <span className="text-gradient-duo font-semibold">Unfolded.</span> iPhone Duo — also searched as iPhone 18
+            Duo or the iPhone Fold — has a tall 5.4-inch outer screen and a wide 7.6-inch inner screen that opens like
+            a small tablet.{" "}
             {is4k
-              ? "Ready-made pairs for the 5.4-inch outer display and the 7.6-inch inner display, plus iPhone 18 Pro."
-              : "Designs for the 5.4-inch outer display, the 7.6-inch inner display and iPhone 18 Pro."}
+              ? "These wallpapers are cut for both, in 4K, plus iPhone 18 Pro."
+              : "These wallpapers are made for both, plus iPhone 18 Pro."}
           </p>
           <ul aria-label="Screen sizes" className="mx-auto mt-5 flex max-w-2xl flex-wrap items-center justify-center gap-x-2 gap-y-1 text-[14px] text-fg-2">
             {SIZE_STRIP.map((item, index) => (
@@ -159,6 +167,11 @@ export default async function HomePage() {
               </li>
             ))}
           </ul>
+          {libraryUpdated ? (
+            <p className="mt-6 text-center text-[14px] text-fg-3">
+              Library last updated <time dateTime={libraryUpdated}>{formatDate(libraryUpdated)}</time>
+            </p>
+          ) : null}
         </div>
       </section>
 
@@ -276,11 +289,12 @@ export default async function HomePage() {
         <div className="max-w-3xl">
           <h2 className="headline-section">Wallpapers for both iPhone Duo screens.</h2>
           <div className="mt-5 space-y-4 text-[17px] leading-7 text-fg-2">
+            {/* The hero now carries the definition, so this paragraph says what the hero cannot fit:
+                why two screens need two files rather than one resized one. */}
             <p>
-              iPhone Duo — also searched as iPhone 18 Duo or the iPhone Fold — has two displays with very different
-              shapes: a tall 5.4-inch outer screen at 1398 × 2034 and a wide 7.6-inch inner screen at 2670 × 1878
-              that opens like a small tablet. A wallpaper cut for a regular iPhone loses a band from the top and
-              bottom on the outer screen and much more on the inner one.
+              The two screens are different <em>shapes</em>, not just different sizes — one portrait, one wider than a
+              laptop. A wallpaper cut for a regular iPhone loses a band from the top and bottom on the outer screen and
+              much more on the inner one, which is why one file rarely suits both.
             </p>
             <p>
               Every wallpaper here is free to download{" "}
@@ -307,6 +321,47 @@ export default async function HomePage() {
               covers the light and dark versions, their exact sizes and how to set them.
             </p>
           </div>
+
+          {/* The same four numbers the rest of the site works from, as a table. Comparative data in a
+              table is what both readers and answer engines reach for; it was only ever prose here. */}
+          {devices.length ? (
+            <figure className="mt-8 overflow-x-auto rounded-[24px] border border-line">
+              <table className="w-full border-collapse text-left text-[15px]">
+                <caption className="sr-only">iPhone Duo and iPhone 18 Pro wallpaper sizes</caption>
+                <thead>
+                  <tr className="border-b border-line bg-surface">
+                    <th scope="col" className="px-4 py-3 font-semibold">Screen</th>
+                    <th scope="col" className="px-4 py-3 font-semibold">Wallpaper size</th>
+                    <th scope="col" className="px-4 py-3 font-semibold">Shape</th>
+                    <th scope="col" className="px-4 py-3 font-semibold">Display</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {devices.map((device) => (
+                    <tr key={device.id} className="border-b border-line last:border-0">
+                      <th scope="row" className="px-4 py-3 font-medium">
+                        <Link href={`/devices/${device.slug}`} className="hover:text-link">
+                          {device.name}
+                        </Link>
+                      </th>
+                      <td className="px-4 py-3 tabular-nums text-fg-2">
+                        {device.width} × {device.height}
+                      </td>
+                      {/* The ratios alone read almost identically (1.45:1 against 1.42:1) and hide the
+                          thing that matters: one screen is taller than it is wide, the other wider. */}
+                      <td className="px-4 py-3 text-fg-2">
+                        {orientationLabel(device.width, device.height)}{" "}
+                        <span className="tabular-nums text-fg-3">{aspectRatioLabel(device.width, device.height)}</span>
+                      </td>
+                      <td className="px-4 py-3 text-fg-2">
+                        {device.diagonal_in ? `${device.diagonal_in}-inch` : (device.screen_label ?? "—")}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </figure>
+          ) : null}
         </div>
       </section>
 

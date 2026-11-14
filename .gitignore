@@ -56,3 +56,6 @@ next-env.d.ts
 
 # Local audits can include signed-in account data and crawl diagnostics.
 /reports/
+
+# Supabase CLI scratch
+/supabase/.temp/

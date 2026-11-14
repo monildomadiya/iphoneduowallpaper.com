@@ -77,6 +77,9 @@ const fieldsSchema = z.object({
   title: z.string().trim().min(2, "Title must be at least 2 characters.").max(120),
   slug: z.string().trim().max(100).nullish(),
   description: optionalText(2000),
+  // The long hand-written section. Roomy on purpose: it is the one part of a wallpaper page that
+  // no other page shares, so there is no reason to cut an editor short.
+  about: optionalText(20000),
   categoryId: z.uuid().nullish(),
   deviceIds: z.array(z.uuid()).max(20).default([]),
   // Only the Android app still sends collections; when absent, existing links are left alone.
@@ -168,6 +171,9 @@ function rowFields(data: z.infer<typeof fieldsSchema>) {
     credit_url: emptyToNull(data.creditUrl),
     seo_title: emptyToNull(data.seoTitle),
     seo_description: emptyToNull(data.seoDescription),
+    // Left alone when the client does not send it, so a save from the Android app — which knows
+    // nothing about this field — cannot wipe copy someone spent time writing.
+    ...(data.about !== undefined ? { about: emptyToNull(data.about) } : {}),
     ...(data.focalX !== undefined ? { focal_x: Math.round(data.focalX * 1000) / 1000 } : {}),
     ...(data.focalY !== undefined ? { focal_y: Math.round(data.focalY * 1000) / 1000 } : {}),
     ...(data.lockScreenFriendly !== undefined ? { lock_screen_friendly: data.lockScreenFriendly } : {}),

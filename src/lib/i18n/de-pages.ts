@@ -17,8 +17,8 @@ export const DE_ABOUT: AboutStrings = {
       body: "Keine unscharfen Vorschauen, keine Screenshots. Auf jeder Seite stehen die genaue Auflösung und die Dateigröße, und du lädst die Originaldatei herunter.",
     },
     {
-      title: "Respekt vor Kreativen",
-      body: "Wir veröffentlichen eigene Werke, von Menschen geprüfte KI-gestützte Designs, lizenzierte Bilder und gemeinfreie Werke und nennen die Urheber überall dort, wo es nötig ist.",
+      title: "Woher die Bilder kommen",
+      body: "Fast alle Hintergrundbilder hier sind KI-gestützte Werke, die vor der Veröffentlichung von Hand zusammengestellt und geprüft werden. Jede Hintergrundbild-Seite nennt in den Details ihre Quelle — und den Urheber, wann immer das Werk von jemand anderem stammt.",
     },
     {
       title: "Mit Sorgfalt sortiert",
@@ -40,8 +40,8 @@ export const DE_ABOUT: AboutStrings = {
     },
     {
       id: "editorial-team",
-      title: "Unsere Redaktion und unsere Grundsätze",
-      body: `Unsere Anleitungen schreibt und bearbeitet die Redaktion von {site}, die auch jedes Hintergrundbild vor der Veröffentlichung prüft. Wir schreiben über die häufigsten Fragen und wenden auf jede Anleitung dieselben Grundsätze an:
+      title: "Wer das hier schreibt, und wie",
+      body: `Ich heiße {author} und betreibe {site} allein. Die Anleitungen, die Prüfung jedes Hintergrundbilds und die Antworten auf deine E-Mails kommen alle von mir: Hinter dem Namen steckt keine Redaktion, und das sage ich lieber, als eine zu suggerieren, die es nicht gibt. Versprechen kann ich dir, wie ich arbeite:
 
 - **Klar und praktisch.** Genaue Displaymaße, echte Menüpfade und Schritt-für-Schritt-Anleitungen statt Füllwörter.
 - **Vor der Veröffentlichung geprüft.** Wir gleichen die Schritte mit Apples eigener Dokumentation und der aktuellen iOS-Version ab. Unterscheiden sich Menünamen zwischen iOS-Versionen, weisen wir darauf hin.

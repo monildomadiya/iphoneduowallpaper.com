@@ -38,7 +38,10 @@ export async function generateMetadata({ params, searchParams }: PageProps<"/[la
     languages: languageAlternates(`/categories/${slug}`),
     locale: localeContent(found.lang).ogLocale,
     image: found.category.cover_thumb_key ? { url: imageUrl(found.category.cover_thumb_key), alt: found.copy.name } : null,
-    noIndex: found.category.wallpaper_count === 0,
+    // An empty listing is thin content, and so is a translated listing with no copy of its own:
+    // a heading, one line of description and a grid of thumbnails. Both become indexable once
+    // the missing half arrives — the first wallpaper, or the category's advice in this language.
+    noIndex: found.category.wallpaper_count === 0 || !found.copy.paragraphs?.length,
   });
 }
 

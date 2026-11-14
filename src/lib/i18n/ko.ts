@@ -292,7 +292,7 @@ export const KO: LocaleContent = {
     h1: "한국어 가이드.",
     lead: "iPhone Duo의 두 화면에서 배경화면이 선명하게 보이도록 알아야 할 모든 것.",
     by: "작성:",
-    team: "{site} 편집팀",
+    team: "{author}",
     minRead: "{n}분 분량",
     toc: "이 가이드의 내용",
     english: "영어로 읽기",

@@ -3,6 +3,21 @@ import { aspectRatioLabel } from "@/lib/utils";
 
 export const LEGAL_LAST_UPDATED = "September 14, 2026";
 
+/**
+ * The person who writes and reviews everything here. One name in one place: the About page, every
+ * guide byline in every language, the Article author and the Organization's founder all read it,
+ * so they can never drift apart the way "Editorial Team" once did.
+ */
+export const SITE_AUTHOR = "Darshan Patel";
+
+/** The placeholder older posts still carry in `author_name`; it names nobody. */
+export const LEGACY_AUTHOR = "Editorial Team";
+
+/** The stored byline, or the site's author when a post still holds the placeholder. */
+export function postAuthor(name: string | null | undefined): string {
+  return name && name !== LEGACY_AUTHOR ? name : SITE_AUTHOR;
+}
+
 /** Lock Screen mockup shows iPhone Duo's launch day. */
 export const MOCKUP_TIME = "9:41";
 export const MOCKUP_DATE = "Friday, October 23";

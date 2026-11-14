@@ -8,6 +8,7 @@ import { getSiteSettings } from "@/lib/data/settings";
 import { isForeignLocale, languageAlternates, localeContent } from "@/lib/i18n";
 import { fill } from "@/lib/i18n/en";
 import { buildMetadata, localizedPageJsonLd } from "@/lib/seo";
+import { SITE_AUTHOR } from "@/lib/site";
 
 
 const ICONS = [Ruler, Sparkles, ShieldCheck, Layers];
@@ -31,7 +32,7 @@ export default async function LocalizedAboutPage({ params }: PageProps<"/[lang]/
   if (!isForeignLocale(lang)) notFound();
   const settings = await getSiteSettings();
   const { about, chrome } = localeContent(lang);
-  const values = { site: settings.site_name, email: settings.contact_email };
+  const values = { site: settings.site_name, email: settings.contact_email, author: SITE_AUTHOR };
   const path = `/${lang}/about`;
 
   return (

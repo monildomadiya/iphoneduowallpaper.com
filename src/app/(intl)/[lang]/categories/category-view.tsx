@@ -93,6 +93,12 @@ export async function LocalizedCategoryView({
             </div>
           </div>
         </section>
+      ) : copy.paragraphs?.length ? (
+        <section className="container-apple mt-24">
+          <div className="prose-apple max-w-3xl">
+            {copy.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+          </div>
+        </section>
       ) : null}
     </>
   );

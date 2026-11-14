@@ -307,7 +307,7 @@ El creador hace un recorte para cada pantalla a su resolución exacta, así iOS 
     h1: "Guías en español.",
     lead: "Todo lo que necesitas saber para que tu fondo se vea nítido en las dos pantallas del iPhone Duo.",
     by: "Por",
-    team: "el equipo editorial de {site}",
+    team: "{author}",
     minRead: "{n} min de lectura",
     toc: "En esta guía",
     english: "Leer en inglés",

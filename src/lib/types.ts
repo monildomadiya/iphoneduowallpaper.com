@@ -88,6 +88,8 @@ export interface WallpaperCardData {
 
 export interface WallpaperDetail extends WallpaperCardData {
   description: string | null;
+  /** Markdown written by hand for this one image, shown under "About this wallpaper". */
+  about: string | null;
   tags: string[];
   original_key: string;
   file_size: number;

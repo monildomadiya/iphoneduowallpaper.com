@@ -6,6 +6,7 @@ import { refreshTag } from "@/lib/admin/refresh";
 import { emptyToNull, normalizeTags, uniqueSlug } from "@/lib/admin/slugs";
 import { ActionError, authorize } from "@/lib/auth";
 import { deleteObjects, headObject } from "@/lib/r2";
+import { SITE_AUTHOR } from "@/lib/site";
 
 const postSchema = z.object({
   id: z.uuid().nullish(),
@@ -15,7 +16,7 @@ const postSchema = z.object({
   content: z.string().max(100_000, "The article is too long."),
   coverKey: z.string().nullish(),
   tags: z.array(z.string()).max(20).default([]),
-  authorName: z.string().trim().min(1).max(80).default("Editorial Team"),
+  authorName: z.string().trim().min(1).max(80).default(SITE_AUTHOR),
   status: z.enum(["draft", "published"]),
   seoTitle: z.string().trim().max(120).nullish(),
   seoDescription: z.string().trim().max(320).nullish(),

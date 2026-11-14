@@ -4,6 +4,7 @@ import { getSiteSettings } from "@/lib/data/settings";
 import { siteUrl } from "@/lib/env";
 import type { Post, SiteSettings, WallpaperDetail } from "@/lib/types";
 import { absoluteUrl, clampPage, imageUrl, stripMarkdown, truncate } from "@/lib/utils";
+import { SITE_AUTHOR, postAuthor } from "@/lib/site";
 import { wallpaperOverview } from "@/lib/wallpaper-copy";
 
 const MAX_TITLE = 60;
@@ -114,6 +115,8 @@ type JsonLd = Record<string, unknown>;
 // site as a single entity with a single name — what it groups sitelinks and the site name under.
 const WEBSITE_ID = `${siteUrl}/#website`;
 const ORGANIZATION_ID = `${siteUrl}/#organization`;
+/** The one person who writes and reviews the site; founder of the organization and author of every guide. */
+const AUTHOR_ID = `${siteUrl}/#author`;
 
 // Names people may search the brand by; Google falls back to these when choosing the site name.
 const SITE_ALTERNATE_NAMES = ["Duo Wallpapers", "iphoneduowallpaper.com"];
@@ -137,6 +140,14 @@ export function organizationJsonLd(settings: SiteSettings): JsonLd {
       caption: settings.site_name,
     },
     email: settings.contact_email,
+    // Who is behind the site, as an entity rather than a sentence on one page. Search and AI
+    // answers both lean on this to tell an independent one-person site from an anonymous one.
+    founder: {
+      "@id": AUTHOR_ID,
+      "@type": "Person",
+      name: SITE_AUTHOR,
+      url: absoluteUrl("/about#editorial-team"),
+    },
     ...(sameAs.length ? { sameAs } : {}),
   };
 }
@@ -205,11 +216,9 @@ export function wallpaperJsonLd(wallpaper: WallpaperDetail, settings: SiteSettin
 export function articleJsonLd(post: Post, settings: SiteSettings): JsonLd {
   const url = absoluteUrl(`/blog/${post.slug}`);
   const text = stripMarkdown(post.content);
-  // "Editorial Team" alone names nobody; tie the byline to the site and to the page that says who we are.
-  const authorName =
-    !post.author_name || post.author_name === "Editorial Team"
-      ? `${settings.site_name} Editorial Team`
-      : post.author_name;
+  // Older posts still hold the "Editorial Team" placeholder, which named a newsroom that does not
+  // exist; postAuthor() resolves it to the person who actually writes the site.
+  const authorName = postAuthor(post.author_name);
   return {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -225,11 +234,9 @@ export function articleJsonLd(post: Post, settings: SiteSettings): JsonLd {
     wordCount: text.split(/\s+/).filter(Boolean).length,
     articleSection: "Guides",
     ...(post.tags.length ? { keywords: post.tags.join(", ") } : {}),
-    author: {
-      "@type": /\b(team|staff|editors?)\b/i.test(authorName) ? "Organization" : "Person",
-      name: authorName,
-      url: absoluteUrl("/about#editorial-team"),
-    },
+    // Same @id as the Organization's founder, so the author and the person behind the site are one
+    // entity rather than two names that happen to match.
+    author: { "@id": AUTHOR_ID, "@type": "Person", name: authorName, url: absoluteUrl("/about#editorial-team") },
     publisher: {
       "@type": "Organization",
       "@id": ORGANIZATION_ID,
@@ -301,7 +308,8 @@ export function localizedArticleJsonLd(input: {
     inLanguage: input.inLanguage,
     wordCount: stripMarkdown(input.content).split(/\s+/).filter(Boolean).length,
     translationOfWork: { "@id": `${absoluteUrl(input.englishPath)}#article` },
-    author: { "@type": "Organization", name: input.authorName, url: absoluteUrl("/about#editorial-team") },
+    // The same person entity the English guides carry, so a translation is not a different author.
+    author: { "@id": AUTHOR_ID, "@type": "Person", name: input.authorName, url: absoluteUrl(`/${input.inLanguage.split("-")[0]}/about#editorial-team`) },
     publisher: { "@id": ORGANIZATION_ID },
     isPartOf: { "@id": WEBSITE_ID },
     mainEntityOfPage: { "@type": "WebPage", "@id": url },
