@@ -59,6 +59,8 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
   experimental: {
+    // Only nudge the build about security releases, not every stable one or Future Defaults.
+    agentUpgrade: "security",
     // English, the translated languages and admin have separate root layouts; unmatched URLs need a 404 of their own.
     globalNotFound: true,
     serverActions: {
