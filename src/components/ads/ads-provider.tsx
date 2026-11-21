@@ -1,16 +1,18 @@
 "use client";
 
 import { createContext, useContext } from "react";
-import type { AdPlacement } from "@/lib/types";
+import type { AdsConfig } from "@/lib/ads";
 
-export interface AdsConfig {
-  enabled: boolean;
-  clientId: string | null;
-  slots: Partial<Record<AdPlacement, string>>;
-  testMode: boolean;
-}
+const EMPTY: AdsConfig = {
+  enabled: false,
+  clientId: null,
+  placements: {},
+  lazy: true,
+  preview: false,
+  testMode: false,
+};
 
-const AdsContext = createContext<AdsConfig>({ enabled: false, clientId: null, slots: {}, testMode: false });
+const AdsContext = createContext<AdsConfig>(EMPTY);
 
 export function AdsProvider({ config, children }: { config: AdsConfig; children: React.ReactNode }) {
   return <AdsContext value={config}>{children}</AdsContext>;

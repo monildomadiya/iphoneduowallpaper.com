@@ -224,7 +224,7 @@ export default async function HomePage() {
       {latest.items.length ? (
         <section className="container-apple mt-24">
           <SectionHeading title="Latest." subtitle="Fresh from the studio." href="/wallpapers" />
-          <WallpaperGrid wallpapers={latest.items} />
+          <WallpaperGrid wallpapers={latest.items} ad="home_grid" />
         </section>
       ) : null}
 
@@ -396,6 +396,10 @@ export default async function HomePage() {
           <Link href="/wallpaper-readability" className="btn-secondary mt-6 inline-flex">Open the readability lab</Link>
         </div>
       </section>
+
+      <div className="container-apple">
+        <AdSlot placement="home_bottom" className="mt-24" />
+      </div>
 
       <section className="container-apple mt-24">
         <SectionHeading title="Questions?" subtitle="We have answers." />

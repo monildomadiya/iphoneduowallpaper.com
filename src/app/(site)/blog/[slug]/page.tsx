@@ -16,7 +16,15 @@ import { listWallpapers } from "@/lib/data/wallpapers";
 import { languageAlternates } from "@/lib/i18n";
 import { articleJsonLd, buildMetadata } from "@/lib/seo";
 import { categoryGuide, postAuthor } from "@/lib/site";
-import { formatDate, imageUrl, readingMinutes, slugify, stripMarkdown, truncate } from "@/lib/utils";
+import {
+  formatDate,
+  imageUrl,
+  readingMinutes,
+  slugify,
+  splitForMidArticleAd,
+  stripMarkdown,
+  truncate,
+} from "@/lib/utils";
 
 // Renders on the server before responding so unknown slugs return a real 404 status (better for SEO).
 
@@ -71,6 +79,9 @@ export default async function PostPage({ params }: PageProps<"/blog/[slug]">) {
     wallpapersFor(post.slug),
   ]);
   const toc = tableOfContents(post.content);
+  // An ad at a heading halfway down earns far more than one tacked on the end, where most readers
+  // never reach. Short posts come back as a single part and get no break.
+  const [articleStart, articleRest] = splitForMidArticleAd(post.content);
 
   return (
     <>
@@ -124,7 +135,13 @@ export default async function PostPage({ params }: PageProps<"/blog/[slug]">) {
               </ol>
             </nav>
           ) : null}
-          <Markdown content={post.content} />
+          <Markdown content={articleStart} />
+          {articleRest ? (
+            <>
+              <AdSlot placement="post_middle" className="my-12" />
+              <Markdown content={articleRest} />
+            </>
+          ) : null}
           <ResourceLinks title="Put this guide into practice" links={resourcesForGuide(post.slug)} />
           <p className="mt-12 border-t border-line pt-6 text-[14px] text-fg-3">
             Last updated {formatDate(post.updated_at)}. Written and checked by{" "}

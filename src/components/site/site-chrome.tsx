@@ -3,6 +3,7 @@ import { AdsenseScript, GoogleAnalytics } from "@/components/ads/third-party-scr
 import { CookieBanner } from "@/components/site/cookie-banner";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
+import { adsConfigFromSettings } from "@/lib/ads";
 import { getSiteSettings } from "@/lib/data/settings";
 import { isProduction } from "@/lib/env";
 import type { Chrome, CookieStrings } from "@/lib/i18n/types";
@@ -18,24 +19,25 @@ export async function SiteChrome({
   children: React.ReactNode;
 }) {
   const settings = await getSiteSettings();
-  const adsEnabled = settings.adsense_enabled && Boolean(settings.adsense_client_id);
+  const ads = adsConfigFromSettings(settings, !isProduction);
 
   return (
-    <AdsProvider
-      config={{
-        enabled: adsEnabled,
-        clientId: settings.adsense_client_id,
-        slots: settings.ad_slots,
-        testMode: !isProduction,
-      }}
-    >
+    <AdsProvider config={ads}>
       <SiteHeader siteName={settings.site_name} announcement={settings.announcement} chrome={chrome} />
       <main id="main" className="min-h-[60vh]">
         {children}
       </main>
       <SiteFooter settings={settings} chrome={chrome} />
       {settings.cookie_banner_enabled ? <CookieBanner strings={cookies} /> : null}
-      {settings.adsense_client_id ? <AdsenseScript clientId={settings.adsense_client_id} /> : null}
+      {/* The master switch really is a master switch: with ads off the script never loads, so Auto
+          ads stop too. Site verification does not need it — the google-adsense-account meta tag in
+          rootMetadata stays in place whether ads are serving or not. */}
+      {ads.enabled && settings.adsense_client_id ? (
+        <AdsenseScript
+          clientId={settings.adsense_client_id}
+          frequencyHint={settings.adsense_auto_ads ? settings.adsense_frequency_hint : null}
+        />
+      ) : null}
       {isProduction && settings.ga_measurement_id ? <GoogleAnalytics measurementId={settings.ga_measurement_id} /> : null}
     </AdsProvider>
   );

@@ -66,7 +66,13 @@ async function ListingContent({
       </div>
 
       {result.items.length ? (
-        <WallpaperGrid wallpapers={result.items} priorityCount={page === 1 ? 4 : 0} locale={locale} />
+        <WallpaperGrid
+          wallpapers={result.items}
+          priorityCount={page === 1 ? 4 : 0}
+          locale={locale}
+          ad="list_grid"
+          adAfter={10}
+        />
       ) : (
         <EmptyState
           title={page > 1 ? (t?.endTitle ?? "You've reached the end") : title}

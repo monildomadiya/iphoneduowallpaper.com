@@ -47,14 +47,14 @@ See [Cloudflare setup](cloudflare/README.md).
 - Categories, collections and devices manager (covers, SEO fields, ordering, visibility)
 - Blog editor with Markdown preview
 - Inbox for contact messages and DMCA / content reports (one click to unpublish a reported wallpaper)
-- Ads & AdSense settings (publisher ID, auto ads, 8 ad placements, ads.txt) and site settings (brand, analytics, legal details, social links)
+- Ads & AdSense: master on/off switch, publisher ID, Auto ads, 13 placements each with its own switch, ad unit ID and unit type (display, in-article, in-feed, multiplex), lazy loading, a per-page ad limit, a preview mode and ads.txt
 
 ---
 
 ## 1. Supabase
 
 1. Create a project at [supabase.com](https://supabase.com) (choose a region close to your visitors, e.g. Mumbai).
-2. Open **SQL Editor → New query**, paste the contents of [`supabase/migrations/0001_init.sql`](supabase/migrations/0001_init.sql) and run it.
+2. Open **SQL Editor → New query** and run every file in [`supabase/migrations/`](supabase/migrations/) in order: `0001_init.sql`, `0002_variants.sql`, `0003_wallpaper_about.sql`, `0004_ads.sql`. Each one is safe to re-run.
 3. Run [`supabase/seed.sql`](supabase/seed.sql) the same way. It adds the iPhone Duo and iPhone 18 Pro devices, 10 categories, 5 collections and 15 guides (edit them later in the admin panel).
 4. **Authentication → Sign In / Providers → Email**: turn **off** “Allow new users to sign up”. Admin accounts are created with the script below.
 5. **Authentication → URL Configuration**:
@@ -123,13 +123,15 @@ Native Sharp processing remains automatic when using Node hosting.
 
 1. Sign up at [adsense.google.com](https://adsense.google.com) and add your site.
 2. In **Admin → Ads & AdSense** paste your publisher ID (`ca-pub-…`) and save. The site-verification meta tag and `/ads.txt` are added automatically.
-3. If AdSense asks for the code snippet, switch on **Serve ads** — the official script loads on public pages only.
-4. After approval: either enable Auto ads in AdSense, or create display ad units and paste their slot IDs into the placements.
-5. In AdSense **Privacy & messaging**, create a consent message for visitors from the EEA, UK and Switzerland.
+3. Switch on **Serve ads**. This is the master switch: with it off the AdSense script never loads, so neither ad units nor Auto ads appear. It only ever loads on public pages, never in the admin panel.
+4. After approval, do both: turn Auto ads on in AdSense (they need no unit IDs), and create ad units under **AdSense → Ads → By ad unit**, then switch on the placements you want and paste each unit ID. Pick the unit type that matches the spot — in-article inside a guide, multiplex at the end of a page.
+5. Check the layout before anyone else sees it: open any page with `?ads=preview` and every spot is drawn as an outlined box.
+6. In AdSense **Privacy & messaging**, create a consent message for visitors from the EEA, UK and Switzerland.
 
 **Stay compliant**
 
 - Never click your own ads. Ads are labeled “Advertisement”, never shown on admin, login or error pages, and kept away from download buttons.
+- Keep the per-page limit in **Admin → Ads** sensible. Crowding a page is the usual reason a healthy account gets ad serving limited, and the admin panel refuses to save a page that goes over the limit.
 - Handle copyright notices in **Admin → Reports** quickly.
 
 ## 6. Android admin app

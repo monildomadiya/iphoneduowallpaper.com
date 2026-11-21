@@ -13,7 +13,7 @@ import { FOREIGN_LOCALES, guideCard, isForeignLocale, languageAlternates, locale
 import { fill } from "@/lib/i18n/en";
 import { buildMetadata, localizedArticleJsonLd } from "@/lib/seo";
 import { SITE_AUTHOR } from "@/lib/site";
-import { formatDate, headingId, readingMinutes } from "@/lib/utils";
+import { formatDate, headingId, readingMinutes, splitForMidArticleAd } from "@/lib/utils";
 
 
 export function generateStaticParams() {
@@ -68,6 +68,7 @@ export default async function LocalizedGuidePage({ params }: PageProps<"/[lang]/
     perPage: 5,
   });
   const toc = tableOfContents(guide.content);
+  const [articleStart, articleRest] = splitForMidArticleAd(guide.content);
   const others = content.guides.filter((item) => item.slug !== guide.slug);
   const author = fill(blog.team, { site: settings.site_name, author: SITE_AUTHOR });
 
@@ -130,7 +131,13 @@ export default async function LocalizedGuidePage({ params }: PageProps<"/[lang]/
               </ol>
             </nav>
           ) : null}
-          <Markdown content={guide.content} />
+          <Markdown content={articleStart} />
+          {articleRest ? (
+            <>
+              <AdSlot placement="post_middle" className="my-12" />
+              <Markdown content={articleRest} />
+            </>
+          ) : null}
           <AdSlot placement="post_bottom" className="mt-12" />
         </div>
       </article>

@@ -236,6 +236,11 @@ export default async function WallpaperPage({ params }: PageProps<"/wallpapers/[
               ) : null}
             </section>
 
+            {/* Below the description, not below the tags: down there it ended up barely 200px above
+                the unit under the article, and it is far enough from the download buttons that a
+                missed tap can never land on an ad. */}
+            <AdSlot placement="wallpaper_sidebar" className="mt-8" />
+
             {devices.length ? (
               <section className="mt-8 rounded-[24px] bg-surface p-5 md:p-6">
                 <h2 className="text-[19px] font-semibold tracking-tight">Screen fit</h2>
@@ -324,8 +329,6 @@ export default async function WallpaperPage({ params }: PageProps<"/wallpapers/[
               </div>
             ) : null}
 
-            <AdSlot placement="wallpaper_sidebar" className="mt-10" />
-
             {/* The four steps used to be inlined here, word for word on every wallpaper page. The guide
                 they duplicated is better and stays up to date in one place. */}
             <p className="mt-10 border-y border-line py-5 text-[15px] leading-6">
@@ -364,6 +367,8 @@ export default async function WallpaperPage({ params }: PageProps<"/wallpapers/[
             <WallpaperGrid wallpapers={related} />
           </section>
         ) : null}
+
+        <AdSlot placement="wallpaper_related" className="mt-20" />
       </div>
     </>
   );

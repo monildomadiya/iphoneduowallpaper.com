@@ -19,7 +19,7 @@ export default async function AdsPage() {
     <>
       <AdminHeader
         title="Ads & AdSense"
-        description="Connect Google AdSense, choose where ads appear and manage ads.txt — no code changes needed."
+        description="Switch ads on or off, pick the spots and unit types, control how they load, and manage ads.txt — all without a code change."
       />
       <AdsSettingsForm settings={settings} siteHost={siteUrl.replace(/^https?:\/\//, "")} />
     </>

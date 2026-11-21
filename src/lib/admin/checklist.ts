@@ -1,6 +1,7 @@
 import "server-only";
 import { r2PublicUrl, siteUrl } from "@/lib/env";
 import { isR2Configured, supabaseSecretKey } from "@/lib/server-env";
+import { resolveAdPlacements } from "@/lib/ads";
 import type { SiteSettings } from "@/lib/types";
 
 export interface ChecklistItem {
@@ -40,5 +41,10 @@ export function buildAdSenseChecklist(counts: ChecklistCounts, settings: SiteSet
     },
     { label: "AdSense publisher ID added", done: Boolean(settings.adsense_client_id), href: "/admin/ads" },
     { label: "Ads switched on after approval", done: settings.adsense_enabled, href: "/admin/ads" },
+    {
+      label: `Ad units placed (${Object.keys(resolveAdPlacements(settings)).length} live)`,
+      done: settings.adsense_auto_ads || Object.keys(resolveAdPlacements(settings)).length > 0,
+      href: "/admin/ads",
+    },
   ];
 }

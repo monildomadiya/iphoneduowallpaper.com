@@ -1,10 +1,12 @@
 /* eslint-disable @next/next/no-img-element -- thumbnails are pre-optimized WebP files served from Cloudflare R2 */
 import { Download } from "lucide-react";
 import Link from "next/link";
+import { Fragment } from "react";
+import { AdSlot } from "@/components/ads/ad-slot";
 import { localeContent } from "@/lib/i18n";
 import type { ForeignLocale } from "@/lib/i18n/types";
 import { wallpaperHref, wallpaperTranslation } from "@/lib/i18n/wallpapers";
-import type { WallpaperCardData } from "@/lib/types";
+import type { AdPlacement, WallpaperCardData } from "@/lib/types";
 import { cn, formatCompact, imageUrl, qualityLabel, wallpaperAlt } from "@/lib/utils";
 
 interface WallpaperCardProps {
@@ -75,12 +77,22 @@ export function WallpaperGrid({
   priorityCount = 0,
   className,
   locale,
+  ad,
+  adAfter = 6,
 }: {
   wallpapers: WallpaperCardData[];
   priorityCount?: number;
   className?: string;
   locale?: ForeignLocale;
+  /** Breaks the grid with a full-width ad, if that placement is switched on in Admin → Ads. */
+  ad?: AdPlacement;
+  /** How many cards come before it. */
+  adAfter?: number;
 }) {
+  // Only break the grid when real cards follow the ad; otherwise it is just another unit stuck on
+  // the end, where the page already has one.
+  const adIndex = ad && wallpapers.length > adAfter + 1 ? adAfter - 1 : -1;
+
   return (
     <ul
       className={cn(
@@ -89,9 +101,16 @@ export function WallpaperGrid({
       )}
     >
       {wallpapers.map((wallpaper, index) => (
-        <li key={wallpaper.id}>
-          <WallpaperCard wallpaper={wallpaper} priority={index < priorityCount} locale={locale} />
-        </li>
+        <Fragment key={wallpaper.id}>
+          <li>
+            <WallpaperCard wallpaper={wallpaper} priority={index < priorityCount} locale={locale} />
+          </li>
+          {ad && index === adIndex ? (
+            <li className="col-span-full">
+              <AdSlot placement={ad} className="my-2" />
+            </li>
+          ) : null}
+        </Fragment>
       ))}
     </ul>
   );

@@ -191,7 +191,7 @@ export default async function LocalizedHomePage({ params }: PageProps<"/[lang]">
       {latest.items.length ? (
         <section className="container-apple mt-24">
           <SectionHeading title={home.latest[0]} subtitle={home.latest[1]} href={`/${lang}/wallpapers`} linkLabel={home.viewAll} />
-          <WallpaperGrid wallpapers={latest.items} locale={lang} />
+          <WallpaperGrid wallpapers={latest.items} locale={lang} ad="home_grid" />
         </section>
       ) : null}
 
@@ -235,6 +235,10 @@ export default async function LocalizedHomePage({ params }: PageProps<"/[lang]">
           </Link>
         </div>
       </section>
+
+      <div className="container-apple">
+        <AdSlot placement="home_bottom" className="mt-24" />
+      </div>
 
       <section className="container-apple mt-24">
         <SectionHeading title={home.faqTitle[0]} subtitle={home.faqTitle[1]} />

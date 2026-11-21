@@ -174,6 +174,39 @@ export function screenFit(width: number, height: number, screenW: number, screen
   return { level, scale, cropped };
 }
 
+/**
+ * Splits an article in two at the `##` heading nearest the middle, so an ad can sit between the
+ * halves. A heading is the only honest break point: dropping a unit between two paragraphs of the
+ * same thought reads as an interruption, and short articles get no break at all.
+ */
+export function splitForMidArticleAd(markdown: string, minChars = 2500): [string] | [string, string] {
+  if (markdown.length < minChars) return [markdown];
+  const target = markdown.length / 2;
+  const earliest = markdown.length * 0.28;
+  const latest = markdown.length * 0.72;
+  const lines = markdown.split("\n");
+  let best = -1;
+  let bestDistance = Number.POSITIVE_INFINITY;
+  let fenced = false;
+  let offset = 0;
+
+  for (const line of lines) {
+    if (/^\s*```/.test(line)) {
+      fenced = !fenced;
+    } else if (!fenced && /^##\s+\S/.test(line) && offset > earliest && offset < latest) {
+      const distance = Math.abs(offset - target);
+      if (distance < bestDistance) {
+        bestDistance = distance;
+        best = offset;
+      }
+    }
+    offset += line.length + 1;
+  }
+
+  if (best < 0) return [markdown];
+  return [markdown.slice(0, best).trimEnd(), markdown.slice(best)];
+}
+
 export function readingMinutes(markdown: string): number {
   // Chinese has no spaces between words; a word averages about two characters.
   const han = markdown.match(/\p{Script=Han}/gu)?.length ?? 0;

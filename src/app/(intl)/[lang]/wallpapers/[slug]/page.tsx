@@ -229,6 +229,8 @@ export default async function LocalizedWallpaperPage({ params }: PageProps<"/[la
               <p className="mt-3 text-[15px] leading-6 text-fg-2">{localizedOverview(wallpaper, translation.title, t)}</p>
             </section>
 
+            <AdSlot placement="wallpaper_sidebar" className="mt-8" />
+
             {devices.length ? (
               <section className="mt-8 rounded-[24px] bg-surface p-5 md:p-6">
                 <h2 className="text-[19px] font-semibold tracking-tight">{t.fit}</h2>
@@ -294,8 +296,6 @@ export default async function LocalizedWallpaperPage({ params }: PageProps<"/[la
               </dl>
             </section>
 
-            <AdSlot placement="wallpaper_sidebar" className="mt-10" />
-
             {/* The same four steps, translated, used to repeat on all 284 localized wallpaper pages.
                 They link to the guide instead — see the English page for the reasoning. */}
             <p className="mt-10 border-y border-line py-5 text-[15px] leading-6">
@@ -334,6 +334,8 @@ export default async function LocalizedWallpaperPage({ params }: PageProps<"/[la
             <WallpaperGrid wallpapers={related} locale={locale} />
           </section>
         ) : null}
+
+        <AdSlot placement="wallpaper_related" className="mt-20" />
       </div>
     </>
   );
